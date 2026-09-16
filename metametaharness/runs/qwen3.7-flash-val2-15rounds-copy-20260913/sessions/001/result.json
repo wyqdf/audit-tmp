@@ -1,0 +1,76 @@
+{
+  "session_id": "fea80d57-b860-4d9f-b829-8c5bf58c254b",
+  "commits_before": [
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 293.6166582107544,
+  "benchmark_seconds": 597.9361543655396,
+  "wall_seconds": 891.552812576294,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 275093,
+    "num_turns": 76,
+    "stop_reason": "end_turn",
+    "session_id": "fea80d57-b860-4d9f-b829-8c5bf58c254b",
+    "total_cost_usd": 3.3305620000000005,
+    "usage": {
+      "input_tokens": 53346,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3323264,
+      "output_tokens": 56088,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 53346,
+        "outputTokens": 56088,
+        "cacheReadInputTokens": 3323264,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 3.3305620000000005,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 1 complete — one mechanism-level candidate created, evaluated once, audited, and recorded.\n\n## Stage 1 — Lineage analysis\nParent: `f0ec3e9` (root baseline). Its notes/traces isolated a concrete defect: `retrieve_examples` was load-bearing (called in 246/260 samples; every sample that skipped it scored 0) yet selected memory by hash-seeded shuffle, so each question got an arbitrary 30,000-char slice. Trace analysis confirmed the cap binds only where memory is large (LawBench 105,318 chars → ~28% delivered; USPTO's whole memory fits at 8,665 chars) and that baseline accuracy tracked target-string presence in the slice (0.54 present vs 0.17 absent).\n\n## Stage 2 — Evolution\nBranch `codex/relevance-ranked-retrieval` off `f0ec3e9`; one change in `solver/tools/retrieval.py`: IDF-weighted character-bigram cosine ranking of memory examples against the current question, delivered most-similar-first, budget packed by skipping oversized examples instead of stopping at them. Deterministic, no dataset names/keywords/branching.\n\n## Stage 3 — Validation (single run, `partial` status → exit 1, results authoritative)\n\n| | USPTO | Symptom2Disease | LawBench | average |\n|---|---|---|---|---|\n| baseline | 0.1333 | 0.81 | 0.26 | **0.4011** |\n| candidate | 0.1833 | 0.88 | 0.27 | **0.4444** |\n\nMechanism activated and worked:\n- **USPTO** delivered set identical (median 8,663 vs 8,702 chars for 50/50 examples) — only order changed, yet the first delivered example now matches the question's reaction type in **45%** of samples vs **13%** (chance ≈ 10%). Accuracy rose with no content change.\n- **LawBench** target-string presence rose **27% → 45%** at unchanged delivered volume; accuracy 26 → 27/100, with 3 samples lost to a non-retryable provider content filter on the post-retrieval call (baseline had none) — those stay in the denominator per contract.\n- Cost/latency fell alongside (median calls 5→3, 3→2, 3→2; median elapsed 74→53 s, 27→20 s, 42→34 s).\n\n## Record\nCommit `97e9d51746013d47c915aa34079110ce66e52867` on `codex/relevance-ranked-retrieval`, tree `8a4e7e02…` matching the evaluated tree, parent `f0ec3e9`; template-compliant message plus a notes entry attached to `refs/notes/evolution` citing every trace-derived claim. Working tree clean; no further edits or reruns.",
+    "ttft_ms": 794,
+    "ttft_stream_ms": 257,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 891025,
+    "uuid": "7944d89d-442e-49fa-9e6d-09bc7eced8f1"
+  },
+  "session_file": "projects/-workspace-harness/fea80d57-b860-4d9f-b829-8c5bf58c254b.jsonl",
+  "usage": {
+    "input_tokens": 53346,
+    "output_tokens": 56088,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3323264
+  },
+  "cost_usd": 3.3305620000000005,
+  "num_turns": 76,
+  "duration_api_ms": 275093,
+  "error": null,
+  "commit": "97e9d51746013d47c915aa34079110ce66e52867",
+  "tree": "8a4e7e02ef6677b8b23161b60a8e92d7d5c9c347"
+}

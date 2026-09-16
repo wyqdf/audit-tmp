@@ -1,0 +1,79 @@
+{
+  "session_id": "171245ed-4041-4c7c-8c80-69f82eb64b8b",
+  "commits_before": [
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 1578.079910993576,
+  "benchmark_seconds": 749.4634852409363,
+  "wall_seconds": 2327.5433962345123,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 589135,
+    "num_turns": 96,
+    "stop_reason": "end_turn",
+    "session_id": "171245ed-4041-4c7c-8c80-69f82eb64b8b",
+    "total_cost_usd": 7.333358000000001,
+    "usage": {
+      "input_tokens": 71197,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7872896,
+      "output_tokens": 121637,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 71197,
+        "outputTokens": 121637,
+        "cacheReadInputTokens": 7872896,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.333358000000001,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 4 is complete. Summary of the iteration:\n\n**Stage 1 — Parent & direction**\n- **Parent:** round-2 node `b8b4c09` (tree `84ec2cc2…`, average 0.5267 — the highest in the tree, not HEAD).\n- **Problem (re-measured):** its deterministic `canonicalize` only rewrites one-character edge drift; of its 99 successful LawBench samples 55 were wrong, 43 of 84 missing charges are stored spellings, yet `侵犯公民个人信息` vs stored `非法获取公民个人信息` and `窝藏` vs stored `窝藏、包庇` are never reached. Round 3 proved the spellings can be recovered by showing the memory's answers — and measured what that menu costs (stored answers adopted that the facts don't support; 6 USPTO + 2 Symptom2Disease flips).\n- **Expected effect:** reach round 3's spelling class without letting the memory choose the answer.\n\n**Stage 2 — Mechanism (one change):** the answer space is applied *after the fact* by the harness. New `solver/adjudication.py` asks the model once, post-answer, for rewrites onto stored spellings; the harness accepts one only if the replacement is a stored spelling verbatim and is **not a fragment** of the value it replaces, then applies it inside the answer field. `GroundedAgent` runs that before the unchanged `canonicalize`; `answer_space.py` gains the stored-spelling rendering (`build_index` derives the identical value set). No prompt menu, no dataset names or task branching. Offline probes picked the framing (a value-adding variant was rejected for breaking 2/10 correct USPTO answers).\n\n**Stage 3 — Run once, audit, commit**\n- Scores: `{\"USPTO\": 0.2333, \"Symptom2Disease\": 0.88, \"LawBench\": 0.47, \"average\": 0.5278, \"status\": \"partial\"}` (parent 0.5267).\n- Activation: adjudication call in all 258 answered samples (median calls 2→3), 36 rewrites proposed — 23 rejected by the fragment guard (including the exact `销售假冒注册商标的商品` → `假冒注册商标` case that harmed a correct answer in probing), 13 accepted in 13 LawBench samples, 0 proposed on the other two tasks.\n- Effect, attributed by replaying the run's own messages through the parent pipeline: LawBench 41/98 → 47/100 — the six gains are the mechanism's (`窝藏`→`窝藏、包庇` ex14, `侵犯公民个人信息(罪)`→`非法获取公民个人信息` ex28, `拐卖妇女(罪)`→`拐卖妇女、儿童` ex36), **0 samples harmed in any task**. The same replay reproduces USPTO 14/60 and 88/100 exactly, so their dip vs the parent run is variance, not the mechanism.\n- Honest limits: aggregate gain is marginal (+0.0011 over parent) because the extra call costs latency and this run's own baseline was lower elsewhere; 7 of 13 accepted rewrites changed nothing.\n- Commit `bd85864` on `codex/verified-spelling-adjudication`, tree `91f82d64…` matching the evaluated tree, parent matching the manifest; note attached to `refs/notes/evolution`. Working tree clean; no reruns.",
+    "ttft_ms": 462,
+    "ttft_stream_ms": 247,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 2326998,
+    "uuid": "78cc1667-c1f5-4a6b-a59c-4e845a9d1da9"
+  },
+  "session_file": "projects/-workspace-harness/171245ed-4041-4c7c-8c80-69f82eb64b8b.jsonl",
+  "usage": {
+    "input_tokens": 71197,
+    "output_tokens": 121637,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 7872896
+  },
+  "cost_usd": 7.333358000000001,
+  "num_turns": 96,
+  "duration_api_ms": 589135,
+  "error": null,
+  "commit": "bd858644ae4c1192e5454467e371555ea7b28548",
+  "tree": "91f82d6416679b031eb200bcf2664557237a854f"
+}

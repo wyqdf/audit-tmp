@@ -1,0 +1,61 @@
+solver:
+  provider: deepseek
+  model: deepseek-v4-flash
+  api_base: https://api.deepseek.com/v1
+  api_key_env: PROPOSER_API_KEY  # config.local.yaml 的 proposer 段是 DeepSeek key（solver 段仍是 qwen key，先写后被 proposer 段覆盖）
+  system_prompt: ''
+  temperature: 0.0
+  max_tokens: 16384
+  context_window: 1048576
+  max_model_calls: 32
+  timeout_seconds: 900
+  request_timeout_seconds: 180
+  client_timeout_seconds: 420
+  tool_timeout_seconds: 120
+  max_retries: 3
+  retry_backoff_seconds: 5
+  error_patterns:
+    content_filter: []
+  explicit_cache: false  # DeepSeek 自动前缀缓存，不需要 DashScope 的 cache_control 标记
+  answer_guard: true
+  reasoning_effort: high
+runtime:
+  model_concurrency: 48
+  parallel_questions: 48
+  prepare_timeout_seconds: 900
+  sample_attempts: 2
+proposer:
+  model: deepseek-v4-flash
+  api_base: https://api.deepseek.com/anthropic
+  api_key_env: PROPOSER_API_KEY
+  effort: max
+  timeout_seconds: 7200
+evolution:
+  iterations: 6
+dataset:
+  root: benchmark/data
+  tasks:
+  - USPTO
+  - Symptom2Disease
+  - LawBench
+  seed: 42
+  num_epochs: 1
+  num_train: 200
+  num_val: 50
+  num_test: 100
+  overrides:
+    USPTO:
+      num_train: 50
+      num_val: 30
+      num_test: 100
+    Symptom2Disease:
+      num_train: 200
+      num_val: 50
+      num_test: 212
+    LawBench:
+      num_train: 200
+      num_val: 50
+      num_test: 100
+evaluation:
+  val_samples: 2
+  test_samples: 1

@@ -1,0 +1,84 @@
+{
+  "session_id": "0acbccd9-0c34-4bcb-aa38-ad5caac96781",
+  "commits_before": [
+    "4131b187a63752f507859195702d1001750a2b5e",
+    "d7dab4e3aea52889644fb745452f475727f23c44",
+    "9e1b53e9b085fd8156455f30558e739ff5ebf7ea",
+    "a9d3480e4b6d1716a9f476f8a291556231d136bc",
+    "bd858644ae4c1192e5454467e371555ea7b28548",
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 3486.4984843730927,
+  "benchmark_seconds": 414.7012605667114,
+  "wall_seconds": 3901.199744939804,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 1053147,
+    "num_turns": 162,
+    "stop_reason": "end_turn",
+    "session_id": "0acbccd9-0c34-4bcb-aa38-ad5caac96781",
+    "total_cost_usd": 17.474617,
+    "usage": {
+      "input_tokens": 106507,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 23729664,
+      "output_tokens": 203090,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 106507,
+        "outputTokens": 203090,
+        "cacheReadInputTokens": 23729664,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 17.474617,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 9 is complete. Summary of the iteration:\n\n**Stage 1 — Lineage analysis.** Parent: `4131b18` (round-8, tree `4621bcdd…`, average 0.5511 — the tree's highest and its only complete three-task run). I replayed all five recent runs through the unchanged pipeline and found the answer path is saturated: every rule is strictly safe and silent (adjudicate +5/−0, canonicalize +11/−0, trim_trailing +4/−0, complete_compound +3/−0), and the residual LawBench errors need charges the memory mostly does not pair with the case. Four separate addition mechanisms were re-measured and rejected (subset completion 0 wins/172 losses; case-guarded completion 0/2; separator normalisation 0 firings; a model-driven completion verifier produced nothing acceptable in 100 probe calls). The remaining lever was the *evidence*: the delivered slice carried all of a sample's target charges for only 52/100 samples while the memory stores them for 74, and accuracy splits 79% (covered) versus 33% (not).\n\n**Stage 2 — Mechanism.** One change in `solver/tools/retrieval.py`: the tool now renders its selection in two tiers from the same ranking and budget — the closest examples whole until half of `MAX_CHARS` is spent, then the ranking continues with each remaining example contributing only the answer the memory stores for it, so the rest of the budget reaches the answer space instead of stopping where whole cases stop. `render()` is shared with `select_examples()` so recovery sees identical evidence.\n\n**Stage 3.1 — Run (once).** `{\"USPTO\": 0.2, \"Symptom2Disease\": 0.87, \"LawBench\": 0.59, \"average\": 0.5533, \"status\": \"ok\"}`, 260/260 samples, rankable.\n\n**Stage 3.2 — Audit (cited in the note).** The mechanism activated exactly as designed: LawBench 27.9 whole + 172.1 answer entries per question (coverage 52 → 74, the memory's ceiling; whole-answer delivery 36 → 42), Symptom2Disease 79.7 + 120.3, USPTO byte-identical. The agent's own answers improved on the targeted task (34 → 37 before the rules; final 57 → 59), but the aggregate rose only +0.0022 because Symptom2Disease lost three attributable samples to a trade that task does not need (its whole tier already carried every label). One LawBench win is coverage-attributable (ex 46 s0), the loss is the unchanged adjudicator's addition, and USPTO's +0.0167 is variance on unchanged evidence.\n\n**Stage 3.3 — Record.** Commit `3c6c0d0` on `codex/tiered-evidence` (tree = evaluated tree, parent = `4131b18`), with the round's note attached at `refs/notes/evolution`. Working tree clean; no further edits or reruns.",
+    "ttft_ms": 398,
+    "ttft_stream_ms": 248,
+    "time_to_request_ms": 59,
+    "type": "result",
+    "duration_ms": 3900624,
+    "uuid": "ab61242e-e1f4-4138-975d-3e411236c1f7"
+  },
+  "session_file": "projects/-workspace-harness/0acbccd9-0c34-4bcb-aa38-ad5caac96781.jsonl",
+  "usage": {
+    "input_tokens": 106507,
+    "output_tokens": 203090,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 23729664
+  },
+  "cost_usd": 17.474617,
+  "num_turns": 162,
+  "duration_api_ms": 1053147,
+  "error": null,
+  "commit": "3c6c0d07cb8c988a518872beaa3a892d641411e0",
+  "tree": "806c3bdaca840f15a97e4bcead1bae6941fb83fb"
+}

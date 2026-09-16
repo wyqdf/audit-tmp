@@ -1,0 +1,81 @@
+{
+  "session_id": "5daf0414-15ab-4d55-8abb-f6358f21a711",
+  "commits_before": [
+    "a9d3480e4b6d1716a9f476f8a291556231d136bc",
+    "bd858644ae4c1192e5454467e371555ea7b28548",
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 3839.3235218524933,
+  "benchmark_seconds": 686.2356264591217,
+  "wall_seconds": 4525.559148311615,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 907541,
+    "num_turns": 110,
+    "stop_reason": "end_turn",
+    "session_id": "5daf0414-15ab-4d55-8abb-f6358f21a711",
+    "total_cost_usd": 11.955151999999995,
+    "usage": {
+      "input_tokens": 90367,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 13949184,
+      "output_tokens": 181149,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 90367,
+        "outputTokens": 181149,
+        "cacheReadInputTokens": 13949184,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 11.955151999999995,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 6 complete. One candidate created, evaluated once, audited, and committed.\n\n## What I did\n\n**Stage 1 — Lineage analysis.** Read the full contract (`benchmark/domainspecific.md`), the Skill, the graph (`f0ec3e9` baseline → `97e9d51` → `b8b4c09` → `{2668740, bd85864}` → `a9d3480`), every note, and all six run traces. Parent chosen: **`a9d3480` (round 5, average 0.54, highest node)** — not by default, but because the defect is measured in its own traces.\n\nBefore fixing a direction I measured every remaining error class on the parent's traces and recorded the negatives (they're in the note so they aren't retried): 37 of 46 wrong LawBench samples have no target anywhere in memory; memory-neighbourhood kNN scores 6–12/100; oracle self-consistency has no headroom (0.56 LawBench, 0.17–0.30 USPTO); question-only and memory-informed completion net ≈0; nearest-stored-value snapping adds 0 wins; interior completion adds 0 wins and only harms; two-tier evidence delivery is +9/−5 on LawBench but −4 on Symptom2Disease; LCS-based ordering halves LawBench target delivery.\n\n**Stage 2 — Mechanism.** The surviving defect was the answer pipeline's contract, not a scoring rule: 37/100 S2D messages carried no `final_answer` field (so the rules ran over prose and shortened words `week`→`wee`), and one LawBench sample answered `\"final_answer\": \"\"` and scored 0 unrecovered. New `solver/resolution.py` resolves the answer first (one bounded restatement call when none exists), and `GroundedAgent._ground` now runs the unchanged adjudication/canonicalize/trim **inside the answer field only**.\n\n**Stage 3 — One run, audited, committed.**\n- `{\"USPTO\": 0.1333, \"Symptom2Disease\": 0.87, \"LawBench\": 0.57, \"average\": 0.5244, \"status\": \"partial\"}` — LawBench best-ever, aggregate down 0.0156.\n- Activation: S2D `answer_guard` reformats 37→0, empty answers 3→1 (the remainder is the provider's content filter), and ex16 s1 recovered from `\"\"` to `[罪名]放火<eoa>` = target.\n- Attribution measured, not assumed: only that one win is the mechanism's; two other LawBench wins are samples the parent run lost to the content filter, and USPTO is untouched by construction (51/60 predictions changed on its own, 2 wrong→right vs 6 right→wrong).\n- Commit `9e1b53e` on `codex/answer-resolution` (parent `a9d3480`), note attached to `refs/notes/evolution`, source unchanged since evaluation.\n\nThe honest verdict, recorded in the note: the mechanism closed the defect it targeted but its net scored effect is one recovered sample against one lost, and the aggregate regression came from USPTO variance this mechanism cannot reach.",
+    "ttft_ms": 1105,
+    "ttft_stream_ms": 256,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 4525037,
+    "uuid": "23790996-6ad7-4275-b7fa-19a6dd77d7a0"
+  },
+  "session_file": "projects/-workspace-harness/5daf0414-15ab-4d55-8abb-f6358f21a711.jsonl",
+  "usage": {
+    "input_tokens": 90367,
+    "output_tokens": 181149,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 13949184
+  },
+  "cost_usd": 11.955151999999995,
+  "num_turns": 110,
+  "duration_api_ms": 907541,
+  "error": null,
+  "commit": "9e1b53e9b085fd8156455f30558e739ff5ebf7ea",
+  "tree": "554cf786d2852b6f74cd94ee0fbc150d7c031c11"
+}

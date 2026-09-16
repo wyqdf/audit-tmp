@@ -1,0 +1,85 @@
+{
+  "session_id": "fc010be5-e883-4871-aeee-3067f6f292ef",
+  "commits_before": [
+    "3c6c0d07cb8c988a518872beaa3a892d641411e0",
+    "4131b187a63752f507859195702d1001750a2b5e",
+    "d7dab4e3aea52889644fb745452f475727f23c44",
+    "9e1b53e9b085fd8156455f30558e739ff5ebf7ea",
+    "a9d3480e4b6d1716a9f476f8a291556231d136bc",
+    "bd858644ae4c1192e5454467e371555ea7b28548",
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 1340.5914974212646,
+  "benchmark_seconds": 800.2198352813721,
+  "wall_seconds": 2140.8113327026367,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 538918,
+    "num_turns": 88,
+    "stop_reason": "end_turn",
+    "session_id": "fc010be5-e883-4871-aeee-3067f6f292ef",
+    "total_cost_usd": 6.516570999999999,
+    "usage": {
+      "input_tokens": 76972,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7011072,
+      "output_tokens": 105047,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 76972,
+        "outputTokens": 105047,
+        "cacheReadInputTokens": 7011072,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 6.516570999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 10 complete — one candidate produced, evaluated once, audited, committed and annotated.\n\n**Stage 1 — lineage analysis.** Parent = `3c6c0d0` (`codex/tiered-evidence`, average 0.5533, the tree's best and only complete run of round 9), chosen deliberately because this round touches only the evidence the solver is given, so the parent's answer path had to be held fixed. Problem (re-measured on the parent's traces): the answer tail is *unconditional*, so a memory whose whole examples already write its answer space still pays for it — Symptom2Disease's whole tier carries all 22 stored labels, yet the parent cut it from 170.7 to 79.7 cases and lost three samples to a tail that added nothing; LawBench's 27.9 whole cases wrote only 26 of its 143 stored answers, so the tail mostly repeated them.\n\n**Stage 2 — mechanism.** `solver/tools/retrieval.py` now *derives* the split: `_answer_parts` prices the stored answers the delivered whole examples do not already show (once each), `_whole_parts` gets the budget minus that price, and the two are rendered against each other to a fixed point (1–5 passes; bounded and trimmed for pathological memories). Ranking, memory, prompt, skill and all answer-path rules untouched; no dataset names or task branches.\n\n**Stage 3 — run (once), audit, commit.**\n- Scores: `{\"USPTO\": 0.25, \"Symptom2Disease\": 0.88, \"LawBench\": 0.57, \"average\": 0.5667, \"status\": \"ok\"}` — tree-best average (parent 0.5533), 260/260 ran, 0 failures.\n- Activation verified byte-for-byte: every recorded `retrieve_examples` output matches the shipped renderer (96/96, 100/100, 51/51); LawBench now carries 53.6 whole + 88.2 answer lines at 29,958 chars with coverage 72/100 (parent 71), Symptom2Disease 170.7 whole + no tail, byte-identical to the round-8 node in all 100 samples (recovering the two samples the parent's tail cost), USPTO unchanged.\n- Honest verdict in the notes: the aggregate gain is **not** the mechanism's — USPTO +0.05 is 7 flips up vs 4 down on byte-identical evidence — while LawBench, the one task whose evidence changed, moved −0.02 (3 gains / 5 losses: one repeats the unchanged adjudicator's superset rewrite, one never called the tool, one is a sibling mix-up, two are the model writing the stored short spelling `受贿`).\n\nCommit `459ed3d` on `codex/conditional-answer-tail` (parent `3c6c0d0`, tree `5ac00dbb…` = the evaluated tree), note attached to `refs/notes/evolution`.",
+    "ttft_ms": 1577,
+    "ttft_stream_ms": 278,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 2140239,
+    "uuid": "d3cd8e33-5940-455f-9af4-032e3518c5e4"
+  },
+  "session_file": "projects/-workspace-harness/fc010be5-e883-4871-aeee-3067f6f292ef.jsonl",
+  "usage": {
+    "input_tokens": 76972,
+    "output_tokens": 105047,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 7011072
+  },
+  "cost_usd": 6.516570999999999,
+  "num_turns": 88,
+  "duration_api_ms": 538918,
+  "error": null,
+  "commit": "459ed3ddb3b906be7148fafecd3ead0a1386f804",
+  "tree": "5ac00dbbca9c8f149a9d95d995ea5b744a01f789"
+}

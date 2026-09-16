@@ -1,0 +1,80 @@
+{
+  "session_id": "32b7e89c-656f-4f2b-8f02-8cd3044e35fc",
+  "commits_before": [
+    "bd858644ae4c1192e5454467e371555ea7b28548",
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 692.5832486152649,
+  "benchmark_seconds": 479.3677098751068,
+  "wall_seconds": 1171.9509584903717,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 656531,
+    "num_turns": 112,
+    "stop_reason": "end_turn",
+    "session_id": "32b7e89c-656f-4f2b-8f02-8cd3044e35fc",
+    "total_cost_usd": 9.454956000000001,
+    "usage": {
+      "input_tokens": 91036,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 11345152,
+      "output_tokens": 133088,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 91036,
+        "outputTokens": 133088,
+        "cacheReadInputTokens": 11345152,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 9.454956000000001,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 5 complete. Summary of the iteration:\n\n**Stage 1 — Lineage analysis.** Five nodes exist; `bd85864` (round 4, avg 0.5278) is the tree's best and was chosen as parent over round 3's head (its prompt-time answer-menu measurably costs USPTO/Symptom2Disease). Diagnosing its traces: of 53 wrong LawBench samples, the largest readable class is a charge the model names correctly but affixes with a character no stored value ends with (`破坏电力设备罪` vs `破坏电力设备`, `非法狩猎罪`, `以危险方法危害公共安全罪`). Both inherited rules are blind there — `canonicalize` needs the stripped value to be a stored spelling, and the adjudicator may only propose stored spellings verbatim. Round 3 had rejected a convention rule; replaying all five recorded runs confirmed that unguarded rule is unsafe (52 wrong→right but 15 right→wrong), yet the harm is separable by one statistic the earlier round never used: how much of the vocabulary uses the character *inside*.\n\n**Stage 2 — Mechanism.** `solver/answer_space.py` gains `edge_conventions` (which characters end a stored value; how much of the vocabulary uses each remaining one inside) and `trim_trailing`, which drops a run's trailing character only when it never ends a stored value, is used inside ≤10% of them, and the remainder ends the way stored values end. `GroundedAgent` applies it after the unchanged adjudication and `canonicalize`, inside the answer field only. No dataset names, labels, or task branching. Pre-run replay of all recorded runs: 25 LawBench gains, 0 harms in any task.\n\n**Stage 3 — Run and audit (one invocation).** Scores: `{\"USPTO\": 0.2, \"Symptom2Disease\": 0.88, \"LawBench\": 0.54, \"average\": 0.54, \"status\": \"partial\"}` vs parent 0.5278/0.47 LawBench. The rule fired on 17/258 messages (18 rewrites; 13 LawBench, 4 Symptom2Disease prose-only, 0 USPTO) and replaying this run's own messages through the parent pipeline gives LawBench 50/98 against 54 — the four flips are the mechanism's, with 0 samples harmed. USPTO's 14→12 is variance (0 rewrites there, identical replay with and without the rule); Symptom2Disease unchanged. Two LawBench samples lost to the provider content filter (same class as rounds 1–4). No extra model calls; latency unchanged. Weaknesses documented in the note: prose shortening when a message carries no answer field, 9 of 13 rewrites scored no change, and the 10% threshold is a measured margin, not a proof.\n\nCommitted on `codex/answer-edge-convention`: `a9d3480` (tree `b31e34da…` = the evaluated tree, parent `bd85864`), with the evolution note attached to `refs/notes/evolution`. Working tree clean; no further edits or reruns.",
+    "ttft_ms": 1223,
+    "ttft_stream_ms": 221,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 1171396,
+    "uuid": "edc52b38-badf-4bb1-b2a9-3d3f5dbab04c"
+  },
+  "session_file": "projects/-workspace-harness/32b7e89c-656f-4f2b-8f02-8cd3044e35fc.jsonl",
+  "usage": {
+    "input_tokens": 91036,
+    "output_tokens": 133088,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 11345152
+  },
+  "cost_usd": 9.454956000000001,
+  "num_turns": 112,
+  "duration_api_ms": 656531,
+  "error": null,
+  "commit": "a9d3480e4b6d1716a9f476f8a291556231d136bc",
+  "tree": "b31e34dad8ab52401cb7424d32437a21c135b24b"
+}

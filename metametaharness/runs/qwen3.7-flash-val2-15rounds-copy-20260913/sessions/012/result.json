@@ -1,0 +1,87 @@
+{
+  "session_id": "09ee3525-dab1-4cba-b5a8-dd1b2456aae7",
+  "commits_before": [
+    "d58f5409cb1586bd8c781730607dcece3a0777f8",
+    "459ed3ddb3b906be7148fafecd3ead0a1386f804",
+    "3c6c0d07cb8c988a518872beaa3a892d641411e0",
+    "4131b187a63752f507859195702d1001750a2b5e",
+    "d7dab4e3aea52889644fb745452f475727f23c44",
+    "9e1b53e9b085fd8156455f30558e739ff5ebf7ea",
+    "a9d3480e4b6d1716a9f476f8a291556231d136bc",
+    "bd858644ae4c1192e5454467e371555ea7b28548",
+    "26687402a0bcf0fb7a77e78814112ce7106c6e84",
+    "b8b4c09009107c3a2337f8f3e24f8e0d7ff5c443",
+    "97e9d51746013d47c915aa34079110ce66e52867",
+    "f0ec3e900c67f02506cef28a4c0a1e89b97b0ccf"
+  ],
+  "completed": true,
+  "activity_seconds": 2561.1626391410828,
+  "benchmark_seconds": 699.9624121189117,
+  "wall_seconds": 10461.534587144852,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 610286,
+    "num_turns": 62,
+    "stop_reason": "end_turn",
+    "session_id": "09ee3525-dab1-4cba-b5a8-dd1b2456aae7",
+    "total_cost_usd": 14.793328000000002,
+    "usage": {
+      "input_tokens": 285962,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 20795136,
+      "output_tokens": 118638,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 285962,
+        "outputTokens": 118638,
+        "cacheReadInputTokens": 20795136,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 14.793328000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 12 is complete. Summary of the candidate node:\n\n**Stage 1 — Lineage analysis.** Walked all 13 nodes (`git log --branches --graph`, per-node notes/traces/scores) and replayed every recorded sample of the 12 evaluated runs through the shipped answer path (`/tmp/r12/marginal.py`). Findings: the answer path is strictly monotone (1498 → 1791 correct across 8 runs, no right→wrong transition anywhere), round 11's guard is complete on all 262 recorded proposals, and the tree's residual is capability-bound plus draw noise. I measured and rejected the obvious directions before committing to one: memory-driven additions (108/14, 0/256, 0 fix/1–3 break, 0/11), re-asking the model (98/100 no-op), a broader adjudicator pass (15 proposals, 0 kept), property-ordered retrieval (negatively correlated), and the tail's substring dedup (2/100, both already correct).\n\n**Stage 2 — One mechanism.** Parent `d58f540` (round 11 = round 10's evidence mechanism + the count guard, both measured positive; its average shortfall is draw-level, re-verified: 232/232 byte-identical `retrieve_examples` renderings vs its parent). Branch `codex/in-context-resolution`. Problem: the harness states an answer inside the agent's run only by asking a *fresh single-turn call* that sees the concluding message and nothing else — the only stage that re-decides an answer the agent had already reached (189 such samples over 12 runs; 8 where the fresh call returned `pneumonia` for a message ending `[DIAGNOSIS]bronchial asthma[/DIAGNOSIS]`). Change: `resolution.in_run` continues the agent's own message list (evidence + reasoning) with the shipped rules as one closing turn; the old single-message restatement becomes the fallback. Retrieval, memory, prompt, skill, adjudication and the guard untouched. Pre-run paired validation on the same 189 recorded messages: **8 wrong→right, 0 right→wrong**.\n\n**Stage 3 — One run, audit, commit.** `{\"USPTO\": 0.15, \"Symptom2Disease\": 0.89, \"LawBench\": 0.57, \"average\": 0.5367, \"status\": \"ok\"}`, 260/260 samples, 0 failures. The mechanism activated on 37 Symptom2Disease samples (visible as the closing turn), the fallback never fired, and it changed 2 predictions — all 37 agreeing with a fresh replay of the shipped fallback, so this draw did not exercise the 8-sample divergence; the run's 11 prediction changes against the parent are all on samples it never touched. Committed as `76b74de` (tree `83ed278a` = the evaluated tree, parent `d58f540`), notes attached to `refs/notes/evolution`, working tree clean, benchmark invoked exactly once.",
+    "ttft_ms": 4413,
+    "ttft_stream_ms": 904,
+    "time_to_request_ms": 68,
+    "type": "result",
+    "duration_ms": 3260451,
+    "uuid": "9a41ecb9-efc3-4f5d-9468-b8dbb930910a"
+  },
+  "session_file": "projects/-workspace-harness/09ee3525-dab1-4cba-b5a8-dd1b2456aae7.jsonl",
+  "usage": {
+    "input_tokens": 285962,
+    "output_tokens": 118638,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 20795136
+  },
+  "cost_usd": 14.793328000000002,
+  "num_turns": 62,
+  "duration_api_ms": 610286,
+  "error": null,
+  "commit": "76b74debf015a2ae007c9fc1569e5fd388601a7b",
+  "tree": "83ed278ac33df92c592b4c5f3d6a1ca0170aab56"
+}
