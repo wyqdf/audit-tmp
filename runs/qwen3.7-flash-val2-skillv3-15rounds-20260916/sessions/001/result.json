@@ -1,0 +1,77 @@
+{
+  "session_id": "b8a0d52e-ed3d-40bb-9e8d-63e678e686c2",
+  "commits_before": [
+    "913ebd453415dde6004e24820c62cb0ac9eb642d",
+    "f0b6817a6c9c5920d4398ea87db7d5dcc9e5cef3"
+  ],
+  "completed": true,
+  "activity_seconds": 306.6057255268097,
+  "benchmark_seconds": 629.8437826633453,
+  "wall_seconds": 936.449508190155,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 188138,
+    "num_turns": 61,
+    "stop_reason": "end_turn",
+    "session_id": "b8a0d52e-ed3d-40bb-9e8d-63e678e686c2",
+    "total_cost_usd": 1.9129299999999994,
+    "usage": {
+      "input_tokens": 37415,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 1810560,
+      "output_tokens": 32823,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 37415,
+        "outputTokens": 32823,
+        "cacheReadInputTokens": 1810560,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 1.9129299999999994,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "One evolution iteration is complete. Node **N2** (`02dcfc4`, branch `relevance-ranked-retrieval`) was created, evaluated, committed, and annotated.\n\n## What I did\n\n**Stage 1 — Lineage analysis.** The graph had two nodes: baseline `f0b6817` (0.4311) and N1 `913ebd4` (0.5244), whose notes fixed answer *wording* via a derived answer key and explicitly flagged the untouched lever: *which* examples get seen. I confirmed the problem offline against the frozen memories — N1's seeded shuffle delivered only ~54/200 LawBench Train items, and among the evaluator-wrong traces the rank-1 example was never a precedent. A no-model-call simulation priced the alternatives: shuffle covered the gold charge in 28/50 Val questions with the first match at median rank 14; character-bigram ranking covered 37/50 with first match at rank 3, while budget-aware skipping alone moved delivery only 58 → 59.\n\n**Stage 2 — Mechanism + evaluation.** From parent `913ebd4`, I replaced the per-question shuffle in `solver/tools/retrieval.py:56` with deterministic character-bigram cosine ranking (ties in memory order) plus skip-not-break budget filling, and updated the skill so the ranked head reads as precedent. Evaluated once with the bound command in a single blocking call:\n\n`{\"USPTO\": 0.1833, \"Symptom2Disease\": 0.89, \"LawBench\": 0.49, \"average\": 0.5211, \"status\": \"partial\"}` vs parent `0.5244` — **the expected effect was not achieved**, and the commit message and note say so plainly.\n\n## Audit findings worth flagging\n\n- **The mechanism fired; the score didn't follow.** LawBench delivery rose 53.9 → 68.7 examples and no-tool-call executions fell 4 → 2, but two effects cancelled: correct precedents are now used (`LawBench/conversations/0011`), *and* the rank-1 example is copied when wrong — 6/50 wrong predictions now equal the top example's charge vs 0/53 before (`LawBench/conversations/0035` drops two of three gold charges this way).\n- **USPTO's −0.05 is noise, not a retrieval regression.** All 50 items fit before and after, so the change is ordering only; its two samples of one question disagree on 26/30 questions, and question-level solvability is unchanged (9 vs 8).\n- The tree hash of `HEAD` (`913109e9…`) is byte-identical to the evaluated run directory, and the working tree is clean.\n\nN1 `913ebd4` remains the better node; the note records the anchoring failure mode as the next target.",
+    "ttft_ms": 894,
+    "ttft_stream_ms": 248,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 935878,
+    "uuid": "ef695f76-ffd7-4f79-940a-11056fd4f35a"
+  },
+  "session_file": "projects/-workspace-harness/b8a0d52e-ed3d-40bb-9e8d-63e678e686c2.jsonl",
+  "usage": {
+    "input_tokens": 37415,
+    "output_tokens": 32823,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 1810560
+  },
+  "cost_usd": 1.9129299999999994,
+  "num_turns": 61,
+  "duration_api_ms": 188138,
+  "error": null,
+  "commit": "02dcfc462da7f5e66c9e1a8a061194f6b7621d42",
+  "tree": "913109e9e1fd0b7e35ae799d1b9e7f98f3450a3f"
+}

@@ -1,0 +1,86 @@
+{
+  "session_id": "4d6b1996-cdcf-479f-ab9d-c4d0f74f3766",
+  "commits_before": [
+    "be9427ba3ac380aa29c747fba2f5fda4b848dd68",
+    "0e60b869c622281fe80f44f081d9721e58e74353",
+    "856cc92d0b1318129f3bf0c2a63c77babb10eea5",
+    "3b572ccb00c7bb18dd68b26354c5e5134ac77f20",
+    "72d9d0155ab0eb84022f58ee63ab82a42cb13ebd",
+    "52669ee03d6d2d4d3f82bdca2e0563123451c879",
+    "28c00d830ac534ebe82ebbcb350faa1d094d6a97",
+    "d120469d58fef9d4749351908d4dccca93b045bc",
+    "02dcfc462da7f5e66c9e1a8a061194f6b7621d42",
+    "913ebd453415dde6004e24820c62cb0ac9eb642d",
+    "f0b6817a6c9c5920d4398ea87db7d5dcc9e5cef3"
+  ],
+  "completed": true,
+  "activity_seconds": 1020.9439916610718,
+  "benchmark_seconds": 540.6326096057892,
+  "wall_seconds": 1561.576601266861,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 781377,
+    "num_turns": 110,
+    "stop_reason": "end_turn",
+    "session_id": "4d6b1996-cdcf-479f-ab9d-c4d0f74f3766",
+    "total_cost_usd": 11.349061999999996,
+    "usage": {
+      "input_tokens": 106816,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 13966464,
+      "output_tokens": 153270,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 106816,
+        "outputTokens": 153270,
+        "cacheReadInputTokens": 13966464,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 11.349061999999996,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 10 complete. One evaluated candidate node created, per the Skill.\n\n## What was analyzed\n\nThe lineage's 11 evaluated runs (`main` f0b6817 0.4311 → HEAD `be9427b` 0.5656, best). I re-derived the current run's residuals offline (no model calls): the answer-side passes contributed +7 samples there (recovery +4, list-endings +3), the LawBench recall family is provably unreachable (of 51 missing gold entries, 3 are named in the model's own reasoning, 2 appear literally in the case), and every additions/replacements licence re-measures as a trap (unique-superset completion: 1 fix / 2 breaks on the parent).\n\nThe live defect found: `_ngrams` does `\"\".join(text.split())` before taking bigrams, so a question written in **words** is matched by fragments of words. USPTO states its reaction type in words and the type decides the precursors, yet the parent's first five delivered examples carried the question's own type only 0.65 times over — `USPTO/conversations/0000/sample-0.json` opened FGA, FGI, FGA, FGA, FGI.\n\n## Mechanism (branch `token-aware-ranking`, commit `ce5db05`)\n\n`rank_examples` now averages two readings of the same comparison — `TOKEN_WEIGHT` (0.5) of a whitespace-token n-gram cosine and the rest of the character cosine, each query weighed by memory-carried idf. The added reading is degenerate on text written without spaces, so LawBench is untouched by construction (ranking identical on 49/50 Val questions, delivered block byte-identical on 92/100). Offline: USPTO top-5 same-type 0.65 → 1.00, Symptom2Disease gold label in top-5 38 → 44 of 50. No model call added, no dataset/label/keyword branching.\n\n## Result (one run, `runs/e4b5fa6f…/`, 260/260, rankable)\n\n`{\"USPTO\": 0.2, \"Symptom2Disease\": 0.88, \"LawBench\": 0.58, \"average\": 0.5533}` — 0.5656 → 0.5533, i.e. **3 samples down, inside the ~7-sample run-to-run floor**. The ordering moved as designed (first five same-type 0.65 → 1.00; gold label 0.37 → 0.46) and the flips are traceable to it (3 fixed/4 broken LawBench, 1/2 S2D, 5/6 USPTO). The run is confounded: 12 conversations produced no answer this run vs the parent's 5, and the recovery answered 8 of them; on conversations that answered, the numbers are a wash (LawBench 0.579 vs 0.582, S2D 0.894 vs 0.888, USPTO 0.186 vs 0.220).\n\nCommitted as `ce5db05` with the note attached under `refs/notes/evolution`; working tree clean and the commit's tree equals the evaluated run directory.",
+    "ttft_ms": 605,
+    "ttft_stream_ms": 235,
+    "time_to_request_ms": 53,
+    "type": "result",
+    "duration_ms": 1561029,
+    "uuid": "823f1667-44db-4da8-a129-3afd5fdf5bfc"
+  },
+  "session_file": "projects/-workspace-harness/4d6b1996-cdcf-479f-ab9d-c4d0f74f3766.jsonl",
+  "usage": {
+    "input_tokens": 106816,
+    "output_tokens": 153270,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 13966464
+  },
+  "cost_usd": 11.349061999999996,
+  "num_turns": 110,
+  "duration_api_ms": 781377,
+  "error": null,
+  "commit": "ce5db05e7d8eefbf6a9f2262883302af70d34109",
+  "tree": "e4b5fa6f8c6543fea051453433e4226e2d1bfc74"
+}
