@@ -1,0 +1,363 @@
+{
+  "task": "LawBench",
+  "tree_hash": "6baad5e09b900c155f86e9d733a3bbb7cf276d9b",
+  "split": "val",
+  "example_index": 0,
+  "sample_index": 0,
+  "status": "ok",
+  "error": null,
+  "was_correct": true,
+  "prediction": "[罪名]单位行贿<eoa>",
+  "target": "单位行贿",
+  "metric": {
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 1,
+    "fp": 0,
+    "fn": 0
+  },
+  "usage": {
+    "model_calls": 7,
+    "input_tokens": 32782,
+    "output_tokens": 6793
+  },
+  "elapsed_seconds": 89.38031868170947,
+  "memory_context_chars": 215932,
+  "tool_calls": [
+    "retrieve_examples",
+    "retrieve_examples",
+    "read_file",
+    "grep"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "stop",
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "stop",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by retrieving examples.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:包头稀土高新技术产业开发区人民检察院指控：\r\n被告单位通辽市某商业广场有限公司及其法定代表人沙某某，利用另案犯罪嫌疑人张某某的职务便利，以通辽市政府办公厅的名义出具了推荐函，使不具备开采石油合法资质的长春某公司得以实际从事石油开采，沙某某和通辽市某商业广场有限公司企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\r\n公诉机关提供了到案经过、户籍证明、无前科证明、内蒙古自治区人民检察院与内蒙古自治区人民代表大会的往来文件、通辽市某公司的工商登记资料、另案犯罪嫌疑人张某某的公务员登记表、干部履历表和分管范围的政府文件、长春某公司的工商登记资料、延长油矿管理局的探矿证、证人于某、刘某某的询问笔录、通政办函【2010】6号推荐函、证人刘某甲的询问笔录和书面材料、长春某公司签订的合作开采石油协议书、另案犯罪嫌疑人张某某的讯问笔录、通辽某公司的财务凭证、指派诉讼代表人的法律文书等证据材料。指控被告单位通辽市某商业广场有限公司、被告人沙某某的行为触犯了《中华人民共和国刑法》××之规定，应当以××追究其刑事责任。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. The tool returns every example the memory holds — the complete demonstration set for this task — so there is nothing left to search for; answer from those examples and your own analysis of the question.\n3. Match the wording, format and level of detail of the examples' answers.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_d18662004c894d2fab71d279",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants me to simulate a judge and determine the criminal charge(s) based on the provided facts.\nI need to first call `retrieve_examples` to see if there are any examples of how to format the answer or what kind of charges are typically given for similar facts.\nThen I will analyze the facts and provide the reasoning and final answer in JSON format.\n\nFacts summary:\n- Defendant unit: Tongliao City Certain Commercial Plaza Co., Ltd. (通辽市某商业广场有限公司)\n- Legal representative: Sha XX (沙某某)\n- They used the position convenience of Zhang XX (another suspect, civil servant).\n- They issued a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Certain Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha XX and the company intended to share不正当利益 (illegitimate benefits) from the illegal oil mining business of Changchun Certain Company.\n- To thank Zhang XX, they paid him an illegitimate remuneration of 200,000 RMB.\n- The prosecution alleges that the defendant unit and Sha XX violated the Criminal Law and should be prosecuted for a certain crime.\n\nAnalysis:\nThe key actions are:\n1. Using another person's position (Zhang XX, a civil servant) to get a recommendation letter.\n2. Paying Zhang XX 200,000 RMB as \"illegitimate remuneration\" (不正当报酬) to thank him for helping them.\n3. The purpose was to obtain illegitimate benefits (sharing profits from illegal oil mining).\n\nThis looks like **单位行贿罪** (Crime of Offering Bribes by a Unit) or **行贿罪** (Crime of Offering Bribes). Since it's done by a unit (the company) for the benefit of the unit, and the legal representative is involved, it's likely 单位行贿罪. Wait, let's check the details.\nThey paid 200,000 RMB to Zhang XX. Zhang XX is a state functionary.\nAccording to Chinese Criminal Law Article 393: 单位行贿罪 (Unit Bribery). If a unit offers bribes to state functionaries for illegitimate benefits, or violates state regulations by offering rebates or handling fees to state functionaries, it constitutes unit bribery.\nAlso, could it be 对非国家工作人员行贿罪? No, Zhang XX is a civil servant/government office staff.\nCould it be 介绍贿赂罪? No, they directly paid him.\nSo the charge is likely 单位行贿罪 (Crime of Offering Bribes by a Unit).\n\nLet's verify with typical cases. A company pays money to a government official to get approval/qualification illegally. This is standard 单位行贿罪.\nWait, the text says \"以通辽市政府办公厅的名义出具了推荐函...企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\"\nThis matches 单位行贿罪 perfectly.\n\nLet's call `retrieve_examples` to see the format and expected output style.\n"
+    },
+    {
+      "content": "Tool result too large, the result of this tool call call_d18662004c894d2fab71d279 was saved in the filesystem at this path: /large_tool_results/call_d18662004c894d2fab71d279\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  The complete demonstration set for this task (200 examples):\n2  \n3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n... [1367 lines truncated] ...\n1373  A: 盗窃;掩饰、隐瞒犯罪所得、犯罪所得收益\n1374  \n1375  Q: 事实:\n1376  \t二审审理查明的事实与证据和原审一致，本院予以确认。\n1377  A: 非法转让、倒卖土地使用权;故意伤害\n",
+      "role": "tool",
+      "tool_call_id": "call_d18662004c894d2fab71d279"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_6309c6f67b4b428e87076010",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"file_path\": \"/large_tool_results/call_d18662004c894d2fab71d279\", \"offset\": 0, \"limit\": 50}"
+          }
+        }
+      ],
+      "reasoning_content": "The examples show a format where the answer is just the crime name(s).\nLet's look at more examples to understand the exact output format. I will read a few lines from the file."
+    },
+    {
+      "content": " 1  The complete demonstration set for this task (200 examples):\n 2  \n 3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n 4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n 5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n 6  公诉机关认为：被告人张1某以非法占有为目的，在签订、履行合同过程中虚构事实，诈骗他人财物，数额巨大，其行为触犯了《中华人民共和国刑法》××之规定，犯罪事实清楚，证据确实充分，应当以××追究其刑事责任。案发后，被告人张1某能如实供述自己的罪行，根据《中华人民共和国刑法》××××的规定，可从轻处罚。\n 7  \n 8  A: 合同诈骗\n 9  \n10  Q: 事实:厦门市湖里区人民检察院指控：\n11  2009年5月至11月间，被告人吴1某在经营管理被告单位厦门市三悦服饰有限公司期间，为牟取开票费，在明知没有实际货物交易的情况下，利用该公司开具厦门增值税专用发票22份给厦门华融实业有限公司，税款数额合计人民币350620.25元。厦门华融实业有限公司使用该22份发票向税务机关申请出口退税，骗取国家出口退税款人民币329995.57元。案发后，厦门华融实业有限公司已退还税款人民币329995.57元。\n12  2014年5月7日，被告人吴1某接电话通知后到公安机关投案，后如实供述自己的罪行。\n13  公诉机关当庭出示并宣读了被告人吴1某的供述和辩解、追缴在案的赃款人民币15万元及扣押决定书、扣押清单、厦门增值税专用发票、银行对账单、营业执照等书证、证人陈某某、李某某等人的证言、辨认笔录、户籍证明、到案经过及情况说明等证据。公诉机关认为，被告单位厦门市三悦服饰有限公司为其他公司虚开增值税专用发票，虚开税款数额合计人民币350620.25元，数额巨大，被告人吴1某系直接负责的主管人员，其行为已触犯了《中华人民共和国刑法》××××、××，犯罪事实清楚，证据确实、充分，应当以虚开增值税专用发票罪追究其刑事责任。被告人吴1某自动投案并如实供述自己的罪行，根据《中华人民共和国刑法》××××，是自首，可以对被告单位厦门市三悦服饰有限公司及被告人吴1某从轻或者减轻处罚。\n14  被告单位对公诉机关指控的事实及罪名均无异议并当庭认罪。\n15  \n16  A: 虚开增值税专用发票、用于骗取出口退税、抵扣税款发票;经济犯\n17  \n18  Q: 事实:沈阳市皇姑区人民检察院指控，2011年5月至2012年期间，被告人姜1某受皇姑区政府委托担任皇姑区车辆厂东西地块征收办公室副主任，其在主管该地块无房产产籍（即违建房）征收补偿审批工作期间，利用其对违建房的违建认定表进行签字审批后被征收人即可签协议获得补偿的职务便利，违反2004年9号文件《沈阳市无房产产籍房屋征收补助办法》、沈阳市皇姑区城市房屋拆迁管理办公室制定的《皇姑区车辆厂东、西地块房屋征收补偿方案》之规定，徇私舞弊，对46份不符合补偿标准的违建认定表进行签字审批，造成国家征收补偿款损失共计人民币2164000元。\n19  2011年5月至2012年间，被告人姜1某受国家机关委托担任车辆厂东西地块征收办公室副主任，利用职务便利，非法收受赵某甲给予的好处费人民币10000元，赃款挥霍。\n20  2011年5月至2012年间，被告人姜1某受国家机关委托担任车辆厂东西地块征收办公室副主任，利用职务便利，非法收受张某甲给予的好处费人民币130000元及一辆丰田汉兰达牌轿车（物品价值人民币230000元），赃款挥霍。\n21  公诉机关认为，被告人姜1某的行为已触犯了《中华人民共和国刑法》××、××、××、××、××之规定，应以××及××追究刑事责任。为上述指控，公诉机关提供了相关证据。\n22  \n23  A: 受贿;滥用职权\n24  \n25  Q: 事实:龙江县人民检察院指控：\n26  2014年12月初，被告人赵某在龙江县龙江镇的江城招待所内容留谭某、宫某吸食毒品冰毒。\n27  2014年12月10日左右，被告人赵某在龙江县龙江镇的火车头旅店内容留谭某、宫某吸食冰毒。\n28  被告人赵某于2014年12月19日在龙江县龙江镇富华名苑6号楼3单元503室谭某住宅内被公安机关抓获。公诉机关以书证、证人证言、被告人供述等证据认为，被告人赵某提供场所，容留他人吸食毒品，其行为已触犯《中华人民共和国刑法》××之规定，应当以××追究其刑事责任，依据《中华人民共和国刑事诉讼法》××之规定，向本院提起公诉。建议判处被告人赵某二年以下××，并处罚金。\n29  \n30  A: 容留他人吸毒\n31  \n32  Q: 事实:黑龙江省巴彦县人民检察院指控，2012年6月9日，被告人张某某谎称以租车的名义将被害人李某某的轿车骗走后，张某某将骗得的轿车抵押给其朋友焦某某并借款人民币15,000元，此后李某某多次给张某某打电话要车时张某某拒不还车，之后张某某逃往外地。公诉机关认为，被告人张某某触犯了《中华人民共和国刑法》××的规定，构成××，应当以××追究其刑事责任。针对上述指控，公诉机关提供了相应的证据。\n33  \n34  A: 诈骗;组织、强迫、引诱、容留、介绍卖淫;引诱、容留、介绍卖淫\n35  \n36  Q: 事实:公诉机关指控，一、××。2000年10月16日，被告人宋某与朋友张1某军、小某（身份不详）、李某某（已判刑）、董某某（已判刑）从北安市到五大连池市中联环公司催缴工程款。在张1某军朋友兰某某安排午饭后，兰某某与张1某军等五人来到五大连池市丽豪夜总会，在准备离开时遇到被害人杨某某，张1某军因杨某某未与其说话而不满，宋某等四人到二楼谩骂杨某某，被兰某某等人拉开后离开。15时许，杨某某持战刀在五大连池市中联环公司楼下找到宋某等四人，双方殴打在一起，董某某用板凳击打杨某某的头部、背部，宋某用短刀扎杨某某背部，李某某用尖刀刺杨某某腰部一刀，杨某某经抢救无效死亡。经鉴定，杨某某系被他人用锐气作用于腰部致肾动脉破裂，大失血死亡。\n37  对以上事实，公诉机关向本院提供了书证出警经过、到案经过、破案经过、户籍证明、在逃人员登记表、黑河市中级人民法院刑事判决书、北安市人民法院刑事判决书、证人董某某、李某某、兰某某、沈某某等人的证言、被告人宋某的供述与辩解、鉴定意见、活体检验笔录等证据予以证实。\n38  公诉机关认为被告人宋某的行为触犯了《中华人民共和国刑法》××××的规定，应当以××追究其刑事责任。\n39  \n40  A: 故意伤害;窝藏、包庇\n41  \n42  Q: 事实:上栗县人民检察院指控，2015年3月起，被告人张某在未取得制造烟花鞭炮的行政许可的情况下，在上栗县金山镇龙泉村欧某老屋内，用高氯酸钾、银粉、硫磺等材料配制点火药和过火药，并雇请赖某、叶某为擦炮上点火药和封尾，生产擦炮。同年11月10日公安人员在该屋内查获点火药11千克、过火药70千克、半成某擦炮998饼、成某擦炮1020饼。经鉴定，查获的点火药属于烟火药，擦炮成某和半成某中含有烟火药。\n43  针对指控的事实，公诉机关当庭出示并宣读了物证、书证、证人证言、被告人供述和辩解、鉴定意见、勘验笔录、辨认笔录等证据。公诉机关认为，被告人张某非法制造爆炸物，其行为触犯了《中华人民共和国刑法》××之规定，应当以非法制造爆炸物罪追究其刑事责任。\n44  \n45  A: 非法制造、买卖、运输、邮寄、储存枪支、弹药、爆炸物\n46  \n47  Q: 事实:辽中县人民检察院指控：2014年11月3日，在辽中县某镇某村，被告人郭某某在无专业电焊技能的情况下，在其儿子郭某甲的大棚内用电焊焊大门。虽用彩钢板隔离，但电焊火星仍引燃大棚内草帘子，火势蔓延，导致周围32个大棚和大棚内农作物及其他物品烧毁。经鉴定，涉案物品损失价值人民币682260元。案发后，被告人家属已赔偿被害人经济损失并取得谅解。\n48  对上述事实，公诉机关向法庭提供了相关证据予以证明。公诉机关认为，被告人郭某某的行为已触犯了《中华人民共和国刑法》××之规定，应当以××追究刑事责任。\n49  \n50  A: 失火\n\n[Read 50 lines (lines 1-50 of 1377 total). 1327 lines remaining from offset 50.]",
+      "role": "tool",
+      "tool_call_id": "call_6309c6f67b4b428e87076010"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_2b406889736c46a58d1cecb4",
+          "function": {
+            "name": "grep",
+            "arguments": "{\"pattern\": \"行贿\", \"path\": \"/large_tool_results/call_d18662004c894d2fab71d279\", \"output_mode\": \"content\", \"max_count\": \"20\"}"
+          }
+        }
+      ],
+      "reasoning_content": "The examples show that the output format is just the crime name(s), separated by semicolons if multiple.\nFor example: `A: 合同诈骗` or `A: 受贿;滥用职权`.\n\nNow, let's analyze the given facts carefully.\nFacts:\n- Defendant unit: 通辽市某商业广场有限公司 (Tongliao City Certain Commercial Plaza Co., Ltd.)\n- Legal representative: 沙某某 (Sha XX)\n- They used the position convenience of Zhang XX (another suspect, civil servant).\n- They issued a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Certain Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha XX and the company intended to share illegitimate benefits from the illegal oil mining business.\n- To thank Zhang XX, they paid him an illegitimate remuneration of 200,000 RMB.\n- The prosecution alleges that the defendant unit and Sha XX violated the Criminal Law and should be prosecuted for a certain crime.\n\nThis clearly describes **单位行贿罪** (Crime of Offering Bribes by a Unit).\nWait, could it also involve other crimes? The text says \"企图在长春某公司非法开采出石油以后分享石油业务的不正当利益\". It doesn't say they actually committed illegal mining themselves, but rather helped Changchun Certain Company do it illegally. So the main charge is bribery.\nIs there any other charge? Sometimes helping others get illegal permits/qualifications through bribery might be charged as 介绍贿赂罪 or 行贿罪. But since it's a unit acting for unit benefit, it's 单位行贿罪.\nLet's check if there are similar cases in the examples. I'll search for \"行贿\" in the examples.\n"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "/large_tool_results/call_2fe35defec4b46c7a56a4f88:\n  68: A: 行贿\n  83: A: 行贿\n  228: A: 行贿\n  288: Q: 事实:公诉机关指控，2013年4月，被告人韩某某在担任西宁某物业管理有限公司副总经理期间，在某小区保障性住房项目改造过程中利用职务之便利，非法收受闫某的行贿款200，000元人民币。\n  396: 被告人赵1某系肇东市福泰兴酒业有限公司法定代表人。赵2某（另案处理）在担任肇东市市长期间，于2012年年初指示肇东市政府接待办从福泰兴酒业采购了价值120余万元的白酒，用于政府招待。2012年11月份某日，赵1某在赵2某办公室送给赵2某人民币30万元，用于感谢赵2某采购其生产的白酒，同时表达了希望能继续成为肇东市政府指定采购招待用酒的企业，赵2某表示同意，收下了赵1某行贿款人民币30万元。\n/large_tool_results/call_d18662004c894d2fab71d279:\n  68: A: 行贿\n  83: A: 行贿\n  228: A: 行贿\n  288: Q: 事实:公诉机关指控，2013年4月，被告人韩某某在担任西宁某物业管理有限公司副总经理期间，在某小区保障性住房项目改造过程中利用职务之便利，非法收受闫某的行贿款200，000元人民币。\n  396: 被告人赵1某系肇东市福泰兴酒业有限公司法定代表人。赵2某（另案处理）在担任肇东市市长期间，于2012年年初指示肇东市政府接待办从福泰兴酒业采购了价值120余万元的白酒，用于政府招待。2012年11月份某日，赵1某在赵2某办公室送给赵2某人民币30万元，用于感谢赵2某采购其生产的白酒，同时表达了希望能继续成为肇东市政府指定采购招待用酒的企业，赵2某表示同意，收下了赵1某行贿款人民币30万元。\n  399: A: 单位行贿\n  584: 1.利用影响力受贿人民币(下同)300万某和行贿100万某\n  589: 3.单位行贿35万某\n  591: 针对上述指控，公诉机关向法庭提交了相应的证据予以证明。公诉机关认为，被告人罗1某的行为已构成受贿罪、××、行贿罪、××，应当数罪并罚。被告人罗1某在被调查期间，主动交待侦查机关尚未掌握的犯罪事实，系自首，要求依照《中华人民共和国刑法》××、××××、××、××、××××之规定判处。\n  593: A: 单位行贿;利用影响力受贿\n  604: A: 单位行贿\n  663: 2013年11月18日，黄某某接到吴川市人民检察院办案人员的电话通知后，自行来到吴川市人民检察院接受调查，并如实交代了其为了获取高额拆迁补偿款而向于某甲行贿3万元的犯罪事实。2014年3月17日，吴川市人民检察院对黄某某涉嫌××一案立案侦查。\n  666: A: 行贿\n  720: A: 对非国家工作人员行贿;对单位行贿\n  797: A: 对非国家工作人员行贿\n\nNote: the search stopped early (it hit its time limit or the maximum match count). The matches above are valid but incomplete. Narrow the search (a more specific pattern or a narrower path), or raise max_count, to see the rest.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "tool",
+      "tool_call_id": "call_2b406889736c46a58d1cecb4"
+    },
+    {
+      "role": "assistant",
+      "content": "```json\n{\n  \"reasoning\": \"本案中，被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为谋取不正当利益（分享长春某公司非法开采石油的业务利益），利用国家工作人员张某某的职务便利，违规获取政府推荐函，并在事后为表示感谢向张某某支付20万元不正当报酬。根据《中华人民共和国刑法》第三百九十三条规定，单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的，构成单位行贿罪。本案系单位决策并为单位谋取利益，由法定代表人具体实施，依法应认定为单位行贿。\",\n  \"final_answer\": \"[罪名]单位行贿<eoa>\"\n}\n```",
+      "reasoning_content": "I see examples of \"单位行贿\" (Unit Bribery).\nLet's look at the example around line 396-399:\nQ: 事实:被告人赵1某系肇东市福泰兴酒业有限公司法定代表人。赵2某（另案处理）在担任肇东市市长期间，于2012年年初指示肇东市政府接待办从福泰兴酒业采购了价值120余万元的白酒，用于政府招待。2012年11月份某日，赵1某在赵2某办公室送给赵2某人民币30万元，用于感谢赵2某采购其生产的白酒，同时表达了希望能继续成为肇东市政府指定采购招待用酒的企业，赵2某表示同意，收下了赵1某行贿款人民币30万元。\nA: 单位行贿\n\nThis matches perfectly with our case: A company legal representative pays money to a government official to thank them for helping the company get business/benefits. The charge is 单位行贿罪 (or just 单位行贿 as in the examples).\n\nWait, the prompt says: \"被告单位通辽市某商业广场有限公司及其法定代表人沙某某...企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\"\nThis is exactly unit bribery.\n\nCould there be another charge? \"使不具备开采石油合法资质的长春某公司得以实际从事石油开采\" - this might involve 非法采矿罪 if they were the ones mining, but here it's Changchun Certain Company doing the mining. The defendant unit just helped them get the recommendation letter and paid the bribe. So it's just 单位行贿.\n\nLet's check if the examples use \"单位行贿\" or \"单位行贿罪\". The examples use \"单位行贿\". I will stick to \"单位行贿\".\n\nWait, let's look at another example:\nLine 593: A: 单位行贿;利用影响力受贿\nLine 604: A: 单位行贿\n\nSo the format is just the crime name without \"罪\".\n\nIs there any chance it's 行贿罪 instead of 单位行贿罪? The facts explicitly say \"被告单位通辽市某商业广场有限公司及其法定代表人沙某某...企图...分享...不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\" This indicates the bribe was given by the unit for the unit's benefit. So it's 单位行贿.\n\nLet's double check the exact wording in the prompt: \"应当以××追究其刑事责任。\"\nThe answer should be just the crime name(s).\n\nReasoning:\n被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为了谋取不正当利益（分享长春某公司非法开采石油的不正当利益），通过国家工作人员张某某的职务便利，违规出具推荐函，并事后向张某某支付20万元作为感谢费（不正当报酬）。该行为符合《中华人民共和国刑法》第三百九十三条规定的单位行贿罪的构成要件，即单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的行为。因此，被告单位及直接负责的主管人员沙某某的行为构成单位行贿罪。\n\nFinal answer: [罪名]单位行贿<eoa>\n\nWait, should I include \"罪\" or not? The examples show:\nA: 合同诈骗\nA: 虚开增值税专用发票、用于骗取出口退税、抵扣税款发票;经济犯 (this one seems weird, maybe truncated or noisy data)\nA: 受贿;滥用职权\nA: 容留他人吸毒\nA: 诈骗;组织、强迫、引诱、容留、介绍卖淫;引诱、容留、介绍卖淫\nA: 故意伤害;窝藏、包庇\nA: 非法制造、买卖、运输、邮寄、储存枪支、弹药、爆炸物\nA: 失火\nA: 行贿\nA: 单位行贿\n\nSo I will use \"单位行贿\".\n\nLet's verify the format required:\n`{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\nAnd the final answer should contain the markup like `[罪名]单位行贿<eoa>` based on the prompt's instruction:\n\"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\"\n\nSo `final_answer` should be `[罪名]单位行贿<eoa>`.\n\nLet's construct the JSON carefully.\nReasoning: 本案中，被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为谋取不正当利益（分享长春某公司非法开采石油的业务利益），利用国家工作人员张某某的职务便利，违规获取政府推荐函，并在事后为表示感谢向张某某支付20万元不正当报酬。根据《中华人民共和国刑法》第三百九十三条规定，单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的，构成单位行贿罪。本案系单位集体决定并为单位谋取利益，故应认定为单位行贿。\n\nFinal Answer: [罪名]单位行贿<eoa>\n\nCheck against constraints:\n- \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\" -> Done.\n- Format matches examples.\n- JSON output with \"reasoning\" and \"final_answer\".\n\nOne minor point: Could it be \"对非国家工作人员行贿\"? No, Zhang XX is a civil servant/government office staff (\"另案犯罪嫌疑人张某某的公务员登记表\"). So he is a state functionary.\nCould it be \"介绍贿赂\"? No, they directly paid him.\nSo \"单位行贿\" is correct.\n\nI will generate the response now.\nAll steps verified.\nOutput matches requirements.\nProceed. \nLet's quickly review the exact text of the prompt to ensure no missed details.\n\"被告单位通辽市某商业广场有限公司及其法定代表人沙某某，利用另案犯罪嫌疑人张某某的职务便利，以通辽市政府办公厅的名义出具了推荐函，使不具备开采石油合法资质的长春某公司得以实际从事石油开采，沙某某和通辽市某商业广场有限公司企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\"\nMatches unit bribery perfectly.\nReady. \nOutput generation. \n`{\"reasoning\": \"本案中，被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为谋取不正当利益（分享长春某公司非法开采石油的业务利益），利用国家工作人员张某某的职务便利，违规获取政府推荐函，并在事后为表示感谢向张某某支付20万元不正当报酬。根据《中华人民共和国刑法》第三百九十三条规定，单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的，构成单位行贿罪。本案系单位决策并为单位谋取利益，由法定代表人具体实施，依法应认定为单位行贿。\", \"final_answer\": \"[罪名]单位行贿<eoa>\"}`\nMatches perfectly. \nProceeds. \n(Self-Correction/Verification during thought)\nWait, is there any possibility of \"行贿罪\" vs \"单位行贿罪\"? In Chinese criminal law practice, when a company's legal representative pays money for the company's benefit, it's charged as 单位行贿罪. The examples also use \"单位行贿\". So it's fine.\nThe prompt asks for the answer in `[罪名]...<eoa>`.\nI will output exactly that.\nAll good. \nOutput matches. \nDone. \n[Final Check of the Prompt]\n\"请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\"\nFormat: `{\"reasoning\": \"...\", \"final_answer\": \"[罪名]单位行贿<eoa>\"}`\nPerfect. \nProceeds. \n[Output Generation] -> *Self-Correction/Refinement during generation prep*: I'll make sure the JSON is strictly valid and follows the exact structure requested.\nThe reasoning will be concise and directly address the legal elements.\nFinal string: `{\"reasoning\": \"本案中，被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为谋取不正当利益（分享长春某公司非法开采石油的业务利益），利用国家工作人员张某某的职务便利，违规获取政府推荐函，并在事后为表示感谢向张某某支付20万元不正当报酬。根据《中华人民共和国刑法》第三百九十三条规定，单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的，构成单位行贿罪。本案系单位决策并为单位谋取利益，由法定代表人具体实施，依法应认定为单位行贿。\", \"final_answer\": \"[罪名]单位行贿<eoa>\"}`\nLooks solid.✅\nOutput matches. \nProceeds. \n*(Done.)*\n"
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by retrieving examples.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:包头稀土高新技术产业开发区人民检察院指控：\r\n被告单位通辽市某商业广场有限公司及其法定代表人沙某某，利用另案犯罪嫌疑人张某某的职务便利，以通辽市政府办公厅的名义出具了推荐函，使不具备开采石油合法资质的长春某公司得以实际从事石油开采，沙某某和通辽市某商业广场有限公司企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\r\n公诉机关提供了到案经过、户籍证明、无前科证明、内蒙古自治区人民检察院与内蒙古自治区人民代表大会的往来文件、通辽市某公司的工商登记资料、另案犯罪嫌疑人张某某的公务员登记表、干部履历表和分管范围的政府文件、长春某公司的工商登记资料、延长油矿管理局的探矿证、证人于某、刘某某的询问笔录、通政办函【2010】6号推荐函、证人刘某甲的询问笔录和书面材料、长春某公司签订的合作开采石油协议书、另案犯罪嫌疑人张某某的讯问笔录、通辽某公司的财务凭证、指派诉讼代表人的法律文书等证据材料。指控被告单位通辽市某商业广场有限公司、被告人沙某某的行为触犯了《中华人民共和国刑法》××之规定，应当以××追究其刑事责任。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. The tool returns every example the memory holds — the complete demonstration set for this task — so there is nothing left to search for; answer from those examples and your own analysis of the question.\n3. Match the wording, format and level of detail of the examples' answers.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_d18662004c894d2fab71d279",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants me to simulate a judge and determine the criminal charge(s) based on the provided facts.\nI need to first call `retrieve_examples` to see if there are any examples of how to format the answer or what kind of charges are typically given for similar facts.\nThen I will analyze the facts and provide the reasoning and final answer in JSON format.\n\nFacts summary:\n- Defendant unit: Tongliao City Certain Commercial Plaza Co., Ltd. (通辽市某商业广场有限公司)\n- Legal representative: Sha XX (沙某某)\n- They used the position convenience of Zhang XX (another suspect, civil servant).\n- They issued a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Certain Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha XX and the company intended to share不正当利益 (illegitimate benefits) from the illegal oil mining business of Changchun Certain Company.\n- To thank Zhang XX, they paid him an illegitimate remuneration of 200,000 RMB.\n- The prosecution alleges that the defendant unit and Sha XX violated the Criminal Law and should be prosecuted for a certain crime.\n\nAnalysis:\nThe key actions are:\n1. Using another person's position (Zhang XX, a civil servant) to get a recommendation letter.\n2. Paying Zhang XX 200,000 RMB as \"illegitimate remuneration\" (不正当报酬) to thank him for helping them.\n3. The purpose was to obtain illegitimate benefits (sharing profits from illegal oil mining).\n\nThis looks like **单位行贿罪** (Crime of Offering Bribes by a Unit) or **行贿罪** (Crime of Offering Bribes). Since it's done by a unit (the company) for the benefit of the unit, and the legal representative is involved, it's likely 单位行贿罪. Wait, let's check the details.\nThey paid 200,000 RMB to Zhang XX. Zhang XX is a state functionary.\nAccording to Chinese Criminal Law Article 393: 单位行贿罪 (Unit Bribery). If a unit offers bribes to state functionaries for illegitimate benefits, or violates state regulations by offering rebates or handling fees to state functionaries, it constitutes unit bribery.\nAlso, could it be 对非国家工作人员行贿罪? No, Zhang XX is a civil servant/government office staff.\nCould it be 介绍贿赂罪? No, they directly paid him.\nSo the charge is likely 单位行贿罪 (Crime of Offering Bribes by a Unit).\n\nLet's verify with typical cases. A company pays money to a government official to get approval/qualification illegally. This is standard 单位行贿罪.\nWait, the text says \"以通辽市政府办公厅的名义出具了推荐函...企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\"\nThis matches 单位行贿罪 perfectly.\n\nLet's call `retrieve_examples` to see the format and expected output style.\n"
+      },
+      {
+        "content": "Tool result too large, the result of this tool call call_d18662004c894d2fab71d279 was saved in the filesystem at this path: /large_tool_results/call_d18662004c894d2fab71d279\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  The complete demonstration set for this task (200 examples):\n2  \n3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n... [1367 lines truncated] ...\n1373  A: 盗窃;掩饰、隐瞒犯罪所得、犯罪所得收益\n1374  \n1375  Q: 事实:\n1376  \t二审审理查明的事实与证据和原审一致，本院予以确认。\n1377  A: 非法转让、倒卖土地使用权;故意伤害\n",
+        "role": "tool",
+        "tool_call_id": "call_d18662004c894d2fab71d279"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_6309c6f67b4b428e87076010",
+            "function": {
+              "name": "read_file",
+              "arguments": "{\"file_path\": \"/large_tool_results/call_d18662004c894d2fab71d279\", \"offset\": 0, \"limit\": 50}"
+            }
+          }
+        ],
+        "reasoning_content": "The examples show a format where the answer is just the crime name(s).\nLet's look at more examples to understand the exact output format. I will read a few lines from the file."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": " 1  The complete demonstration set for this task (200 examples):\n 2  \n 3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n 4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n 5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n 6  公诉机关认为：被告人张1某以非法占有为目的，在签订、履行合同过程中虚构事实，诈骗他人财物，数额巨大，其行为触犯了《中华人民共和国刑法》××之规定，犯罪事实清楚，证据确实充分，应当以××追究其刑事责任。案发后，被告人张1某能如实供述自己的罪行，根据《中华人民共和国刑法》××××的规定，可从轻处罚。\n 7  \n 8  A: 合同诈骗\n 9  \n10  Q: 事实:厦门市湖里区人民检察院指控：\n11  2009年5月至11月间，被告人吴1某在经营管理被告单位厦门市三悦服饰有限公司期间，为牟取开票费，在明知没有实际货物交易的情况下，利用该公司开具厦门增值税专用发票22份给厦门华融实业有限公司，税款数额合计人民币350620.25元。厦门华融实业有限公司使用该22份发票向税务机关申请出口退税，骗取国家出口退税款人民币329995.57元。案发后，厦门华融实业有限公司已退还税款人民币329995.57元。\n12  2014年5月7日，被告人吴1某接电话通知后到公安机关投案，后如实供述自己的罪行。\n13  公诉机关当庭出示并宣读了被告人吴1某的供述和辩解、追缴在案的赃款人民币15万元及扣押决定书、扣押清单、厦门增值税专用发票、银行对账单、营业执照等书证、证人陈某某、李某某等人的证言、辨认笔录、户籍证明、到案经过及情况说明等证据。公诉机关认为，被告单位厦门市三悦服饰有限公司为其他公司虚开增值税专用发票，虚开税款数额合计人民币350620.25元，数额巨大，被告人吴1某系直接负责的主管人员，其行为已触犯了《中华人民共和国刑法》××××、××，犯罪事实清楚，证据确实、充分，应当以虚开增值税专用发票罪追究其刑事责任。被告人吴1某自动投案并如实供述自己的罪行，根据《中华人民共和国刑法》××××，是自首，可以对被告单位厦门市三悦服饰有限公司及被告人吴1某从轻或者减轻处罚。\n14  被告单位对公诉机关指控的事实及罪名均无异议并当庭认罪。\n15  \n16  A: 虚开增值税专用发票、用于骗取出口退税、抵扣税款发票;经济犯\n17  \n18  Q: 事实:沈阳市皇姑区人民检察院指控，2011年5月至2012年期间，被告人姜1某受皇姑区政府委托担任皇姑区车辆厂东西地块征收办公室副主任，其在主管该地块无房产产籍（即违建房）征收补偿审批工作期间，利用其对违建房的违建认定表进行签字审批后被征收人即可签协议获得补偿的职务便利，违反2004年9号文件《沈阳市无房产产籍房屋征收补助办法》、沈阳市皇姑区城市房屋拆迁管理办公室制定的《皇姑区车辆厂东、西地块房屋征收补偿方案》之规定，徇私舞弊，对46份不符合补偿标准的违建认定表进行签字审批，造成国家征收补偿款损失共计人民币2164000元。\n19  2011年5月至2012年间，被告人姜1某受国家机关委托担任车辆厂东西地块征收办公室副主任，利用职务便利，非法收受赵某甲给予的好处费人民币10000元，赃款挥霍。\n20  2011年5月至2012年间，被告人姜1某受国家机关委托担任车辆厂东西地块征收办公室副主任，利用职务便利，非法收受张某甲给予的好处费人民币130000元及一辆丰田汉兰达牌轿车（物品价值人民币230000元），赃款挥霍。\n21  公诉机关认为，被告人姜1某的行为已触犯了《中华人民共和国刑法》××、××、××、××、××之规定，应以××及××追究刑事责任。为上述指控，公诉机关提供了相关证据。\n22  \n23  A: 受贿;滥用职权\n24  \n25  Q: 事实:龙江县人民检察院指控：\n26  2014年12月初，被告人赵某在龙江县龙江镇的江城招待所内容留谭某、宫某吸食毒品冰毒。\n27  2014年12月10日左右，被告人赵某在龙江县龙江镇的火车头旅店内容留谭某、宫某吸食冰毒。\n28  被告人赵某于2014年12月19日在龙江县龙江镇富华名苑6号楼3单元503室谭某住宅内被公安机关抓获。公诉机关以书证、证人证言、被告人供述等证据认为，被告人赵某提供场所，容留他人吸食毒品，其行为已触犯《中华人民共和国刑法》××之规定，应当以××追究其刑事责任，依据《中华人民共和国刑事诉讼法》××之规定，向本院提起公诉。建议判处被告人赵某二年以下××，并处罚金。\n29  \n30  A: 容留他人吸毒\n31  \n32  Q: 事实:黑龙江省巴彦县人民检察院指控，2012年6月9日，被告人张某某谎称以租车的名义将被害人李某某的轿车骗走后，张某某将骗得的轿车抵押给其朋友焦某某并借款人民币15,000元，此后李某某多次给张某某打电话要车时张某某拒不还车，之后张某某逃往外地。公诉机关认为，被告人张某某触犯了《中华人民共和国刑法》××的规定，构成××，应当以××追究其刑事责任。针对上述指控，公诉机关提供了相应的证据。\n33  \n34  A: 诈骗;组织、强迫、引诱、容留、介绍卖淫;引诱、容留、介绍卖淫\n35  \n36  Q: 事实:公诉机关指控，一、××。2000年10月16日，被告人宋某与朋友张1某军、小某（身份不详）、李某某（已判刑）、董某某（已判刑）从北安市到五大连池市中联环公司催缴工程款。在张1某军朋友兰某某安排午饭后，兰某某与张1某军等五人来到五大连池市丽豪夜总会，在准备离开时遇到被害人杨某某，张1某军因杨某某未与其说话而不满，宋某等四人到二楼谩骂杨某某，被兰某某等人拉开后离开。15时许，杨某某持战刀在五大连池市中联环公司楼下找到宋某等四人，双方殴打在一起，董某某用板凳击打杨某某的头部、背部，宋某用短刀扎杨某某背部，李某某用尖刀刺杨某某腰部一刀，杨某某经抢救无效死亡。经鉴定，杨某某系被他人用锐气作用于腰部致肾动脉破裂，大失血死亡。\n37  对以上事实，公诉机关向本院提供了书证出警经过、到案经过、破案经过、户籍证明、在逃人员登记表、黑河市中级人民法院刑事判决书、北安市人民法院刑事判决书、证人董某某、李某某、兰某某、沈某某等人的证言、被告人宋某的供述与辩解、鉴定意见、活体检验笔录等证据予以证实。\n38  公诉机关认为被告人宋某的行为触犯了《中华人民共和国刑法》××××的规定，应当以××追究其刑事责任。\n39  \n40  A: 故意伤害;窝藏、包庇\n41  \n42  Q: 事实:上栗县人民检察院指控，2015年3月起，被告人张某在未取得制造烟花鞭炮的行政许可的情况下，在上栗县金山镇龙泉村欧某老屋内，用高氯酸钾、银粉、硫磺等材料配制点火药和过火药，并雇请赖某、叶某为擦炮上点火药和封尾，生产擦炮。同年11月10日公安人员在该屋内查获点火药11千克、过火药70千克、半成某擦炮998饼、成某擦炮1020饼。经鉴定，查获的点火药属于烟火药，擦炮成某和半成某中含有烟火药。\n43  针对指控的事实，公诉机关当庭出示并宣读了物证、书证、证人证言、被告人供述和辩解、鉴定意见、勘验笔录、辨认笔录等证据。公诉机关认为，被告人张某非法制造爆炸物，其行为触犯了《中华人民共和国刑法》××之规定，应当以非法制造爆炸物罪追究其刑事责任。\n44  \n45  A: 非法制造、买卖、运输、邮寄、储存枪支、弹药、爆炸物\n46  \n47  Q: 事实:辽中县人民检察院指控：2014年11月3日，在辽中县某镇某村，被告人郭某某在无专业电焊技能的情况下，在其儿子郭某甲的大棚内用电焊焊大门。虽用彩钢板隔离，但电焊火星仍引燃大棚内草帘子，火势蔓延，导致周围32个大棚和大棚内农作物及其他物品烧毁。经鉴定，涉案物品损失价值人民币682260元。案发后，被告人家属已赔偿被害人经济损失并取得谅解。\n48  对上述事实，公诉机关向法庭提供了相关证据予以证明。公诉机关认为，被告人郭某某的行为已触犯了《中华人民共和国刑法》××之规定，应当以××追究刑事责任。\n49  \n50  A: 失火\n\n[Read 50 lines (lines 1-50 of 1377 total). 1327 lines remaining from offset 50.]",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_6309c6f67b4b428e87076010"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The examples show that the output format is just the crime name(s), separated by semicolons if multiple.\nFor example: `A: 合同诈骗` or `A: 受贿;滥用职权`.\n\nNow, let's analyze the given facts carefully.\nFacts:\n- Defendant unit: 通辽市某商业广场有限公司 (Tongliao City Certain Commercial Plaza Co., Ltd.)\n- Legal representative: 沙某某 (Sha XX)\n- They used the position convenience of Zhang XX (another suspect, civil servant).\n- They issued a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Certain Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha XX and the company intended to share illegitimate benefits from the illegal oil mining business.\n- To thank Zhang XX, they paid him an illegitimate remuneration of 200,000 RMB.\n- The prosecution alleges that the defendant unit and Sha XX violated the Criminal Law and should be prosecuted for a certain crime.\n\nThis clearly describes **单位行贿罪** (Crime of Offering Bribes by a Unit).\nWait, could it also involve other crimes? The text says \"企图在长春某公司非法开采出石油以后分享石油业务的不正当利益\". It doesn't say they actually committed illegal mining themselves, but rather helped Changchun Certain Company do it illegally. So the main charge is bribery.\nIs there any other charge? Sometimes helping others get illegal permits/qualifications through bribery might be charged as 介绍贿赂罪 or 行贿罪. But since it's a unit acting for unit benefit, it's 单位行贿罪.\nLet's check if there are similar cases in the examples. I'll search for \"行贿\" in the examples.\n",
+        "tool_calls": [
+          {
+            "id": "call_2b406889736c46a58d1cecb4",
+            "type": "function",
+            "function": {
+              "name": "grep",
+              "arguments": "{\"pattern\": \"行贿\", \"path\": \"/large_tool_results/call_d18662004c894d2fab71d279\", \"output_mode\": \"content\", \"max_count\": \"20\"}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by retrieving examples.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:包头稀土高新技术产业开发区人民检察院指控：\r\n被告单位通辽市某商业广场有限公司及其法定代表人沙某某，利用另案犯罪嫌疑人张某某的职务便利，以通辽市政府办公厅的名义出具了推荐函，使不具备开采石油合法资质的长春某公司得以实际从事石油开采，沙某某和通辽市某商业广场有限公司企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\r\n公诉机关提供了到案经过、户籍证明、无前科证明、内蒙古自治区人民检察院与内蒙古自治区人民代表大会的往来文件、通辽市某公司的工商登记资料、另案犯罪嫌疑人张某某的公务员登记表、干部履历表和分管范围的政府文件、长春某公司的工商登记资料、延长油矿管理局的探矿证、证人于某、刘某某的询问笔录、通政办函【2010】6号推荐函、证人刘某甲的询问笔录和书面材料、长春某公司签订的合作开采石油协议书、另案犯罪嫌疑人张某某的讯问笔录、通辽某公司的财务凭证、指派诉讼代表人的法律文书等证据材料。指控被告单位通辽市某商业广场有限公司、被告人沙某某的行为触犯了《中华人民共和国刑法》××之规定，应当以××追究其刑事责任。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. The tool returns every example the memory holds — the complete demonstration set for this task — so there is nothing left to search for; answer from those examples and your own analysis of the question.\n3. Match the wording, format and level of detail of the examples' answers.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_2fe35defec4b46c7a56a4f88",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants me to simulate a judge's reasoning based on the provided case facts and determine the criminal charge(s).\nI need to:\n1. Call `retrieve_examples` first.\n2. Analyze the case facts.\n3. Provide reasoning.\n4. Output the final answer in the specified format: `[罪名]...<eoa>` or `[罪名]...;...<eoa>`.\n\nLet's start by calling `retrieve_examples`."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Tool result too large, the result of this tool call call_2fe35defec4b46c7a56a4f88 was saved in the filesystem at this path: /large_tool_results/call_2fe35defec4b46c7a56a4f88\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  The complete demonstration set for this task (200 examples):\n2  \n3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n... [1367 lines truncated] ...\n1373  A: 盗窃;掩饰、隐瞒犯罪所得、犯罪所得收益\n1374  \n1375  Q: 事实:\n1376  \t二审审理查明的事实与证据和原审一致，本院予以确认。\n1377  A: 非法转让、倒卖土地使用权;故意伤害\n",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_2fe35defec4b46c7a56a4f88"
+      },
+      {
+        "role": "assistant",
+        "content": "{\n \"reasoning\": \"本案事实显示，被告单位通辽市某商业广场有限公司及其法定代表人沙某某，为了谋取不正当利益（使不具备资质的长春某公司非法开采石油并分享利益），利用另案犯罪嫌疑人张某某（国家工作人员）的职务便利，向张某某支付不正当报酬20万元。该行为符合《中华人民共和国刑法》第三百九十三条规定的单位行贿罪的构成要件：主体为单位，主观上具有为谋取不正当利益的目的，客观上实施了给予国家工作人员财物的行为，且情节严重（数额达20万元）。因此，应当认定被告单位及直接负责的主管人员构成单位行贿罪。\",\n \"final_answer\": \"[罪名]单位行贿<eoa>\"\n}",
+        "reasoning_content": "The examples show a format where the answer is just the charge(s) separated by semicolons if multiple.\nLet's analyze the case facts:\n- Defendant unit: 通辽市某商业广场有限公司 (Tongliao City Commercial Plaza Co., Ltd.)\n- Legal representative: 沙某某 (Sha Moumou)\n- They used the position of convenience of Zhang Moumou (another suspect, a civil servant) to issue a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha and the company intended to share illegal profits from the oil business after Changchun Company illegally mined oil.\n- To thank Zhang Moumou, they paid him an improper reward of 200,000 RMB.\n\nKey elements:\n1. Giving money/property to a state functionary (Zhang Moumou) to seek illegitimate benefits. This constitutes **单位行贿罪** (Crime of Offering Bribes by a Unit). The defendant is a unit (company), and its legal representative acted on behalf of the unit.\n2. Wait, could it be 对非国家工作人员行贿罪? No, Zhang is a civil servant (公务员登记表 mentioned). So it's 行贿罪 or 单位行贿罪. Since it's done by the company for the company's benefit, it's 单位行贿罪.\n3. Are there other charges? They tried to get someone else to mine oil illegally without qualification. But the main charge highlighted by the prosecution for paying 200k to Zhang is bribery.\n4. Let's check the exact wording in similar cases. \"被告单位...及其法定代表人...企图在...分享...不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\" This clearly points to 单位行贿罪.\n5. Could it also involve 非法采矿罪? The text says \"使不具备开采石油合法资质的长春某公司得以实际从事石油开采\", but the defendants themselves didn't mine; they facilitated it to share profits later. The prosecution focuses on the bribe payment. Usually, in such Chinese judicial exam/case analysis questions, the primary charge is 单位行贿罪.\n6. Let's verify with the format: `[罪名]单位行贿<eoa>` or `[罪名]单位行贿罪<eoa>`. The examples use names like `盗窃`, `诈骗`, `非法转让、倒卖土地使用权;故意伤害`. They usually omit \"罪\" at the end, e.g., `盗窃` instead of `盗窃罪`. I will follow that convention: `单位行贿`.\n7. Wait, let's look at the example format: `[罪名]盗窃<eoa>`. So I should output `[罪名]单位行贿<eoa>`.\n8. Let's double check the exact charge name in Chinese Criminal Law: 第三百九十三条 单位行贿罪. Often abbreviated as 单位行贿 in these tasks.\n9. Is there any other charge? The text says \"企图在长春某公司非法开采出石油以后分享石油业务的不正当利益\". This is the motive for the bribe. The act is giving 200k to a state functionary. So 单位行贿 is correct.\n10. I will structure the reasoning clearly: identify the subject (unit + legal rep), the object (state functionary), the act (giving 200k for illegitimate benefits), and conclude it matches 单位行贿罪.\n11. Format: `{\"reasoning\": \"...\", \"final_answer\": \"[罪名]单位行贿<eoa>\"}`.\n\nLet's craft the reasoning carefully.\n- 主体：被告单位通辽市某商业广场有限公司及其法定代表人沙某某。\n- 行为：为谋取不正当利益（使无资质公司非法开采石油并分享利益），给予国家工作人员张某某财物20万元。\n- 法律定性：根据《刑法》第三百九十三条，单位为谋取不正当利益而行贿，或者违反国家规定，给予国家工作人员以回扣、手续费，情节严重的，构成单位行贿罪。本案中，单位决策并实施行贿行为，违法所得归单位所有，符合单位行贿罪的构成要件。\n- 结论：罪名为单位行贿。\n\nCheck format requirement: \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\"\nThe final output must be JSON: `{\"reasoning\": \"...\", \"final_answer\": \"[罪名]单位行贿<eoa>\"}`.\n\nAll good. I will generate the response. \nOne minor point: sometimes these datasets expect just the charge name without \"罪\". I'll stick to \"单位行贿\".\nI will write out the reasoning in Chinese as requested.\nReady. \nOutput matches requirements.✅\n"
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by retrieving examples.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:包头稀土高新技术产业开发区人民检察院指控：\r\n被告单位通辽市某商业广场有限公司及其法定代表人沙某某，利用另案犯罪嫌疑人张某某的职务便利，以通辽市政府办公厅的名义出具了推荐函，使不具备开采石油合法资质的长春某公司得以实际从事石油开采，沙某某和通辽市某商业广场有限公司企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\r\n公诉机关提供了到案经过、户籍证明、无前科证明、内蒙古自治区人民检察院与内蒙古自治区人民代表大会的往来文件、通辽市某公司的工商登记资料、另案犯罪嫌疑人张某某的公务员登记表、干部履历表和分管范围的政府文件、长春某公司的工商登记资料、延长油矿管理局的探矿证、证人于某、刘某某的询问笔录、通政办函【2010】6号推荐函、证人刘某甲的询问笔录和书面材料、长春某公司签订的合作开采石油协议书、另案犯罪嫌疑人张某某的讯问笔录、通辽某公司的财务凭证、指派诉讼代表人的法律文书等证据材料。指控被告单位通辽市某商业广场有限公司、被告人沙某某的行为触犯了《中华人民共和国刑法》××之规定，应当以××追究其刑事责任。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. The tool returns every example the memory holds — the complete demonstration set for this task — so there is nothing left to search for; answer from those examples and your own analysis of the question.\n3. Match the wording, format and level of detail of the examples' answers.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_d18662004c894d2fab71d279",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants me to simulate a judge and determine the criminal charge(s) based on the provided facts.\nI need to first call `retrieve_examples` to see if there are any examples of how to format the answer or what kind of charges are typically given for similar facts.\nThen I will analyze the facts and provide the reasoning and final answer in JSON format.\n\nFacts summary:\n- Defendant unit: Tongliao City Certain Commercial Plaza Co., Ltd. (通辽市某商业广场有限公司)\n- Legal representative: Sha XX (沙某某)\n- They used the position convenience of Zhang XX (another suspect, civil servant).\n- They issued a recommendation letter in the name of Tongliao Municipal Government Office.\n- This allowed Changchun Certain Company, which lacked legal qualifications for oil mining, to actually engage in oil mining.\n- Sha XX and the company intended to share不正当利益 (illegitimate benefits) from the illegal oil mining business of Changchun Certain Company.\n- To thank Zhang XX, they paid him an illegitimate remuneration of 200,000 RMB.\n- The prosecution alleges that the defendant unit and Sha XX violated the Criminal Law and should be prosecuted for a certain crime.\n\nAnalysis:\nThe key actions are:\n1. Using another person's position (Zhang XX, a civil servant) to get a recommendation letter.\n2. Paying Zhang XX 200,000 RMB as \"illegitimate remuneration\" (不正当报酬) to thank him for helping them.\n3. The purpose was to obtain illegitimate benefits (sharing profits from illegal oil mining).\n\nThis looks like **单位行贿罪** (Crime of Offering Bribes by a Unit) or **行贿罪** (Crime of Offering Bribes). Since it's done by a unit (the company) for the benefit of the unit, and the legal representative is involved, it's likely 单位行贿罪. Wait, let's check the details.\nThey paid 200,000 RMB to Zhang XX. Zhang XX is a state functionary.\nAccording to Chinese Criminal Law Article 393: 单位行贿罪 (Unit Bribery). If a unit offers bribes to state functionaries for illegitimate benefits, or violates state regulations by offering rebates or handling fees to state functionaries, it constitutes unit bribery.\nAlso, could it be 对非国家工作人员行贿罪? No, Zhang XX is a civil servant/government office staff.\nCould it be 介绍贿赂罪? No, they directly paid him.\nSo the charge is likely 单位行贿罪 (Crime of Offering Bribes by a Unit).\n\nLet's verify with typical cases. A company pays money to a government official to get approval/qualification illegally. This is standard 单位行贿罪.\nWait, the text says \"以通辽市政府办公厅的名义出具了推荐函...企图在长春某公司非法开采出石油以后分享石油业务的不正当利益，为感谢张某某而向其支付了不正当报酬20万元。\"\nThis matches 单位行贿罪 perfectly.\n\nLet's call `retrieve_examples` to see the format and expected output style.\n"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Tool result too large, the result of this tool call call_d18662004c894d2fab71d279 was saved in the filesystem at this path: /large_tool_results/call_d18662004c894d2fab71d279\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  The complete demonstration set for this task (200 examples):\n2  \n3  Q: 事实:长春市朝阳区人民检察院指控：2013年7月21日，被告人张1某在长春市朝阳区安达街绿地集团写字楼下，谎称自己挂靠在大连安泰建设有限公司，在长春市“丰合西郡”有工程发包为由，与被害人林某和李3某签订发包合同，诈骗被害人林某和李3某二人人民币共计10万元。\n4  2013年8月24日，被告人张1某在长春市朝阳区安达街绿地集团写字楼703室，虚构自己是吉林省朝晖城市建设工程有限公司副总经理，以在长春市“丰合西郡”有工程发包为由，与林某签订发包合同，诈骗被害人林某人民币19万元。\n5  长春市朝阳区人民检察院认定上述事实的证据如下：被告人张1某的供述，被害人林某、李3某的陈述，证人张2某的证言，抓获经过，户籍证明，劳务清包工程协议书，扣押物品、文件清单，鉴定意见等。\n... [1367 lines truncated] ...\n1373  A: 盗窃;掩饰、隐瞒犯罪所得、犯罪所得收益\n1374  \n1375  Q: 事实:\n1376  \t二审审理查明的事实与证据和原审一致，本院予以确认。\n1377  A: 非法转让、倒卖土地使用权;故意伤害\n",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_d18662004c894d2fab71d279"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The examples show a format where the answer is just the crime name(s).\nLet's look at more examples to understand the exact output format. I will read a few lines from the file.",
+        "tool_calls": [
+          {
+            "id": "call_6309c6f67b4b428e87076010",
+            "type": "function",
+            "function": {
+              "name": "read_file",
+              "arguments": "{\"file_path\": \"/large_tool_results/call_d18662004c894d2fab71d279\", \"offset\": 0, \"limit\": 50}"
+            }
+          }
+        ]
+      }
+    ]
+  ]
+}

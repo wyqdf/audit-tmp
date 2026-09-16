@@ -1,0 +1,80 @@
+{
+  "session_id": "659187a9-39df-4018-ab53-f3398db04108",
+  "commits_before": [
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 783.5323059558868,
+  "benchmark_seconds": 1512.7774522304535,
+  "wall_seconds": 2296.3097581863403,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 481359,
+    "num_turns": 92,
+    "stop_reason": "end_turn",
+    "session_id": "659187a9-39df-4018-ab53-f3398db04108",
+    "total_cost_usd": 5.808546999999999,
+    "usage": {
+      "input_tokens": 68381,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 6518784,
+      "output_tokens": 88290,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 68381,
+        "outputTokens": 88290,
+        "cacheReadInputTokens": 6518784,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 5.808546999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 5 complete. One candidate node created, evaluated, and committed.\n\n## Analysis (Stage 1)\n\nInspecting the DAG (`main → adaed03 → 32b0dc3 → 3a72aec → d4199a2`), I selected the strongest node **d4199a2 (panel vote, avg 0.5467)** as parent and replayed all recorded traces of the five runs from `/workspace/runs`:\n\n- The prompt, skill and frozen memories are byte-identical across all runs, so every raw reply is an independent draw of the same question.\n- Re-voting the pooled replies over a fixed example set with 8 draws each (30/50/45 examples, 1000 partitions per point) shows the exact-answer vote **still climbing past the shipped cap of 5**: USPTO 0.2291 (k=5) → 0.2437 (k=6) → 0.2589 (k=8), S2D/LawBench essentially flat.\n- The parent run left budget unspent (USPTO mean 16.2 of 32 model calls, 337s of 900s; 10/60 samples stopped by the 450s check), and 3 USPTO samples returned a single reply because one dead draw ended the panel outright.\n- Measured dead before spending the change: canonical/order-insensitive vote keys (0 sample changes), memory-support ranking (never fires), vote-then-ground vs ground-then-vote (identical), component-majority/union/longest (equal or worse).\n\n## Modification (Stage 2)\n\nBranch `panel-budget-draws` from d4199a2; only `solver/agent.py` changed: `PANEL_SIZE 5→8`, `PANEL_BUDGET 0.5→0.6`, a new `_out_of_budget` guard that starts a draw only if the slowest draw so far would still fit, and dead draws are now lost draws (`PANEL_FAILURES = 2` consecutive failures end the panel) instead of ending it immediately. Loop semantics unit-checked against a stub agent (8 checks, no model call).\n\n## Evaluation (one run, `fcc91464`)\n\n`{\"USPTO\": 0.3167, \"Symptom2Disease\": 0.85, \"LawBench\": 0.55, \"average\": 0.5722, \"status\": \"partial\"}` — parents's `0.5467`. USPTO +0.0667 against a +0.0298 counterfactual; draws/sample rose 4.47→5.77, 4.34→6.17, 3.24→3.49 (max 5→8), and on the run's own replies the panel beats its first draw 18/59 vs 14/59 (USPTO). Cost: calls 2609→3283, tokens 30.0M→35.8M, but wall clock 1738s→1513s thanks to the budget guard. Three samples lost, all on the first draw (one USPTO slow-call timeout, two LawBench `content_filter`).\n\nAudit: tree hash matches the manifest, sha256 of the source identical before/after, HEAD never moved during the run, `git status` clean. Note attached under `refs/notes/evolution` to `b51ec0b`.",
+    "ttft_ms": 684,
+    "ttft_stream_ms": 291,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 2295745,
+    "uuid": "8e16dbd9-c888-4159-8b98-417972c02ed1"
+  },
+  "session_file": "projects/-workspace-harness/659187a9-39df-4018-ab53-f3398db04108.jsonl",
+  "usage": {
+    "input_tokens": 68381,
+    "output_tokens": 88290,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 6518784
+  },
+  "cost_usd": 5.808546999999999,
+  "num_turns": 92,
+  "duration_api_ms": 481359,
+  "error": null,
+  "commit": "b51ec0b034067d9a3955d14242997402126d5536",
+  "tree": "fcc91464461269cdba7fec072109789c088b094e"
+}

@@ -1,0 +1,82 @@
+{
+  "session_id": "3d58a76d-61ee-4fac-bbf0-4c83af2fa350",
+  "commits_before": [
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 480.24061942100525,
+  "benchmark_seconds": 1002.8467233181,
+  "wall_seconds": 1483.0873427391052,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 452609,
+    "num_turns": 90,
+    "stop_reason": "end_turn",
+    "session_id": "3d58a76d-61ee-4fac-bbf0-4c83af2fa350",
+    "total_cost_usd": 6.071105999999999,
+    "usage": {
+      "input_tokens": 90889,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 6918272,
+      "output_tokens": 86301,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 90889,
+        "outputTokens": 86301,
+        "cacheReadInputTokens": 6918272,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 6.071105999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "One evolution iteration complete.\n\n## Stage 1 — Analysis\n\nGraph: baseline `804b98a` (0.4378) → grounding → affix trim → abbreviation restore → panel vote → panel budget (0.5722) → whole memory `40218c3` (0.57, the tip). I picked `40218c3` as parent: its own notes locate the next defect and it holds the lineage's best LawBench (0.57) and Symptom2Disease (0.89).\n\nMeasured defects in the parent's traces:\n- `deepagents` takes a **tool result** off the conversation past 20,000 tokens (**80,000 chars**), but a **human message** only past 50,000 tokens (**200,000 chars**). LawBench's memory renders to **105,318 chars**, so 99/100 samples were handed a five-line preview plus a path; the agent paged for it (`read_file 0→71`, `grep 0→6`).\n- Every attempt paid a `retrieve_examples` call (249/378/304 of 2210 calls) — a draw cost two model calls, spending the sample's 32-call budget on fetching what the question could carry.\n- I also re-measured the alternatives before spending the change: the USPTO memory covers only 11.7% of val gold components (0/30 examples), LawBench 81% (37/50); 32/45 wrong USPTO samples share *no* component with the gold; only 4/53 missing LawBench charges appear in the reply's own reasoning; no chemistry toolkit is importable (rdkit/openbabel/indigo/selfies all absent); missing-charge completion was already measured harmful.\n\n## Stage 2 — Modification, one mechanism\n\nThe demonstration set now travels **with the question** instead of being fetched by a tool: `solver/tools/retrieval.py` renders the complete set (closest-first) sized to the question channel (`min(0.25·context_window, 195,000 − question)` chars, vs 80,000 before), `solver.md` carries it as `{examples}`, no business tool is registered, so an attempt is a single model call. Grounding, vote, `PANEL_SIZE`, `PANEL_BUDGET` untouched.\n\n**Result:** `{\"USPTO\": 0.3167, \"Symptom2Disease\": 0.9, \"LawBench\": 0.51, \"average\": 0.5756, \"status\": \"partial\"}` — 253/260 scored, `rankable: true`; the lineage's highest average (parent: 0.25 / 0.89 / 0.57 / 0.57).\n\n**Audit (from traces):** the set sat in every sample's question (108,879 chars for LawBench), **zero tool calls** in the whole run, a draw = one model call (calls 2210→993, wall clock 1504s→1003s, input tokens 14.6M→29.4M). USPTO 9→11 examples any-correct, Symptom 89→90 samples, and the mechanism visibly worked where the memory's own strings matter (`窝藏罪`→`窝藏、包庇`; the molecule written as the memory spells it). LawBench fell only because **7 samples were rejected by the provider's input moderation before any model call** (`DataInspectionFailed` on the 105K-char question, non-retryable); among the samples both runs could attempt it is 50/92 vs 49/92, so the demonstrations themselves still do not move that task — a new, measured defect for the next node.\n\nCommitted as `7b3e5c8` on branch `prompt-borne-demonstrations` (tree `a5092674…`, identical to the evaluated tree), with the evolution note attached under `refs/notes/evolution`; working tree clean.",
+    "ttft_ms": 552,
+    "ttft_stream_ms": 289,
+    "time_to_request_ms": 53,
+    "type": "result",
+    "duration_ms": 1482524,
+    "uuid": "d6f031c6-0cb5-487e-a3b5-00e0b6d3f888"
+  },
+  "session_file": "projects/-workspace-harness/3d58a76d-61ee-4fac-bbf0-4c83af2fa350.jsonl",
+  "usage": {
+    "input_tokens": 90889,
+    "output_tokens": 86301,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 6918272
+  },
+  "cost_usd": 6.071105999999999,
+  "num_turns": 90,
+  "duration_api_ms": 452609,
+  "error": null,
+  "commit": "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+  "tree": "a50926749a89aef8e00f3a6f94270c381f1ce368"
+}

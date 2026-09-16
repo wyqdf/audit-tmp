@@ -1,0 +1,84 @@
+{
+  "session_id": "c6ac7cbb-a006-47aa-a03c-acb8a42244fc",
+  "commits_before": [
+    "5998feee79802d300e08fc49349841202d0904b9",
+    "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 1381.7875537872314,
+  "benchmark_seconds": 1050.5028762817383,
+  "wall_seconds": 2432.2904300689697,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 1315071,
+    "num_turns": 136,
+    "stop_reason": "end_turn",
+    "session_id": "c6ac7cbb-a006-47aa-a03c-acb8a42244fc",
+    "total_cost_usd": 18.041777,
+    "usage": {
+      "input_tokens": 100822,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 22515584,
+      "output_tokens": 251195,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 100822,
+        "outputTokens": 251195,
+        "cacheReadInputTokens": 22515584,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 18.041777,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Node complete. Summary of the round:\n\n## Round 9 — `refusal-same-rung-retry` (commit `9df6a8e`)\n\n**Analysis (Stage 1).** I took the tip node (`5998fee`, average 0.5933, the lineage's best) as parent and priced every remaining lever against the lineage's own traces before touching code:\n\n| lever | measured outcome |\n|---|---|\n| vote rule | plurality 0.58 on pooled LawBench replies vs union 0.54, intersection 0.46, item-majority = plurality |\n| panel depth | plurality on 8 pooled pre-panel replies: USPTO 0.156@k=1 → 0.227@k=5 → 0.240@k=8; unanimity stop costs nothing |\n| delivery | 78–89% identical predictions across 30K-window / whole-memory-tool / whole-set-in-prompt; disagreement splits churn in every direction |\n| grounding | replaying the chain on this run's raw first-draw replies: shipped 58/100 LawBench vs 50 ungrounded, 57 wider-snap, 55 no-restore, 52 extra-split, 58 narrowed-trim |\n| memory-side repairs | 38/42 USPTO wrongs are chemically different molecules (not notation); LawBench's residual is label noise (17–18 of 50 val questions never answered correctly by any node) |\n\nThat left one hole the parent had explicitly flagged as untested: the ladder gives up the demonstration set on the *first* refusal, and a refusal at the last rung loses the sample outright.\n\n**Modification.** `REFUSALS_PER_RUNG = 2`; `_step_down` → `_refused_request`: a refusal is charged to its rung and the *same* question is asked again at the same size, stepping down only after a size has been refused twice. Verification was offline (6 fake-agent cases: retry-at-rung, step-down, bounded give-up at 6 attempts, unchanged non-refusal behaviour).\n\n**Result.** `{\"USPTO\": 0.3333, \"Symptom2Disease\": 0.89, \"LawBench\": 0.57, \"average\": 0.5978, \"status\": \"ok\"}` — 260/260 samples, `rankable: true`. **The expected effect was not achieved, and the run shows why:** every one of the 10 retries was refused as well (0004/0006: 7 attempts/3 draws vs the parent's 5/3; 0007: 10/8 and 5/3 vs 9/8 and 9/8), so the rung profile is byte-identical to the parent's — a refusal here is a repeated verdict on a (question, size) pair, not a per-request event. The +0.0045 is churn (0013 split, 0047 s1, 0028 s1/0007 s0 out, 0045 s0 in). Cost: 10 extra refused requests, no tokens.\n\n**Audit.** Source hashes identical before/during/after (`agent.py` `c7dbd31b…`), HEAD never moved, `source_tree()` reproduces `113ff5bb` after the run, diff is one file (+28/−10), notes attached under `refs/notes/evolution`. The note records the negative measurements and the next step: if a further run shows retries always refused, `REFUSALS_PER_RUNG` is a pure cost and should return to 1.",
+    "ttft_ms": 1385,
+    "ttft_stream_ms": 292,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 2431749,
+    "uuid": "eda6b81e-35f9-404d-97f5-5db612e68b31"
+  },
+  "session_file": "projects/-workspace-harness/c6ac7cbb-a006-47aa-a03c-acb8a42244fc.jsonl",
+  "usage": {
+    "input_tokens": 100822,
+    "output_tokens": 251195,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 22515584
+  },
+  "cost_usd": 18.041777,
+  "num_turns": 136,
+  "duration_api_ms": 1315071,
+  "error": null,
+  "commit": "9df6a8e5498f959a8479c6af4ddda3552d47d116",
+  "tree": "113ff5bbc9eb3cb942f03b55f823d6640642be1c"
+}

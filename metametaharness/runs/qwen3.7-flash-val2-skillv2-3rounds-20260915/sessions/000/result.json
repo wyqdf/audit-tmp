@@ -1,0 +1,76 @@
+{
+  "session_id": "8b92442b-a082-4696-a158-d8d1c4df4bc2",
+  "commits_before": [
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 133.66630268096924,
+  "benchmark_seconds": 378.0505974292755,
+  "wall_seconds": 511.71690011024475,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 125829,
+    "num_turns": 26,
+    "stop_reason": "end_turn",
+    "session_id": "8b92442b-a082-4696-a158-d8d1c4df4bc2",
+    "total_cost_usd": 1.0361520000000002,
+    "usage": {
+      "input_tokens": 33300,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 587904,
+      "output_tokens": 23028,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 33300,
+        "outputTokens": 23028,
+        "cacheReadInputTokens": 587904,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 1.0361520000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Stage 0 is complete. Summary of the handoff:\n\n**Stage 0 — baseline evaluated and noted (no new commit)**\n\n| Item | Value |\n|---|---|\n| Evaluated commit | `804b98a` (HEAD → main), tree `9f49dd72…` |\n| Command | `/opt/venv/bin/python -u /workspace/benchmark/run.py evaluate --run-dir /workspace/runs --candidate /workspace/harness` — one invocation, launched cleanly, ran to completion |\n| Result | `{\"USPTO\": 0.1833, \"Symptom2Disease\": 0.85, \"LawBench\": 0.28, \"average\": 0.4378, \"status\": \"partial\"}` |\n| Evidence | `/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/` — `manifest.json` (`parent: null`, baseline), `results/summary.json`, 260 sample traces |\n| Note | attached to `804b98a` under `refs/notes/evolution` (note object `dd7e593`) |\n| Source state | unchanged before/during/after: `git status` clean, HEAD and tree hash identical |\n\nThe run is complete and `rankable: true`; the `partial` status comes from exactly one non-retryable provider-side `content_filter` on LawBench (example 22, sample 1), which the runner deliberately keeps in the denominator as a wrong answer.\n\n**Audit findings recorded in the note** (evidence for the next evolution step):\n- USPTO (11/60) is where the mean is lost; Symptom2Disease (85/100) is near saturation for this mechanism.\n- 11/60 USPTO samples make **no tool call at all** and answer from parametric knowledge (`memory_context_chars: 0`).\n- The retriever's `MAX_CHARS = 30000` cap is binding for every task (memories are 85 KB / 219 KB / 1.22 MB), and models compensate by `glob`/`read_file`-ing `/harness/memory` after retrieval.\n- LawBench failures are largely format leakage — predictions reproduce question-side markup (`[罪名]单位行贿罪<eoa>`) and collapse multi-label targets to one label.\n\nI did not create a candidate node: the round-0 directive scopes this invocation to Stage 0 and explicitly forbids creating a new commit, so the candidate branch/commit, its evaluation, and its note (Skill Stages 1–2) are left to the continuation round, with `804b98a` as the parent. Nothing outside `/workspace/harness` was modified.",
+    "ttft_ms": 1416,
+    "ttft_stream_ms": 299,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 511176,
+    "uuid": "9fbc3d66-6e26-49e0-bcd0-04279895c655"
+  },
+  "session_file": "projects/-workspace-harness/8b92442b-a082-4696-a158-d8d1c4df4bc2.jsonl",
+  "usage": {
+    "input_tokens": 33300,
+    "output_tokens": 23028,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 587904
+  },
+  "cost_usd": 1.0361520000000002,
+  "num_turns": 26,
+  "duration_api_ms": 125829,
+  "error": null,
+  "commit": "804b98a9a8fe824516fa1e2c16a1b84146f60389",
+  "tree": "9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7"
+}

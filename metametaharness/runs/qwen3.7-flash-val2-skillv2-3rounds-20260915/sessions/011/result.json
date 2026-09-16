@@ -1,0 +1,86 @@
+{
+  "session_id": "ddc5ea65-a085-4256-887c-57bcec14b502",
+  "commits_before": [
+    "679e7deb2b7f373f4c802aa220f341db1eb854ca",
+    "9df6a8e5498f959a8479c6af4ddda3552d47d116",
+    "5998feee79802d300e08fc49349841202d0904b9",
+    "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 617.777975320816,
+  "benchmark_seconds": 1046.0379800796509,
+  "wall_seconds": 1663.815955400467,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 601807,
+    "num_turns": 88,
+    "stop_reason": "end_turn",
+    "session_id": "ddc5ea65-a085-4256-887c-57bcec14b502",
+    "total_cost_usd": 7.568344999999997,
+    "usage": {
+      "input_tokens": 93651,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 8218880,
+      "output_tokens": 119626,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 93651,
+        "outputTokens": 119626,
+        "cacheReadInputTokens": 8218880,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.568344999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "One evolution iteration complete.\n\n## What I found\n\nAnalyzing the tip node (`679e7de`, avg 0.6044) and its run's traces, its own mechanism was the problem: the panel was bounded by two numbers that are not resources.\n\n- **A ceiling of 14 draws** sat above the depth where draws pay — the tip's own measurement: 32 samples drew ≥2 more than the previous node's eight and *none* changed correctness, at a certain 123 calls / 6.7M input tokens.\n- **A guard that reserves only the slowest draw so far** — a lower bound, not a bound. A draw can't outlive the client's 420s timeout, so a panel starting a draw with its 540s share spent can end at 960s, past the 900s wall that SIGKILLs the solver process. I verified six USPTO samples ran past 540s; the slowest (`USPTO/0012/sample-0`) ended at 867s of 900s — a panel killed there returns *no* answer, whatever it collected.\n\nI also re-derived and confirmed the other levers are dead on this run (the vote beats draw 1 by only +5 samples of 260; grounding flips +6 with 0 breaks; ladder profile byte-identical to the parent).\n\n## The change (`solver/agent.py` only, commit `f4201af`, tree `0949fda6`)\n\n- The panel spends the **sample's own wall**; `PANEL_BUDGET`'s fixed 0.6 share is gone.\n- Each draw is **paid for before it is started**: the reserve is what a draw can cost at worst (client timeout) plus `PANEL_SETTLE = 60` for the room outside the panel — so the last draw always returns inside the wall.\n- `_out_of_budget` drops the observed-cost term (subsumed by the bound).\n- `PANEL_CEILING` 14 → 8: the ceiling only guards the call limit, at the depth the vote was measured to be worth.\n\n## Result\n\n`{\"USPTO\": 0.3167, \"Symptom2Disease\": 0.9, \"LawBench\": 0.57, \"average\": 0.5956, \"status\": \"ok\"}` — 260/260 answered, one attempt, rankable.\n\n- **Mechanism achieved**: slowest sample 867s → 796s; samples past 540s 6 → 3; the 867s sample now stops at 643s/3 draws; LawBench's thirteen 14-draw panels are gone; input tokens 37.3M → 29.9M (LawBench 30.5M → 23.5M).\n- **Not achieved on the score**: 0.6044 → 0.5956, from exactly two samples flipping in→out. One of them sits on a panel the ceiling cut from 10 draws to 8, so the ceiling can't be excluded there; the other drew *more* than its parent panel. Against this lineage's measured churn (USPTO has swung 0.1167–0.3333 on the same 30 examples), the drop is not evidence either way — the notes state this rather than smoothing it.\n- One caveat I flagged in the notes: the parent run was clean while this run had 170 provider re-issued requests (0 in the parent), which alone explains Symptom2Disease's +68 calls and its lower panel unanimity.\n\nThe notes also record that the code comment's \"23s reserve for a 350s draw\" is a reconstruction — the guard's own inequality bounds it at ~55–150s for a draw of ≥320s — since per-draw timing isn't kept in the traces. Committing the evaluated tree (rather than editing after the run) was the reason I left the prose as-is and corrected the record in the notes.",
+    "ttft_ms": 986,
+    "ttft_stream_ms": 361,
+    "time_to_request_ms": 56,
+    "type": "result",
+    "duration_ms": 1663235,
+    "uuid": "8e234a8b-de01-47d2-a638-96afbdb12d75"
+  },
+  "session_file": "projects/-workspace-harness/ddc5ea65-a085-4256-887c-57bcec14b502.jsonl",
+  "usage": {
+    "input_tokens": 93651,
+    "output_tokens": 119626,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 8218880
+  },
+  "cost_usd": 7.568344999999997,
+  "num_turns": 88,
+  "duration_api_ms": 601807,
+  "error": null,
+  "commit": "f4201af7fefc4916e2cc12cecbe676c9b483d967",
+  "tree": "0949fda642dffecf29a9b229831f6d127a8b9f46"
+}

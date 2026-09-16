@@ -1,0 +1,83 @@
+{
+  "session_id": "7a3e6cb5-5e60-483e-aa64-f8c53959a450",
+  "commits_before": [
+    "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 389.9740421772003,
+  "benchmark_seconds": 1295.6701393127441,
+  "wall_seconds": 1685.6441814899445,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 342879,
+    "num_turns": 71,
+    "stop_reason": "end_turn",
+    "session_id": "7a3e6cb5-5e60-483e-aa64-f8c53959a450",
+    "total_cost_usd": 4.343993,
+    "usage": {
+      "input_tokens": 65423,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 4646656,
+      "output_tokens": 67742,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 65423,
+        "outputTokens": 67742,
+        "cacheReadInputTokens": 4646656,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 4.343993,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Node complete. Summary of this iteration (Round 8):\n\n**Stage 1 — Analysis.** The lineage is linear: baseline `804b98a` → `adaed03` (answer-space grounding) → `32b0dc3` (ending canonicalization) → `3a72aec` (abbreviation restore) → `d4199a2` (panel vote) → `b51ec0b` (panel budget) → `40218c3` (whole-memory retrieval) → `7b3e5c8` (prompt-borne delivery, best average 0.5756). Parent selected: **`7b3e5c8`**.\n\nThe parent's own finding was that its demonstration set now rides inside the question — 105,318 characters on LawBench — and the run showed the cost: the provider's input filter refused 7 of 100 LawBench samples outright (`DataInspectionFailed`, 0 messages recorded), the runner treats that category as non-retryable, and the harness raised it out of the solver on the draw's first call. Those samples scored zero; LawBench fell 0.57 → 0.51 and the run's status fell to `partial` (completion 0.973, so `rankable` was still true). The same four questions had answered 8/8 correctly two nodes earlier, when their prompts were 1–2K characters — so the refused material was the delivery, not the question.\n\n**Stage 2 — Modification.** The demonstration set is now rendered along a ladder (`DEMO_LADDER = (1.0, 0.25, 0.01)`, each rung a prefix of the one before, same closest-first order), and a refused request is repeated at the next rung instead of losing the sample. The refusal patterns are read from the runner's own `error_patterns.content_filter`, so no provider string is written into the harness; non-refusal exceptions behave exactly as before; rung 0 is byte-identical to the parent's prompt (verified offline before the run, and in the traces after it).\n\n**Evaluation (one run, mandated command):**\n\n| | USPTO | Symptom2Disease | LawBench | average | status |\n|---|---|---|---|---|---|\n| parent `7b3e5c8` | 0.3167 | 0.90 | 0.51 | 0.5756 | partial |\n| **candidate `5998fee`** | 0.30 | 0.90 | **0.58** | **0.5933** | **ok** |\n\n260/260 samples scored, completion 1.0, `rankable: true` — the lineage's highest average. The ladder fired on exactly the questions the provider refuses: 160/160 USPTO+Symptom2Disease and 94/100 LawBench samples ran at rung 0 (parent's prompt byte-for-byte), 2 LawBench samples at rung 1 and 4 at rung 2 (examples 0004/0006 were refused at rung 1 too, so a one-step fallback would have lost them). All 7 samples lost in the parent are scored and correct; LawBench's move is entirely that recovery (52/94 = 0.553 on the rung-0 samples against the parent's 51/93 = 0.548). USPTO's −0.0167 is churn on a byte-identical prompt (one sample in, two out; this task has ranged 0.1167–0.3167 across eight runs).\n\nCommitted as `5998fee` on `refusal-demo-ladder` (tree `1542f6fc…` = the evaluated tree), with the evolution note attached under `refs/notes/evolution`.",
+    "ttft_ms": 710,
+    "ttft_stream_ms": 264,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 1685102,
+    "uuid": "e893781e-ed68-4e9d-9e29-0aaf694c2dea"
+  },
+  "session_file": "projects/-workspace-harness/7a3e6cb5-5e60-483e-aa64-f8c53959a450.jsonl",
+  "usage": {
+    "input_tokens": 65423,
+    "output_tokens": 67742,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 4646656
+  },
+  "cost_usd": 4.343993,
+  "num_turns": 71,
+  "duration_api_ms": 342879,
+  "error": null,
+  "commit": "5998feee79802d300e08fc49349841202d0904b9",
+  "tree": "1542f6fce4d753ef1808c30874ba4d761cae6f69"
+}

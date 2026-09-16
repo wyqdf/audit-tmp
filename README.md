@@ -9,7 +9,9 @@ metametaharness/                    本代（MetaMetaHarness）：proposer + Ski
   outerloop/  benchmark/  adapters/  .claude/skills/meta-meta-harness/
   config.yaml  config.deepseek.yaml  DESIGN.md  README.md
   metametaharness.bundle            该仓库 git 历史
-  runs/qwen3.7-flash-val2-skillv3-15rounds-20260916/
+  runs/qwen3.7-flash-val2-skillv3-15rounds-20260916/    Skill v3，15 轮
+  runs/qwen3.7-flash-val2-skillv2-3rounds-20260915/     Skill v2（旧），14 个候选
+  runs/*.log                        上述两次运行的 stdout 日志
 
 metaharness/                        上一代（MetaHarness）
   outerloop/  benchmark/  adapters/  .claude/  .agents/
@@ -21,6 +23,8 @@ harness/
   metametaharness/
     qwen3.7-flash-val2-skillv3-15rounds-20260916.bundle   全部分支 + refs/notes/evolution
     HEAD/                                                末轮源码快照
+    qwen3.7-flash-val2-skillv2-3rounds-20260915.bundle   全部分支 + refs/notes/evolution
+    qwen3.7-flash-val2-skillv2-3rounds-20260915-src/     末轮源码快照
   metaharness/
     qwen3.7-flash-val2-15rounds-copy-20260913.bundle      仓库 ref
     qwen3.7-flash-val2-15rounds-copy-20260913/            baseline 与各轮候选源码目录
@@ -40,6 +44,17 @@ harness/
 `runs/<run>/` 内容：`sessions/000…014`（15 个 proposer 会话：`conversation.jsonl`、`result.json`、部分含 `tool-results/`）；16 个 `<tree_hash>/`（`manifest.json`、`results/summary.json`、`results/samples.jsonl` 共 260 条逐样本判定、`<task>/conversations/*/sample-*.json` 逐题完整对话、`<task>/memory.json`）。
 
 节点对照：基线 `f0b6817a`/`9f49dd72` 0.4311；N1 `913ebd45`/`57747d4b` 0.5244；N2 `02dcfc46`/`913109e9` 0.5211；N3 `d120469d`/`354e5e0a` 0.5611；N4 `28c00d83`/`2e2d9226` 0.5389；N5 `52669ee0`/`7074979c` 0.5122；N6 `72d9d015`/`3d5eaf15` 0.5556；N7 `3b572ccb`/`bf9c16fd` 0.5544；N8 `856cc92d`/`c1139da1` 0.5422；N9 `0e60b869`/`694c163a` 0.5500；N10 `be9427ba`/`64518426` 0.5656；N11 `ce5db05e`/`e4b5fa6f` 0.5533；N12 `55da8c0d`/`2cfc77c6` 0.5722；N13 `f3bef4a3`/`bf9c69ef` 0.5756；N14 `b56926c7`/`1f0bb7a0` 0.5311；N15 `0549be94`/`f2f87980` 0.5478。
+
+## metametaharness 运行：`qwen3.7-flash-val2-skillv2-3rounds-20260915`（旧 Skill）
+
+| 项 | 值 |
+|---|---|
+| 会话 / 已评测候选 | 14 / 14 |
+| 平均分 | 基线 `9f49dd72`（commit `804b98a9`）0.4378 → 最高 `c757e2f7`（commit `679e7deb`）0.6044 |
+| 记录位置 | 每个候选一份 git note（`refs/notes/evolution`），随 bundle 保存 |
+| 其他 | `killed-r5-005-1916`、`killed-r5-005-1943b` 为中途被杀的候选目录；根目录 `*.log` 为本次运行的 stdout |
+
+候选平均分（按 tree → commit → 均值）：`9f49dd72`/`804b98a9` 0.4378；`53597ebc`/`adaed03b` 0.4522；`0d30915e`/`32b0dc34` 0.4967；`13b8664b`/`3a72aeca` 0.5156；`fb204702`/`d4199a22` 0.5467；`6baad5e0`/`40218c33` 0.5700；`fcc91464`/`b51ec0b0` 0.5722；`a5092674`/`7b3e5c81` 0.5756；`1542f6fc`/`5998feee` 0.5933；`0949fda6`/`f4201af7` 0.5956；`eda1e173`/`5e63b665` 0.5956；`87d68bc4`/`f45f2755` 0.5967；`113ff5bb`/`9df6a8e5` 0.5978；`c757e2f7`/`679e7deb` 0.6044。
 
 ## metaharness 运行：`qwen3.7-flash-val2-15rounds-copy-20260913`
 
@@ -76,5 +91,5 @@ for r in map(json.loads, open('metaharness/runs/qwen3.7-flash-val2-15rounds-copy
 
 - 未包含两代的 `config.local.yaml`（含真实 API 密钥，均已被 `.gitignore` 排除）。全部上传内容已扫描 `sk-`/`ghp_`/`Bearer` 特征，未发现密钥。
 - 两代代码目录上传的是各自工作区的当前状态，与其仓库最后一次提交的差异可用各自的 bundle 对比。
-- 只包含上述两次实验，未包含 `runs/` 下的其他历史 run。
+- 只包含上述三次实验，未包含 `runs/` 下的其他历史 run。
 - metaharness 的候选源码位于其 `harnesses/<run>/`（每个候选一个目录，非 git 提交），已归档在 `harness/metaharness/<run>/`；metametaharness 的候选是 git 提交，见 bundle。

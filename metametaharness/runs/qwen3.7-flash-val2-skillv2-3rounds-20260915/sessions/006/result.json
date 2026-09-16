@@ -1,0 +1,81 @@
+{
+  "session_id": "72d95e2f-0b10-414f-b33b-3e1387120eb8",
+  "commits_before": [
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 1607.5121586322784,
+  "benchmark_seconds": 1503.948724746704,
+  "wall_seconds": 3111.4608833789825,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 643116,
+    "num_turns": 99,
+    "stop_reason": "end_turn",
+    "session_id": "72d95e2f-0b10-414f-b33b-3e1387120eb8",
+    "total_cost_usd": 8.223654000000002,
+    "usage": {
+      "input_tokens": 70190,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9595008,
+      "output_tokens": 123008,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 70190,
+        "outputTokens": 123008,
+        "cacheReadInputTokens": 9595008,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 8.223654000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 6 complete. One candidate was created, evaluated once, and recorded.\n\n## What was analyzed (Stage 1)\n\n**Parent selected:** `b51ec0b` (panel-budget-draws, average 0.5722) — the deepest node.\n\nI replayed the eight pooled draws per example from the four pre-panel runs and found the panel is already sitting on top of what its draws contain: mode 0.3000 vs oracle 0.3333 (USPTO), 0.6000 vs 0.6667 (LawBench), 0.8400 vs 0.8800 (Symptom2Disease). So no aggregation rule can add more than +0.03/+0.07/+0.04 — the miss is in the draws. The retrieval path (the lineage's own recommended lever) was the untouched one: a hash of the question picked a random third of LawBench's memory (32–72 of 200 examples), while 48% of the parent's USPTO calls were the agent re-reading a memory file whose answer content the tool had already returned.\n\n## Modification (Stage 2)\n\n`solver/tools/retrieval.py` now hands over the whole demonstration set, ordered by closeness to the question, with the only remaining cut sized from the model's own context window (`0.25 × context_window`); config is threaded through `tools/__init__.py`/`agent.py`; the skill no longer tells the agent to go search the memory. Panel, grounding and vote untouched.\n\n## Result — expected effect not achieved\n\n`{\"USPTO\": 0.25, \"Symptom2Disease\": 0.89, \"LawBench\": 0.57, \"average\": 0.57, \"status\": \"ok\"}` against the parent's 0.5722.\n\nThe mechanism ran as designed (USPTO file-wandering gone: read_file 365→34, glob 124→2; context 265,372→37,876 chars; calls 1306→705; losses 3→0), but the average is flat: S2D +0.04 and LawBench +0.02 against USPTO −0.067.\n\nThe decisive finding, recorded in the note: **on LawBench the change never reached the model** — 99/100 samples had the 105,318-character retrieval evicted by the agent's own middleware (20,000-token tool-result limit) into `/large_tool_results/`, leaving a ten-line preview and 71 `read_file` calls. A lottery split of the 50 val questions confirms the consequence: the 15 questions whose gold the full memory newly demonstrates scored 16/30 before and 16/30 after, refuting the coverage reading of the earlier correlation.\n\nCommitted as `40218c3` on branch `retrieval-whole-memory` (tree `6baad5e0`, matching the run dir), with the evolution note attached under `refs/notes/evolution`; working tree clean and source byte-identical before and after the run.",
+    "ttft_ms": 1079,
+    "ttft_stream_ms": 303,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 3110921,
+    "uuid": "d20c71a0-af3e-4ae7-b061-4c1ca5b4a561"
+  },
+  "session_file": "projects/-workspace-harness/72d95e2f-0b10-414f-b33b-3e1387120eb8.jsonl",
+  "usage": {
+    "input_tokens": 70190,
+    "output_tokens": 123008,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9595008
+  },
+  "cost_usd": 8.223654000000002,
+  "num_turns": 99,
+  "duration_api_ms": 643116,
+  "error": null,
+  "commit": "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+  "tree": "6baad5e09b900c155f86e9d733a3bbb7cf276d9b"
+}

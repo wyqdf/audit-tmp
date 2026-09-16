@@ -1,0 +1,85 @@
+{
+  "session_id": "f06290d2-bbc6-409e-ae84-a6d40e91372c",
+  "commits_before": [
+    "9df6a8e5498f959a8479c6af4ddda3552d47d116",
+    "5998feee79802d300e08fc49349841202d0904b9",
+    "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 1128.9249670505524,
+  "benchmark_seconds": 1197.841320991516,
+  "wall_seconds": 2326.7662880420685,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 870211,
+    "num_turns": 108,
+    "stop_reason": "end_turn",
+    "session_id": "f06290d2-bbc6-409e-ae84-a6d40e91372c",
+    "total_cost_usd": 11.934023000000002,
+    "usage": {
+      "input_tokens": 102220,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14272896,
+      "output_tokens": 171459,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 102220,
+        "outputTokens": 171459,
+        "cacheReadInputTokens": 14272896,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 11.934023000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "One evolution iteration is complete. Summary of the round:\n\n## Stage 1 — Analysis\nRead the full lineage (10 nodes, one line: baseline 0.4378 → tip 0.5978) plus all notes and the tip run's 260 traces, then priced every remaining lever **offline on the recorded replies** rather than guessing:\n\n| Lever | Measured verdict |\n|---|---|\n| Vote aggregation (component-wise, tie-breaks, medoid, question-support, plausibility filter) | all ≤ plurality (0.1732–0.2128 vs 0.2130 USPTO) |\n| Grounding variants (wider snap, fragment/subsequence completion, reasoning-union) | 0 gains, or −2 |\n| Delivery size / channel / ordering | inert or task-split (IDF helps LawBench, hurts Symptom2Disease) |\n| **Panel depth** | vote still climbing at the 8-draw cut (0.1775@k=3 → 0.2130@k=8, modal limit 0.233); cap bound 27/60 USPTO panels with ~1/3 of the budget unspent |\n| **First dead draw** | `if not results: raise` kills the sample before `PANEL_FAILURES` can apply |\n\n## Stage 2 — Evolution\nParent: tip node `9df6a8e`. Branch `panel-resource-bound`; one mechanism in `solver/agent.py`: **the panel is bounded by the sample's own resources, not a fixed count** — `PANEL_SIZE = 8` → `PANEL_CEILING = 14` (a call-limit ceiling; unanimity stop and the time-budget check do the real stopping) and the failure tolerance is charged from the first draw (`_is_refusal` split out; last-rung refusal and empty-panel raise semantics preserved).\n\n**Result: `{\"USPTO\": 0.3333, \"Symptom2Disease\": 0.9, \"LawBench\": 0.58, \"average\": 0.6044, \"status\": \"ok\"}`** — all 260 samples scored, lineage-high, +0.0066 over the parent.\n\n**Honest finding, measured rather than hidden:** the mechanism ran exactly as designed (USPTO mean draws 6.02→6.60 with panels up to 14; LawBench 3.50→4.43), but it changed no answer — of the 32 samples that drew ≥2 more times, **none** changed correctness; the 9 whose answer changed were wrong before and after; the 6 flips were churn on panels that drew the same or fewer times. So the +0.0066 is run-to-run variation, at a certain cost (calls 1060→1183, input tokens 30.6M→37.3M, slowest sample 678→867s).\n\nCommitted as `679e7de` (tree `c757e2f7` = the evaluated tree, source sha256 unchanged before/after), note attached under `refs/notes/evolution`.",
+    "ttft_ms": 948,
+    "ttft_stream_ms": 223,
+    "time_to_request_ms": 53,
+    "type": "result",
+    "duration_ms": 2326228,
+    "uuid": "f76eda4d-bf03-4acf-85dc-257c7f7fafe5"
+  },
+  "session_file": "projects/-workspace-harness/f06290d2-bbc6-409e-ae84-a6d40e91372c.jsonl",
+  "usage": {
+    "input_tokens": 102220,
+    "output_tokens": 171459,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 14272896
+  },
+  "cost_usd": 11.934023000000002,
+  "num_turns": 108,
+  "duration_api_ms": 870211,
+  "error": null,
+  "commit": "679e7deb2b7f373f4c802aa220f341db1eb854ca",
+  "tree": "c757e2f706558cc818eaceda169668d260206050"
+}

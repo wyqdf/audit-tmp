@@ -1,0 +1,87 @@
+{
+  "session_id": "a880adea-0bb6-4e11-ab1c-5ca9ba28cf0d",
+  "commits_before": [
+    "f4201af7fefc4916e2cc12cecbe676c9b483d967",
+    "679e7deb2b7f373f4c802aa220f341db1eb854ca",
+    "9df6a8e5498f959a8479c6af4ddda3552d47d116",
+    "5998feee79802d300e08fc49349841202d0904b9",
+    "7b3e5c81d135015fd81fc12f608f519f0adcf3c5",
+    "40218c33a8910c70bb7c560c63de1ad18b2b4b0b",
+    "b51ec0b034067d9a3955d14242997402126d5536",
+    "d4199a227940f028381cb15fb128a77917d09419",
+    "3a72aecacf0ef80698d83560b86b77a9472ba60a",
+    "32b0dc348c8984305d240f4843a2736750ee83ef",
+    "adaed03bc8f70d436059c1a0ace17c6955b43099",
+    "804b98a9a8fe824516fa1e2c16a1b84146f60389"
+  ],
+  "completed": true,
+  "activity_seconds": 904.0207877159119,
+  "benchmark_seconds": 1279.6539618968964,
+  "wall_seconds": 2183.6747496128082,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 874531,
+    "num_turns": 96,
+    "stop_reason": "end_turn",
+    "session_id": "a880adea-0bb6-4e11-ab1c-5ca9ba28cf0d",
+    "total_cost_usd": 10.797669000000003,
+    "usage": {
+      "input_tokens": 92201,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 11904128,
+      "output_tokens": 175384,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 92201,
+        "outputTokens": 175384,
+        "cacheReadInputTokens": 11904128,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 10.797669000000003,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "One evolution iteration is complete. Summary of the round:\n\n**Stage 1 — Analysis.** Read the full graph (13 nodes, baseline `804b98a` → tip `f4201af`), the notes of every node, and the tip run's 260 traces. The lineage's accuracy levers are all measured at local optima: the vote sits at the oracle of its own draws (pooled replay USPTO 0.30 vs 0.3333, LawBench 0.60 vs 0.6667), deeper draws changed no answer, the delivery is inert (78–89% identical predictions), and grounding is at a local optimum (I replayed `ground_reply` at `max_edits` 1/2/3/4 on this run's draws: 13/13/13/11 USPTO, 56/56/56/56 LawBench). The one unpriced resource the tip note named is the sample's calls (4.6 of 32 used on LawBench, 6.05 on USPTO), and the measured deficit is one-directional: 20 of 43 wrong LawBench samples named *fewer* charges than the reference, with 22 samples' missing charges being strings the frozen memory already demonstrates.\n\n**Stage 2 — Evolution.** Branch `answer-space-review` off the tip. Mechanism: a panel that agreed with itself is asked the question once more with the memory's demonstrated answers and its own answer in the prompt; its reading replaces the panel's only through the new `extends_answer` (every answer the panel gave survives, everything added is a demonstrated string, the review panel agreed with itself), under the same ceiling/wall/unanimity/failure rules. Files: `solver/agent.py`, `solver/answer_space.py`.\n\n**Result — the expected effect was not achieved, honestly reported.** `{\"USPTO\": 0.3167, \"Symptom2Disease\": 0.9, \"LawBench\": 0.57, \"average\": 0.5956, \"status\": \"ok\"}` — every per-task count identical to the parent. 89 of 100 LawBench samples ran a review (0 on USPTO/S2D, whose answer spaces join no several answers into one); the review's reading repeated the panel's answer in 87 of them, so no answer was changed by an accepted extension. The run does settle the recognition hypothesis negatively: putting the memory's 193 demonstrated answers in front of the model does not make it add one it did not already write. Cost was real: calls 1210 → 1935, input tokens 29.9M → 49.5M, and only 28 of 89 review panels hit their unanimity stop (an exact-string vote is the wrong stop for a re-listing question).\n\n**Audit.** `source_tree()` reproduces the manifest tree `eda1e173` after the run; memories byte-identical to the parent's; commit `5e63b66` (tree `eda1e173…`) carries the template message and the `refs/notes/evolution` note; working tree clean; only the two intended files touched.",
+    "ttft_ms": 786,
+    "ttft_stream_ms": 223,
+    "time_to_request_ms": 53,
+    "type": "result",
+    "duration_ms": 2183076,
+    "uuid": "9fdb03f0-7ab0-4ed2-8729-c88593d75e8a"
+  },
+  "session_file": "projects/-workspace-harness/a880adea-0bb6-4e11-ab1c-5ca9ba28cf0d.jsonl",
+  "usage": {
+    "input_tokens": 92201,
+    "output_tokens": 175384,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 11904128
+  },
+  "cost_usd": 10.797669000000003,
+  "num_turns": 96,
+  "duration_api_ms": 874531,
+  "error": null,
+  "commit": "5e63b6658af97015b0ac41cbe49b96515bb2587a",
+  "tree": "eda1e17347c81a322c52fb65b4b07eb83330a1c3"
+}
