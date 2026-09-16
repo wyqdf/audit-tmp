@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 384.6894241422415,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 282162,
+    "num_turns": 80,
+    "stop_reason": "end_turn",
+    "session_id": "1405f5c7-0545-4e15-9398-d7834d1fb9e5",
+    "total_cost_usd": 4.6562610000000015,
+    "usage": {
+      "input_tokens": 87447,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 5741952,
+      "output_tokens": 53922,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 87447,
+        "outputTokens": 53922,
+        "cacheReadInputTokens": 5741952,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 4.6562610000000015,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 5 complete.\n\n**Step 0 (backfill):** wrote `reports/iteration_4_precedent_audit.md` — the only evaluated iteration missing a post-eval report.\n\n**Analysis.** Iteration 4 regressed (0.563 vs 0.584 at iteration 3), and per-sample diffs show why: the check fired in 100/100 samples yet 4 samples broke for every 1 fixed, and `ex43 s1` oscillated between two edge-related units 16 times until the 32-call budget destroyed the sample. The design note's own first falsifier fired — recall fell (0.653 vs 0.680). Two off-line measurements over the wrong samples set the direction: of 45 wrong samples, 30 never name the missing unit at all, and the missing unit is reachable through this question's reference support in 1 of 22 cases — so re-opening and evidence-ranking (iterations 3 and 4) had nothing left to win. The traces show the decision itself is comparative: `ex0009` treats two charges as rival names for one act, and `ex0014` cites the profile's own shape line to justify answering with an element of a compound unit.\n\n**Candidate `act_ledger_audit`** (copy of `precedent_audit` + targeted changes):\n- The solver builds a **ledger** — one entry per separate act/component the facts establish, each with the unit it calls for and the fact that establishes it, ruled-out entries marked `-` — before choosing; different acts are additive, same act at different generality is one entry.\n- `check_answer(draft, ledger, considered)` now audits **coverage** (every entry with no unit in the draft comes back with the reference case that answers it) and quotes the closest reference case with a longer answer when an entry is open; the old `considered` audit is kept as secondary.\n- The corpus part distribution is reframed as a rendering fact, not a target (the model had cited it verbatim as licence to shorten); the question-type width push is disabled when a ledger is present.\n- The check **cannot oscillate**: a unit relation is reported once per question, and repeat calls say the tool cannot settle it; for single-part tasks the coverage rule inverts so entries are alternatives, not additions.\n\nVerified by compiling, building memory end-to-end for all three task shapes, assembling the solver prompt, invoking the tool through its wrapper, and exercising the coverage, ruled-out, single-slot and oscillation paths.\n\nCANDIDATES: act_ledger_audit",
+    "ttft_ms": 1210,
+    "ttft_stream_ms": 202,
+    "time_to_request_ms": 41,
+    "type": "result",
+    "duration_ms": 384118,
+    "uuid": "24b8a20f-cddf-4967-85eb-3fd19511e48d"
+  },
+  "usage": {
+    "input_tokens": 87447,
+    "output_tokens": 53922,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 5741952
+  },
+  "cost_usd": 4.6562610000000015,
+  "num_turns": 80,
+  "duration_api_ms": 282162
+}

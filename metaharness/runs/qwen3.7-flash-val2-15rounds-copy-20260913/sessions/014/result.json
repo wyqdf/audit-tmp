@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 903.216498571448,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 613737,
+    "num_turns": 125,
+    "stop_reason": "end_turn",
+    "session_id": "ae518826-821a-45f9-a832-ae2ee439c38c",
+    "total_cost_usd": 10.585723000000002,
+    "usage": {
+      "input_tokens": 108430,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14084096,
+      "output_tokens": 120061,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 108430,
+        "outputTokens": 120061,
+        "cacheReadInputTokens": 14084096,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 10.585723000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 14 is complete.\n\n**Step 0** — wrote the missing post-eval report for iteration 13 (`reports/iteration_13_fact_ruled_set.md`), grounded in a replay of its own recorded run rather than its design claims: the \"candidate not carried\" channel wrote 120 lines, 8 named a unit the target contains (7%), 2 were carried; on 25 of the 43 wrong samples the check named nothing and the solver never mentioned the missing unit; and the one-unit corpus moved 0.910 → 0.880 with a byte-identical prompt and check — the cleanest noise measurement in the experiment.\n\n**Step 1–2** — analysis and implementation. Measured over all recorded traces (3,271 replayed `check_answer` calls, 3,630 final turns, all val samples):\n- Every recall-side channel is dead: neighbor-answer unions (8/61 recovered, 240 false proposals), co-occurrence supersets (4/61, breaks 19 correct samples), similarity substitution (0 fixed, 31 broken), family-recurring components (0/64), elision proposals (25% precision). The check's calibration — proposals as remarks, never defects — is the right one.\n- 33 of the 61 missing units on the set corpus are absent from the training vocabulary entirely, and only 3 appear verbatim in the question, so the loss is not memory-side.\n- Two notes the check stated as fact are false: a listed draft unit was told a related listed unit \"says it more specifically\" (6 right, 8 wrong-in-correct-drafts over recorded firings) and that its own longer form \"is never used by the references\".\n\n`harnesses/sibling_units/` = iteration 12's rendering (byte-identical prompts, guide and retrieval, verified over sampled inputs) + its two verified repairs (unreadable-final-answer repair; replacement rendering of a written-out offer) + the two false claims removed, with the candidate side learning that a non-listed candidate attaching text to a carried unit is already answered. New functions: `_elements`, `_attached_extension`, `_spells_same_unit`, `_answers_candidate`; changed: `_carry_text`, `_in_draft`, `check`. Replay separation: 0 exceptions, 317 of 3,271 check outputs change (249 note wording, 47 offer rendering, 21 both); memory derivation untouched; `prepare_memory.py` dry-run and `check` smoke-tested on all three memory shapes.\n\n**Step 3** — `pending_eval.json` written with iteration 14 and the one candidate. No files outside `harnesses/sibling_units/`, `reports/`, and `pending_eval.json` were touched.\n\nCANDIDATES: sibling_units",
+    "ttft_ms": 1295,
+    "ttft_stream_ms": 247,
+    "time_to_request_ms": 47,
+    "type": "result",
+    "duration_ms": 902629,
+    "uuid": "c8f7b05e-9ee4-4e39-b1d2-3ac700b65d18"
+  },
+  "usage": {
+    "input_tokens": 108430,
+    "output_tokens": 120061,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 14084096
+  },
+  "cost_usd": 10.585723000000002,
+  "num_turns": 125,
+  "duration_api_ms": 613737
+}

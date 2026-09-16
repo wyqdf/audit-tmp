@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 649.7423204323277,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 540466,
+    "num_turns": 130,
+    "stop_reason": "end_turn",
+    "session_id": "c50c3e17-a21f-4f20-8432-cfafa9bf0679",
+    "total_cost_usd": 10.222931999999997,
+    "usage": {
+      "input_tokens": 102665,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 14305664,
+      "output_tokens": 102271,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 102665,
+        "outputTokens": 102271,
+        "cacheReadInputTokens": 14305664,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 10.222931999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 6 complete.\n\n**Analysis that drove the candidate.** Iterations 4–5 both regressed (0.563, 0.559 vs. iteration 3's 0.584), and the traces show why: extending the pre-submit audit cost score rather than gaining it. The it5 act-ledger made the model over-decompose (`USPTO ex16`: it3 kept the ring bromide and was right; it5 disconnected both bromines and was wrong), and its coverage-only check *certified* that wrong draft. Meanwhile the re-open channel repaired 0 samples across three measured iterations, and the single-answer task lost 3 samples exactly when the \"enumerate candidates you could support\" wording arrived (0.92 → 0.89).\n\n**Candidate `settled_draft_audit`** (copied from the best-measured iteration-3 harness):\n- The check audits only mechanical defects — missing markup, unbalanced structure, a draft unit that is a fragment of an attested unit, a near-miss spelling — and no longer re-opens candidates the draft set aside (`_considered_audit`, `_audit_rank`, `evidence`, `piece_units`, and the narrower/broader relation notes are removed; `considered` remains an inert, error-free optional argument).\n- A clean draft is now **affirmed** (\"submit this draft unchanged\") instead of handed a list of doubts — the new mechanism, aimed at the turn where a correct answer gets re-decided.\n- The prompt and skill say \"decide once\" instead of demanding a candidate enumeration, keeping it3's proven vocabulary rules.\n- `_required_markup` now only treats tags the question actually *states* as required, so bracketed tokens in the data (e.g. SMILES atoms like `[N+]`) are no longer reported as missing markup.\n\nVerified offline: memory builds for all three tasks, guides render, and replayed against every iteration-3 validation prediction the new check raises no false flags (previously 1 correct LawBench answer was flagged by the fragment heuristic, which is now edge-based only).\n\nReports added: post-eval for iteration 5 (was missing) and the iteration-6 design note. Handoff written to `pending_eval.json`.\n\nCANDIDATES: settled_draft_audit",
+    "ttft_ms": 717,
+    "ttft_stream_ms": 205,
+    "time_to_request_ms": 42,
+    "type": "result",
+    "duration_ms": 649141,
+    "uuid": "6d47790e-16fa-448d-8a4c-d5943d13be2e"
+  },
+  "usage": {
+    "input_tokens": 102665,
+    "output_tokens": 102271,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 14305664
+  },
+  "cost_usd": 10.222931999999997,
+  "num_turns": 130,
+  "duration_api_ms": 540466
+}

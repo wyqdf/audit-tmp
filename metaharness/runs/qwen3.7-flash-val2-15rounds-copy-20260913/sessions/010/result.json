@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 953.8692860137671,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 369774,
+    "num_turns": 92,
+    "stop_reason": "end_turn",
+    "session_id": "3a231f9c-adb8-400a-83e3-79f64bf46b43",
+    "total_cost_usd": 5.7222539999999995,
+    "usage": {
+      "input_tokens": 76149,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 6967168,
+      "output_tokens": 74317,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 76149,
+        "outputTokens": 74317,
+        "cacheReadInputTokens": 6967168,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 5.7222539999999995,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 10 complete.\n\n**What the analysis found.** I read the state files, then measured the prediction traces directly rather than trusting the summaries:\n\n- **The retriever is a dead lever.** Replaying iteration 9's selector, its feature-size tuning *did* raise gold-unit coverage (0.470 → 0.570) but moved no score: the 8 questions that gained coverage were already answered right, and `unshown&wrong` stayed at 40/100. For 21 of 50 multi-unit questions the gold units exist nowhere in the 200 training references.\n- **One regression has stood since iteration 3.** Paired per example, every candidate since iteration 3 sits 1.5–3.5 samples (of 100) *below* the iteration-1/2 level on the single-label task — same sign in all seven comparisons — while gaining 2–5 on the multi-unit task. I also killed two plausible-looking hypotheses before committing to them: answer-diverse selection (already 19.3/20 distinct) and reaction-type-filtered retrieval (already 4.9/5 same-type exemplars shown).\n- **The responsible sentence was identifiable.** Iteration 3 replaced \"Reference labels (copy character for character…)\" with \"this is evidence about vocabulary, not a closed list… write that unit yourself\". That is *false* on the single-label corpus — 100% of its reference answers are built only from units used more than once (22 units, 200 references), and all 50 validation golds are a training answer verbatim — and true on the multi-unit corpus (57%).\n\n**The candidate** (`harnesses/answer_space_closure`, built on iteration 9) derives `reused_share` from training answers, sets `closed_vocabulary` at ≥0.9, and makes the profile, system prompt, skill step and check follow that derivation. I verified the open branch is byte-identical to the parent — same system prompt, same profile text, identical check output over the 100 recorded drafts — so any movement on those two tasks is attributable to the solver, not the prompt.\n\nFiles written: `harnesses/answer_space_closure/`, `reports/iteration_9_attested_retrieval_scale.md` (the missing post-eval report, 28 lines), `reports/iteration_10_design_note.md`, `pending_eval.json`.\n\nCANDIDATES: answer_space_closure",
+    "ttft_ms": 705,
+    "ttft_stream_ms": 220,
+    "time_to_request_ms": 43,
+    "type": "result",
+    "duration_ms": 948226,
+    "uuid": "bf926699-33d4-47f7-954b-bdb6e2e0c1b9"
+  },
+  "usage": {
+    "input_tokens": 76149,
+    "output_tokens": 74317,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 6967168
+  },
+  "cost_usd": 5.7222539999999995,
+  "num_turns": 92,
+  "duration_api_ms": 369774
+}

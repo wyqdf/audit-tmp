@@ -1,0 +1,613 @@
+{
+  "task": "Symptom2Disease",
+  "candidate": "attested_delimiters",
+  "split": "val",
+  "example_index": 47,
+  "sample_index": 0,
+  "status": "ok",
+  "error": null,
+  "was_correct": true,
+  "prediction": "[DIAGNOSIS]dengue[/DIAGNOSIS]",
+  "target": "dengue",
+  "metric": {},
+  "usage": {
+    "model_calls": 5,
+    "input_tokens": 42513,
+    "output_tokens": 4186
+  },
+  "elapsed_seconds": 53.87943156529218,
+  "memory_context_chars": 8853,
+  "tool_calls": [
+    "retrieve_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "check_answer"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by grounding it in the frozen training references. Every reference answer is a single unit, so this task's answer is one unit: name the units the question could support, then answer with the single one the facts establish. A second unit is a different answer rather than a more complete one, and a draft that carries two units is wrong even when one of them is right. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`: a candidate that call reports as not carried is a defect of the draft, and only a fact of the question rules it out - the vocabulary not listing it, the references usually answering with one unit, and another unit covering the same acts do not. Fix everything that call reports.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: every reference answer is a single part. Every reference answer is one unit, so this task's answer is one unit: a draft that carries two units is a different answer, not a more complete one, and the choice is which single unit the facts establish.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[2]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[3]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body. It is itchy and red. There are some patches that are a different color than the rest of my skin. I also have some pimples that look like little balls.\nA: fungal infection\n\n[7]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[8]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[9]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[10]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[11]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[12]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[13]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[14]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[15]\nQ: I've been having back pain, a dry cough, and stiffness in my arms and legs. I've also had problems staying balanced and experience dizziness. My neck hurts, too.\nA: cervical spondylosis\n\n[16]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[17]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[18]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[19]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[20]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first, then choosing between them. Write down every unit\n   the question could support, including the ones you are about to set aside, and for\n   each one ask which fact establishes it and which fact rules it out. A unit may only be\n   set aside for a factual reason - \"the references never use it\" and \"it is not in the\n   reference unit list\" are not factual reasons. This task's answers are one unit, so\n   the answer is the single unit the facts establish: when two candidates both look\n   supported, the one that explains the facts the other cannot is the answer, and the one\n   that leaves a distinctive fact unexplained is not. Covering a fact your choice leaves\n   out means replacing it with the unit that covers it, never appending a second unit.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, join units with the separator the profile\n   names rather than one of your own, and keep any markup the question asks for exactly as\n   the question spells it. How many units the answer carries is what the facts establish:\n   the profile reports the widths the references use, which is a fact about the corpus and\n   not a count this question has to match.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). Every candidate your draft does not carry comes back as a defect\n   of the draft, with the reference cases that answer it and with the answer written out as\n   it would read if it carried it; reference units that share an edge with a unit of your\n   draft are reported too. Fix everything it flags. A candidate it reports as not carried is either ruled out by a\n   fact of the question, and your draft stands, or the facts establish it and the\n   written-out form it gives replaces the unit you drafted - an answer carrying both is\n   not this task's answer.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_ce7ffee4446a4e52a4131edb",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{\"query\": \"shivering fever rash arms neck\", \"limit\": 10}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_1c826dffbfc94016b753690f",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"shivering\", \"limit\": 10}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_4355904c3874415c9f0b026c",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"rash\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants a diagnosis based on the patient's symptoms:\n- Shivering and shivering, feeling cold.\n- High fever.\n- Rashes on arms.\n- Red patches on neck.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms analysis:\n- Shivering, feeling cold, high fever -> suggests an infectious disease or systemic illness (malaria, dengue, typhoid, pneumonia, etc.)\n- Rashes on arms, red patches on neck -> suggests a rash-related condition (dengue, chicken pox, drug reaction, allergy, impetigo, fungal infection).\n\nLet's check the reference examples for similar symptoms:\n[1] tired, weak, high fever, coughing mucus -> bronchial asthma\n[2] rashes flake off, prone to infection, fingers twitch, shake -> drug reaction\n[4] fever, headache, sores near nose, rashes on neck -> impetigo\n[6] rash all over body, itchy, red, patches different color, pimples like little balls -> fungal infection\n[8] stomach ache, vomiting, weak -> typhoid\n[12] burning up, can't catch breath, sweating, shivering, tired, heart racing, coughing brown stuff -> pneumonia\n[13] low temps, blood in urine, pee smells, head hurts -> urinary tract infection\n[16] migraines, headaches, can't sleep, muscles twitching/trembling, dizzy -> drug reaction\n\nWait, let's think about \"shivering\", \"high fever\", \"rashes on arms\", \"red patches on neck\".\nCould it be Dengue? Dengue often presents with high fever, chills/shivering, and rash.\nCould it be Malaria? Malaria presents with high fever, chills/shivering, but usually not prominent rashes.\nCould it be Typhoid? Fever, but rash is less common (rose spots), usually GI symptoms.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on trunk/face.\nCould it be Drug reaction? Rash, maybe fever, but shivering/chills less typical unless severe.\nCould it be Allergy? Rash, but fever is not typical.\n\nLet's search for references with \"shivering\" or \"fever\" and \"rash\".\nActually, I should use `retrieve_examples` or `search_examples` to find similar cases.\nQuery: \"shivering fever rash\" or \"high fever shivering rashes\"\nLet's try `retrieve_examples(query=\"shivering fever rash\")`.\nAlso, `search_examples(keyword=\"shivering\")` or `search_examples(keyword=\"rash\")`.\n\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue very well. Dengue is known for high fever, chills/shivering, and rash (often on arms/neck/trunk).\nLet's check if there's any reference with these exact words.\nI will run `retrieve_examples` with query \"shivering fever rash\".\nAnd `search_examples` with \"dengue\".\nLet's do that."
+    },
+    {
+      "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[2]\nQ: I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\nA: chicken pox\n\n[3]\nQ: I have a rash around my nose and mouth, and it's spreading to other parts of my body. I also have a fever.\nA: impetigo\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[6]\nQ: I've been having coughing fits, back pain, and weakness in my arms and legs. I've also been having neck pain and dizziness.\nA: cervical spondylosis\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.\nA: common cold\n\n[9]\nQ: i have been suffering from dry cough and difficulty in breathing for a week now. i also feel weak throughout the day.\nA: bronchial asthma\n\n[10]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction",
+      "role": "tool",
+      "tool_call_id": "call_ce7ffee4446a4e52a4131edb"
+    },
+    {
+      "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia",
+      "role": "tool",
+      "tool_call_id": "call_1c826dffbfc94016b753690f"
+    },
+    {
+      "content": "[1]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[2]\nQ: I have a rash on my legs that is getting worse. I have difficulty running.\nA: varicose veins\n\n[3]\nQ: I have a rash on my skin that is red, raised, and filled with fluid. It is painful to touch and I have a fever.\nA: impetigo\n\n[4]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[5]\nQ: I have rashes on my chest and back and I itch all over my body. I sometimes have flaky skin, which often leaves marks on my body.\nA: drug reaction\n\n[6]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[7]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[8]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[9]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+      "role": "tool",
+      "tool_call_id": "call_4355904c3874415c9f0b026c"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_345bec2c47c74dcdaae662c6",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"dengue\", \"limit\": 10}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_5c9e64b56e3949dc8ac62300",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"malaria\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "The retrieved examples show:\n- \"I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\" -> dengue\n- \"I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\" -> dengue\n- \"I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\" -> impetigo\n- \"I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\" -> chicken pox\n\nWait, the patient symptoms are:\n\"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nLet's look at another search for \"dengue\" or \"malaria\".\nCould it be Dengue? High fever, shivering/chills, rash on arms and red patches on neck. Dengue typically presents with high fever, severe headache, pain behind the eyes, joint/muscle pain, nausea/vomiting, and rash. The rash often appears a few days after the fever starts.\nCould it be Malaria? Chills, shivering, high fever, sweating. Rash is not typical.\nCould it be Typhoid? Stepwise fever, abdominal pain, rose spots (rash), but usually GI symptoms dominate.\nCould it be Chicken pox? Fever, rash (vesicular), usually starts on trunk/face, spreads. Itching is prominent.\nCould it be Impetigo? Sores near nose, rashes on neck, fever. But impetigo is a bacterial skin infection, usually honey-colored crusts.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\n\nLet's search for \"dengue\" in the references to see if there's a better match."
+    },
+    {
+      "content": "[1]\nQ: I've been having a lot of joint pain, and it's been really hard to walk. I've also lost my appetite, and I feel really weak and nauseous.\nA: dengue\n\n[2]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[3]\nQ: I've been vomiting a lot and I'm not hungry. My muscles, joints and back hurt all the time. I'm starting to have a fever too. I'm really worried and not sure what to do.\nA: dengue\n\n[4]\nQ: I have a high fever and a severe headache. My body aches and I feel chills every night. I also have a pain behind my eyes.\nA: dengue\n\n[5]\nQ: I have been vomiting frequently and have lost my appetite as a result. There are rashes on my skin and my eyes pain, because of which I cannot sleep properly.\nA: dengue\n\n[6]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been vomiting for the past few days and I have stomach cramps. I feel dizzy and weak. I also have a pain behind my eyes.\nA: dengue\n\n[9]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[10]\nQ: I have a skin rash that is red and swollen. I also have a severe fever and body pain.\nA: dengue",
+      "role": "tool",
+      "tool_call_id": "call_345bec2c47c74dcdaae662c6"
+    },
+    {
+      "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria\n\n[5]\nQ: I've been feeling really sick lately. I've been having a high fever, chills, and vomiting. I'm also sweating a lot and have a headache. I feel nauseous and my muscles are really sore.\nA: malaria\n\n[6]\nQ: I've been feeling really sick. I've had a fever, chills, vomiting, and severe itching. I've also had a headache, and I've been perspiring a lot. I've been feeling really nauseous and my muscles ache.\nA: malaria\n\n[7]\nQ: I've been really itchy all over my body, and I've been getting chills and vomiting. My fever is really high, and I've been sweating a lot. I also have a headache, and I feel nauseous. My muscles are really sore.\nA: malaria\n\n[8]\nQ: I've been having a really high fever, chills, and nausea. I've also been sweating a lot and my muscles hurt. I feel really queasy and have a headache.\nA: malaria\n\n[9]\nQ: I have a high fever, severe itching, chills, and vomiting. I also have a headache and have been perspiring a lot. Additionally, I have been nauseous and my muscles hurt.\nA: malaria",
+      "role": "tool",
+      "tool_call_id": "call_5c9e64b56e3949dc8ac62300"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_266a7a1e739742a2b8e0f27e",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"red patches\", \"limit\": 10}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_59889ca4c17344aebdb8e687",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"rashes on my arms\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "Looking at the malaria references, they mention \"high fever, chills, nausea, severe itching, headache, sweating, muscle pain\". But no rash on arms/neck specifically.\nLooking at dengue references: \"rashes all over my body\", \"red spots on arms and legs\", \"rash all over my body... worse in some places like arms and legs\", \"red spots all over the body\".\nThe patient says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nWait, let's look at another possibility: \"chicken pox\" or \"impetigo\" or \"drug reaction\".\nBut \"shivering and shivering and I feel cold. My fever is really high.\" strongly points to an infectious disease with rigors/chills. Dengue often has chills/shivering before the fever spikes. Malaria has chills.\nHowever, the rash on arms and red patches on neck is very specific.\nLet's search for \"red patches on my neck\" or \"rashes on my arms\"."
+    },
+    {
+      "content": "No reference case matches 'red patches'.",
+      "role": "tool",
+      "tool_call_id": "call_266a7a1e739742a2b8e0f27e"
+    },
+    {
+      "content": "[1]\nQ: I've been feeling really sick lately. I've been having a lot of nausea and I feel really uneasy. I've also noticed some rashes on my arms and legs. I've lost my appetite and I feel exhausted every day.\nA: chicken pox\n\n[2]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis",
+      "role": "tool",
+      "tool_call_id": "call_59889ca4c17344aebdb8e687"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_6f6ac6016911475caad7528d",
+          "function": {
+            "name": "check_answer",
+            "arguments": "{\"draft_answer\": \"[DIAGNOSIS]dengue[/DIAGNOSIS]\", \"considered\": \"dengue,malaria,chicken pox,impetigo,drug reaction,typhoid\"}"
+          }
+        }
+      ],
+      "reasoning_content": "Let's search for \"shivering\" again, or \"feel cold\".\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nCould it be Dengue? Yes, dengue has high fever, chills/shivering, and rash (often maculopapular, starting on trunk/arms/neck).\nCould it be Malaria? Malaria has high fever, chills, but rash is not a primary symptom.\nCould it be Typhoid? Fever, but rash is rose spots, usually abdomen.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on face/trunk, very itchy.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\nCould it be Allergy? Rash, but no high fever typically.\n\nLet's look at the exact wording of the patient: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue quite well. In many medical datasets (like the one this seems to be from, possibly a standard Indian medical QA dataset), Dengue is characterized by high fever, chills/shivering, and rash on arms/neck/trunk.\nLet's check if there's any reference with \"shivering\" and \"rash\".\nActually, let's search for \"dengue\" in the full reference set using `retrieve_examples` with query \"dengue rash fever\".\nWait, I already retrieved dengue examples. They mention:\n- \"rashes all over my body that are itchy\"\n- \"red spots on my arms and legs\"\n- \"rash all over my body... worse in some places, like my arms and legs\"\n- \"red spots all over my body\"\n- \"skin rash that is red and swollen. I also have a severe fever and body pain.\"\n\nAnother possibility: \"malaria\" references emphasize itching, chills, sweating, vomiting, headache. No rash mentioned in malaria refs.\nSo Dengue is more likely due to the rash.\n\nLet's consider \"chicken pox\": \"rashes on my arms and legs\", \"itchy\", \"fever\". But chicken pox rash is typically vesicular and starts on face/chest/back. The prompt says \"rashes on my arms and red patches on my neck\".\nWhat about \"impetigo\"? \"sores near my nose and rashes on my neck\". But impetigo doesn't typically cause high fever and shivering as primary symptoms; it's a localized skin infection.\nWhat about \"drug reaction\"? \"rashes on my skin that flake off\", \"fingers twitch and shake\". Not matching.\nWhat about \"fungal infection\"? \"patches of skin that are a different color\", \"pimples that look like little balls\". Not matching high fever/shivering.\n\nTherefore, Dengue is the best fit. High fever, shivering/chills, rash on arms and red patches on neck are classic for Dengue fever (often called \"breakbone fever\", presents with rigors, high fever, and a characteristic rash that may appear on the arms, neck, and trunk).\n\nLet's double check with `check_answer`.\nDraft answer: dengue\nConsidered: dengue, malaria, chicken pox, impetigo, drug reaction, typhoid\n\nWait, let's think if there's any other disease. \"shivering and shivering and I feel cold. My fever is really high.\" -> Rigors.\n\"I have rashes on my arms and red patches on my neck.\" -> Maculopapular rash.\nThis is textbook Dengue.\n\nI will formulate the reasoning and then call check_answer.\nReasoning: The patient presents with high fever, persistent shivering/chills, and a rash involving the arms and neck. These symptoms strongly point towards an acute viral hemorrhagic fever or similar systemic infection. Among the options, Dengue is classically characterized by sudden onset of high fever, chills/shivering, and a maculopapular rash that often appears on the extremities (arms) and neck/trunk after a few days. Malaria also causes high fever and chills but typically lacks a prominent rash. Chicken pox presents with a vesicular, intensely itchy rash that usually begins on the trunk and face. Impetigo involves honey-crusted sores, usually around the nose/mouth. Therefore, Dengue is the most accurate diagnosis based on the combination of high fever, rigors, and specific rash distribution.\n\nLet's run check_answer.\n"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "No surface problem found. Surface checking cannot show that the answer is complete or correct - work through the points below before submitting.\n- Considered units: your notes name 'chicken pox', 'impetigo', 'drug reaction', which the draft does not include. A candidate can only enter this task's answer in place of the unit you drafted: either a fact of the question rules it out and the draft stands, or the facts establish it and it replaces the draft's unit.\n  'chicken pox' is answered by 10 reference answer(s):\n  Q: I have no appetite and I feel like vomiting. I am also very tired. I have rashes on my skin that are really concerning me.\n     A: chicken pox\n  This task's answers are one unit, so carrying it replaces the unit you drafted rather than joining it. Written out: [DIAGNOSIS]chicken pox[/DIAGNOSIS]\n  'impetigo' is answered by 10 reference answer(s):\n  Q: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\n     A: impetigo\n  This task's answers are one unit, so carrying it replaces the unit you drafted rather than joining it. Written out: [DIAGNOSIS]impetigo[/DIAGNOSIS]\n  'drug reaction' is answered by 9 reference answer(s):\n  Q: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\n     A: drug reaction\n  This task's answers are one unit, so carrying it replaces the unit you drafted rather than joining it. Written out: [DIAGNOSIS]drug reaction[/DIAGNOSIS]\n- Shape: your answer has 1 part(s); every reference answer is a single part. That width is one the references use; the widths of the corpus say nothing about whether this answer's set is complete.\n- Units: all 1 unit(s) are reference units, spelled verbatim. That only means the spelling is right, not that the set is complete.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "tool",
+      "tool_call_id": "call_6f6ac6016911475caad7528d"
+    },
+    {
+      "role": "assistant",
+      "content": "{\n  \"reasoning\": \"The patient presents with persistent shivering/chills, a very high fever, and a rash localized to the arms and neck. These symptoms form a classic clinical picture for an acute systemic viral infection. Among the provided options, Dengue is strongly characterized by sudden onset of high fever, rigors (shivering), and a maculopapular rash that frequently appears on the extremities (arms) and neck/trunk. Malaria also causes high fever and chills but typically lacks a prominent rash. Chicken pox presents with a vesicular, intensely itchy rash that usually begins on the face and trunk. Impetigo involves honey-crusted sores primarily around the nose and mouth. Drug reactions may cause rashes but do not typically present with severe rigors and high fever as primary features. Therefore, the combination of high fever, shivering, and specific rash distribution most accurately supports Dengue.\",\n  \"final_answer\": \"[DIAGNOSIS]dengue[/DIAGNOSIS]\"\n}",
+      "reasoning_content": "The check_answer output says:\n- 'chicken pox' is answered by 10 reference answer(s): Q: I have no appetite and I feel like vomiting. I am also very tired. I have rashes on my skin that are really concerning me. A: chicken pox\n- 'impetigo' is answered by 10 reference answer(s): Q: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now. A: impetigo\n- 'drug reaction' is answered by 9 reference answer(s): Q: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake. A: drug reaction\n\nWait, the prompt says: \"I have rashes on my arms and red patches on my neck.\"\nImpetigo reference says: \"sores near my nose and rashes on my neck\". The patient has \"rashes on my arms and red patches on my neck\". This doesn't match impetigo's \"sores near my nose\".\nChicken pox reference says: \"rashes on my skin that are really concerning me\" with vomiting/tiredness. Patient has shivering/fever/rash.\nDrug reaction reference says: \"rashes on my skin that flake off... fingers twitch\". Doesn't match.\n\nWhat about Dengue? The dengue references mention \"rashes all over my body\", \"red spots on my arms and legs\", \"rash all over my body... worse in some places, like my arms and legs\". The patient has \"rashes on my arms and red patches on my neck\". This aligns well with Dengue's rash distribution (arms, neck, trunk). Also, high fever and shivering/chills are classic for Dengue.\n\nLet's verify if there's any other condition. Could it be \"malaria\"? Malaria refs emphasize itching, chills, sweating, vomiting, headache. No rash.\nCould it be \"typhoid\"? Typhoid refs emphasize stomach ache, vomiting, weakness. No prominent rash.\nSo Dengue is definitely the best fit.\n\nThe check_answer tool just lists the considered units that aren't carried, which is expected. It doesn't flag any defects except that I didn't include them, but they are ruled out by facts (impetigo requires sores near nose; chicken pox requires vesicular/itchy rash often with GI symptoms; drug reaction requires flaking skin/twitching). Dengue matches the high fever, shivering, and specific rash locations.\n\nI will finalize the answer as dengue.\nReasoning will summarize the symptom matching.\nFinal answer format: [DIAGNOSIS]dengue[/DIAGNOSIS]\nAll good.\nI will produce the JSON. \nOne minor thing: check if \"dengue\" is exactly spelled as in the reference profile. Yes, \"dengue (10)\".\nReady. \nOutput matches requirement.\nProceed. \nSelf-Correction/Verification during thought: \nCould \"shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\" point to something else? \nIn many standard datasets (like the one this prompt mimics, likely from a medical QA benchmark), this exact phrasing maps to Dengue. The combination of rigors (shivering), high fever, and a maculopapular rash on extremities/neck is pathognomonic for Dengue in these contexts. \nI'm confident.\nOutput generation. \n```json\n{\n  \"reasoning\": \"The patient presents with persistent shivering/chills, a very high fever, and a rash localized to the arms and neck. These symptoms form a classic triad for an acute viral illness. Among the options, Dengue is strongly characterized by sudden onset of high fever, rigors (shivering), and a maculopapular rash that frequently appears on the extremities (arms) and neck/trunk after the initial febrile phase. Malaria also causes high fever and chills but typically lacks a prominent rash. Chicken pox presents with a vesicular, intensely itchy rash that usually begins on the face and trunk. Impetigo involves honey-crusted sores primarily around the nose and mouth. Drug reactions may cause rashes but do not typically present with severe rigors and high fever as primary features. Therefore, the clinical picture most accurately supports Dengue.\",\n  \"final_answer\": \"[DIAGNOSIS]dengue[/DIAGNOSIS]\"\n}\n```\nMatches all constraints. Proceeds. \nNote: I'll make sure the JSON is strictly formatted. No extra text.\nDone. \nOutput Generation. \n(Self-Correction/Refinement during drafting)\nWait, let's double check the exact wording of the prompt's symptoms: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis is extremely specific. I'll stick with dengue.\nAll good. \nProceeds. \n[Output Generation] -> JSON. \n(Note: I will ensure the reasoning string escapes quotes if necessary, but it's fine as is.)\nDone. \n`{\"reasoning\": \"...\", \"final_answer\": \"[DIAGNOSIS]dengue[/DIAGNOSIS]\"}`\nReady. \n[Output]\n"
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Every reference answer is a single unit, so this task's answer is one unit: name the units the question could support, then answer with the single one the facts establish. A second unit is a different answer rather than a more complete one, and a draft that carries two units is wrong even when one of them is right. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`: a candidate that call reports as not carried is a defect of the draft, and only a fact of the question rules it out - the vocabulary not listing it, the references usually answering with one unit, and another unit covering the same acts do not. Fix everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: every reference answer is a single part. Every reference answer is one unit, so this task's answer is one unit: a draft that carries two units is a different answer, not a more complete one, and the choice is which single unit the facts establish.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[2]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[3]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body. It is itchy and red. There are some patches that are a different color than the rest of my skin. I also have some pimples that look like little balls.\nA: fungal infection\n\n[7]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[8]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[9]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[10]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[11]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[12]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[13]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[14]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[15]\nQ: I've been having back pain, a dry cough, and stiffness in my arms and legs. I've also had problems staying balanced and experience dizziness. My neck hurts, too.\nA: cervical spondylosis\n\n[16]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[17]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[18]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[19]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[20]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first, then choosing between them. Write down every unit\n   the question could support, including the ones you are about to set aside, and for\n   each one ask which fact establishes it and which fact rules it out. A unit may only be\n   set aside for a factual reason - \"the references never use it\" and \"it is not in the\n   reference unit list\" are not factual reasons. This task's answers are one unit, so\n   the answer is the single unit the facts establish: when two candidates both look\n   supported, the one that explains the facts the other cannot is the answer, and the one\n   that leaves a distinctive fact unexplained is not. Covering a fact your choice leaves\n   out means replacing it with the unit that covers it, never appending a second unit.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, join units with the separator the profile\n   names rather than one of your own, and keep any markup the question asks for exactly as\n   the question spells it. How many units the answer carries is what the facts establish:\n   the profile reports the widths the references use, which is a fact about the corpus and\n   not a count this question has to match.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). Every candidate your draft does not carry comes back as a defect\n   of the draft, with the reference cases that answer it and with the answer written out as\n   it would read if it carried it; reference units that share an edge with a unit of your\n   draft are reported too. Fix everything it flags. A candidate it reports as not carried is either ruled out by a\n   fact of the question, and your draft stands, or the facts establish it and the\n   written-out form it gives replaces the unit you drafted - an answer carrying both is\n   not this task's answer.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_ce7ffee4446a4e52a4131edb",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"shivering fever rash arms neck\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_1c826dffbfc94016b753690f",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"shivering\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_4355904c3874415c9f0b026c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"rash\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a diagnosis based on the patient's symptoms:\n- Shivering and shivering, feeling cold.\n- High fever.\n- Rashes on arms.\n- Red patches on neck.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms analysis:\n- Shivering, feeling cold, high fever -> suggests an infectious disease or systemic illness (malaria, dengue, typhoid, pneumonia, etc.)\n- Rashes on arms, red patches on neck -> suggests a rash-related condition (dengue, chicken pox, drug reaction, allergy, impetigo, fungal infection).\n\nLet's check the reference examples for similar symptoms:\n[1] tired, weak, high fever, coughing mucus -> bronchial asthma\n[2] rashes flake off, prone to infection, fingers twitch, shake -> drug reaction\n[4] fever, headache, sores near nose, rashes on neck -> impetigo\n[6] rash all over body, itchy, red, patches different color, pimples like little balls -> fungal infection\n[8] stomach ache, vomiting, weak -> typhoid\n[12] burning up, can't catch breath, sweating, shivering, tired, heart racing, coughing brown stuff -> pneumonia\n[13] low temps, blood in urine, pee smells, head hurts -> urinary tract infection\n[16] migraines, headaches, can't sleep, muscles twitching/trembling, dizzy -> drug reaction\n\nWait, let's think about \"shivering\", \"high fever\", \"rashes on arms\", \"red patches on neck\".\nCould it be Dengue? Dengue often presents with high fever, chills/shivering, and rash.\nCould it be Malaria? Malaria presents with high fever, chills/shivering, but usually not prominent rashes.\nCould it be Typhoid? Fever, but rash is less common (rose spots), usually GI symptoms.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on trunk/face.\nCould it be Drug reaction? Rash, maybe fever, but shivering/chills less typical unless severe.\nCould it be Allergy? Rash, but fever is not typical.\n\nLet's search for references with \"shivering\" or \"fever\" and \"rash\".\nActually, I should use `retrieve_examples` or `search_examples` to find similar cases.\nQuery: \"shivering fever rash\" or \"high fever shivering rashes\"\nLet's try `retrieve_examples(query=\"shivering fever rash\")`.\nAlso, `search_examples(keyword=\"shivering\")` or `search_examples(keyword=\"rash\")`.\n\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue very well. Dengue is known for high fever, chills/shivering, and rash (often on arms/neck/trunk).\nLet's check if there's any reference with these exact words.\nI will run `retrieve_examples` with query \"shivering fever rash\".\nAnd `search_examples` with \"dengue\".\nLet's do that."
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[2]\nQ: I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\nA: chicken pox\n\n[3]\nQ: I have a rash around my nose and mouth, and it's spreading to other parts of my body. I also have a fever.\nA: impetigo\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[6]\nQ: I've been having coughing fits, back pain, and weakness in my arms and legs. I've also been having neck pain and dizziness.\nA: cervical spondylosis\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.\nA: common cold\n\n[9]\nQ: i have been suffering from dry cough and difficulty in breathing for a week now. i also feel weak throughout the day.\nA: bronchial asthma\n\n[10]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction",
+        "role": "tool",
+        "tool_call_id": "call_ce7ffee4446a4e52a4131edb"
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia",
+        "role": "tool",
+        "tool_call_id": "call_1c826dffbfc94016b753690f"
+      },
+      {
+        "content": "[1]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[2]\nQ: I have a rash on my legs that is getting worse. I have difficulty running.\nA: varicose veins\n\n[3]\nQ: I have a rash on my skin that is red, raised, and filled with fluid. It is painful to touch and I have a fever.\nA: impetigo\n\n[4]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[5]\nQ: I have rashes on my chest and back and I itch all over my body. I sometimes have flaky skin, which often leaves marks on my body.\nA: drug reaction\n\n[6]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[7]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[8]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[9]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+        "role": "tool",
+        "tool_call_id": "call_4355904c3874415c9f0b026c"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_345bec2c47c74dcdaae662c6",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"dengue\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_5c9e64b56e3949dc8ac62300",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"malaria\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The retrieved examples show:\n- \"I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\" -> dengue\n- \"I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\" -> dengue\n- \"I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\" -> impetigo\n- \"I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\" -> chicken pox\n\nWait, the patient symptoms are:\n\"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nLet's look at another search for \"dengue\" or \"malaria\".\nCould it be Dengue? High fever, shivering/chills, rash on arms and red patches on neck. Dengue typically presents with high fever, severe headache, pain behind the eyes, joint/muscle pain, nausea/vomiting, and rash. The rash often appears a few days after the fever starts.\nCould it be Malaria? Chills, shivering, high fever, sweating. Rash is not typical.\nCould it be Typhoid? Stepwise fever, abdominal pain, rose spots (rash), but usually GI symptoms dominate.\nCould it be Chicken pox? Fever, rash (vesicular), usually starts on trunk/face, spreads. Itching is prominent.\nCould it be Impetigo? Sores near nose, rashes on neck, fever. But impetigo is a bacterial skin infection, usually honey-colored crusts.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\n\nLet's search for \"dengue\" in the references to see if there's a better match."
+      },
+      {
+        "content": "[1]\nQ: I've been having a lot of joint pain, and it's been really hard to walk. I've also lost my appetite, and I feel really weak and nauseous.\nA: dengue\n\n[2]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[3]\nQ: I've been vomiting a lot and I'm not hungry. My muscles, joints and back hurt all the time. I'm starting to have a fever too. I'm really worried and not sure what to do.\nA: dengue\n\n[4]\nQ: I have a high fever and a severe headache. My body aches and I feel chills every night. I also have a pain behind my eyes.\nA: dengue\n\n[5]\nQ: I have been vomiting frequently and have lost my appetite as a result. There are rashes on my skin and my eyes pain, because of which I cannot sleep properly.\nA: dengue\n\n[6]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been vomiting for the past few days and I have stomach cramps. I feel dizzy and weak. I also have a pain behind my eyes.\nA: dengue\n\n[9]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[10]\nQ: I have a skin rash that is red and swollen. I also have a severe fever and body pain.\nA: dengue",
+        "role": "tool",
+        "tool_call_id": "call_345bec2c47c74dcdaae662c6"
+      },
+      {
+        "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria\n\n[5]\nQ: I've been feeling really sick lately. I've been having a high fever, chills, and vomiting. I'm also sweating a lot and have a headache. I feel nauseous and my muscles are really sore.\nA: malaria\n\n[6]\nQ: I've been feeling really sick. I've had a fever, chills, vomiting, and severe itching. I've also had a headache, and I've been perspiring a lot. I've been feeling really nauseous and my muscles ache.\nA: malaria\n\n[7]\nQ: I've been really itchy all over my body, and I've been getting chills and vomiting. My fever is really high, and I've been sweating a lot. I also have a headache, and I feel nauseous. My muscles are really sore.\nA: malaria\n\n[8]\nQ: I've been having a really high fever, chills, and nausea. I've also been sweating a lot and my muscles hurt. I feel really queasy and have a headache.\nA: malaria\n\n[9]\nQ: I have a high fever, severe itching, chills, and vomiting. I also have a headache and have been perspiring a lot. Additionally, I have been nauseous and my muscles hurt.\nA: malaria",
+        "role": "tool",
+        "tool_call_id": "call_5c9e64b56e3949dc8ac62300"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_266a7a1e739742a2b8e0f27e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"red patches\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_59889ca4c17344aebdb8e687",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"rashes on my arms\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "Looking at the malaria references, they mention \"high fever, chills, nausea, severe itching, headache, sweating, muscle pain\". But no rash on arms/neck specifically.\nLooking at dengue references: \"rashes all over my body\", \"red spots on arms and legs\", \"rash all over my body... worse in some places like arms and legs\", \"red spots all over the body\".\nThe patient says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nWait, let's look at another possibility: \"chicken pox\" or \"impetigo\" or \"drug reaction\".\nBut \"shivering and shivering and I feel cold. My fever is really high.\" strongly points to an infectious disease with rigors/chills. Dengue often has chills/shivering before the fever spikes. Malaria has chills.\nHowever, the rash on arms and red patches on neck is very specific.\nLet's search for \"red patches on my neck\" or \"rashes on my arms\"."
+      },
+      {
+        "content": "No reference case matches 'red patches'.",
+        "role": "tool",
+        "tool_call_id": "call_266a7a1e739742a2b8e0f27e"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I've been feeling really sick lately. I've been having a lot of nausea and I feel really uneasy. I've also noticed some rashes on my arms and legs. I've lost my appetite and I feel exhausted every day.\nA: chicken pox\n\n[2]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_59889ca4c17344aebdb8e687"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "Let's search for \"shivering\" again, or \"feel cold\".\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nCould it be Dengue? Yes, dengue has high fever, chills/shivering, and rash (often maculopapular, starting on trunk/arms/neck).\nCould it be Malaria? Malaria has high fever, chills, but rash is not a primary symptom.\nCould it be Typhoid? Fever, but rash is rose spots, usually abdomen.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on face/trunk, very itchy.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\nCould it be Allergy? Rash, but no high fever typically.\n\nLet's look at the exact wording of the patient: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue quite well. In many medical datasets (like the one this seems to be from, possibly a standard Indian medical QA dataset), Dengue is characterized by high fever, chills/shivering, and rash on arms/neck/trunk.\nLet's check if there's any reference with \"shivering\" and \"rash\".\nActually, let's search for \"dengue\" in the full reference set using `retrieve_examples` with query \"dengue rash fever\".\nWait, I already retrieved dengue examples. They mention:\n- \"rashes all over my body that are itchy\"\n- \"red spots on my arms and legs\"\n- \"rash all over my body... worse in some places, like my arms and legs\"\n- \"red spots all over my body\"\n- \"skin rash that is red and swollen. I also have a severe fever and body pain.\"\n\nAnother possibility: \"malaria\" references emphasize itching, chills, sweating, vomiting, headache. No rash mentioned in malaria refs.\nSo Dengue is more likely due to the rash.\n\nLet's consider \"chicken pox\": \"rashes on my arms and legs\", \"itchy\", \"fever\". But chicken pox rash is typically vesicular and starts on face/chest/back. The prompt says \"rashes on my arms and red patches on my neck\".\nWhat about \"impetigo\"? \"sores near my nose and rashes on my neck\". But impetigo doesn't typically cause high fever and shivering as primary symptoms; it's a localized skin infection.\nWhat about \"drug reaction\"? \"rashes on my skin that flake off\", \"fingers twitch and shake\". Not matching.\nWhat about \"fungal infection\"? \"patches of skin that are a different color\", \"pimples that look like little balls\". Not matching high fever/shivering.\n\nTherefore, Dengue is the best fit. High fever, shivering/chills, rash on arms and red patches on neck are classic for Dengue fever (often called \"breakbone fever\", presents with rigors, high fever, and a characteristic rash that may appear on the arms, neck, and trunk).\n\nLet's double check with `check_answer`.\nDraft answer: dengue\nConsidered: dengue, malaria, chicken pox, impetigo, drug reaction, typhoid\n\nWait, let's think if there's any other disease. \"shivering and shivering and I feel cold. My fever is really high.\" -> Rigors.\n\"I have rashes on my arms and red patches on my neck.\" -> Maculopapular rash.\nThis is textbook Dengue.\n\nI will formulate the reasoning and then call check_answer.\nReasoning: The patient presents with high fever, persistent shivering/chills, and a rash involving the arms and neck. These symptoms strongly point towards an acute viral hemorrhagic fever or similar systemic infection. Among the options, Dengue is classically characterized by sudden onset of high fever, chills/shivering, and a maculopapular rash that often appears on the extremities (arms) and neck/trunk after a few days. Malaria also causes high fever and chills but typically lacks a prominent rash. Chicken pox presents with a vesicular, intensely itchy rash that usually begins on the trunk and face. Impetigo involves honey-crusted sores, usually around the nose/mouth. Therefore, Dengue is the most accurate diagnosis based on the combination of high fever, rigors, and specific rash distribution.\n\nLet's run check_answer.\n",
+        "tool_calls": [
+          {
+            "id": "call_6f6ac6016911475caad7528d",
+            "type": "function",
+            "function": {
+              "name": "check_answer",
+              "arguments": "{\"draft_answer\": \"[DIAGNOSIS]dengue[/DIAGNOSIS]\", \"considered\": \"dengue,malaria,chicken pox,impetigo,drug reaction,typhoid\"}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Every reference answer is a single unit, so this task's answer is one unit: name the units the question could support, then answer with the single one the facts establish. A second unit is a different answer rather than a more complete one, and a draft that carries two units is wrong even when one of them is right. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`: a candidate that call reports as not carried is a defect of the draft, and only a fact of the question rules it out - the vocabulary not listing it, the references usually answering with one unit, and another unit covering the same acts do not. Fix everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: every reference answer is a single part. Every reference answer is one unit, so this task's answer is one unit: a draft that carries two units is a different answer, not a more complete one, and the choice is which single unit the facts establish.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[2]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[3]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body. It is itchy and red. There are some patches that are a different color than the rest of my skin. I also have some pimples that look like little balls.\nA: fungal infection\n\n[7]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[8]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[9]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[10]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[11]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[12]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[13]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[14]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[15]\nQ: I've been having back pain, a dry cough, and stiffness in my arms and legs. I've also had problems staying balanced and experience dizziness. My neck hurts, too.\nA: cervical spondylosis\n\n[16]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[17]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[18]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[19]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[20]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first, then choosing between them. Write down every unit\n   the question could support, including the ones you are about to set aside, and for\n   each one ask which fact establishes it and which fact rules it out. A unit may only be\n   set aside for a factual reason - \"the references never use it\" and \"it is not in the\n   reference unit list\" are not factual reasons. This task's answers are one unit, so\n   the answer is the single unit the facts establish: when two candidates both look\n   supported, the one that explains the facts the other cannot is the answer, and the one\n   that leaves a distinctive fact unexplained is not. Covering a fact your choice leaves\n   out means replacing it with the unit that covers it, never appending a second unit.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, join units with the separator the profile\n   names rather than one of your own, and keep any markup the question asks for exactly as\n   the question spells it. How many units the answer carries is what the facts establish:\n   the profile reports the widths the references use, which is a fact about the corpus and\n   not a count this question has to match.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). Every candidate your draft does not carry comes back as a defect\n   of the draft, with the reference cases that answer it and with the answer written out as\n   it would read if it carried it; reference units that share an edge with a unit of your\n   draft are reported too. Fix everything it flags. A candidate it reports as not carried is either ruled out by a\n   fact of the question, and your draft stands, or the facts establish it and the\n   written-out form it gives replaces the unit you drafted - an answer carrying both is\n   not this task's answer.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_ce7ffee4446a4e52a4131edb",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"shivering fever rash arms neck\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_1c826dffbfc94016b753690f",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"shivering\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_4355904c3874415c9f0b026c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"rash\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a diagnosis based on the patient's symptoms:\n- Shivering and shivering, feeling cold.\n- High fever.\n- Rashes on arms.\n- Red patches on neck.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms analysis:\n- Shivering, feeling cold, high fever -> suggests an infectious disease or systemic illness (malaria, dengue, typhoid, pneumonia, etc.)\n- Rashes on arms, red patches on neck -> suggests a rash-related condition (dengue, chicken pox, drug reaction, allergy, impetigo, fungal infection).\n\nLet's check the reference examples for similar symptoms:\n[1] tired, weak, high fever, coughing mucus -> bronchial asthma\n[2] rashes flake off, prone to infection, fingers twitch, shake -> drug reaction\n[4] fever, headache, sores near nose, rashes on neck -> impetigo\n[6] rash all over body, itchy, red, patches different color, pimples like little balls -> fungal infection\n[8] stomach ache, vomiting, weak -> typhoid\n[12] burning up, can't catch breath, sweating, shivering, tired, heart racing, coughing brown stuff -> pneumonia\n[13] low temps, blood in urine, pee smells, head hurts -> urinary tract infection\n[16] migraines, headaches, can't sleep, muscles twitching/trembling, dizzy -> drug reaction\n\nWait, let's think about \"shivering\", \"high fever\", \"rashes on arms\", \"red patches on neck\".\nCould it be Dengue? Dengue often presents with high fever, chills/shivering, and rash.\nCould it be Malaria? Malaria presents with high fever, chills/shivering, but usually not prominent rashes.\nCould it be Typhoid? Fever, but rash is less common (rose spots), usually GI symptoms.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on trunk/face.\nCould it be Drug reaction? Rash, maybe fever, but shivering/chills less typical unless severe.\nCould it be Allergy? Rash, but fever is not typical.\n\nLet's search for references with \"shivering\" or \"fever\" and \"rash\".\nActually, I should use `retrieve_examples` or `search_examples` to find similar cases.\nQuery: \"shivering fever rash\" or \"high fever shivering rashes\"\nLet's try `retrieve_examples(query=\"shivering fever rash\")`.\nAlso, `search_examples(keyword=\"shivering\")` or `search_examples(keyword=\"rash\")`.\n\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue very well. Dengue is known for high fever, chills/shivering, and rash (often on arms/neck/trunk).\nLet's check if there's any reference with these exact words.\nI will run `retrieve_examples` with query \"shivering fever rash\".\nAnd `search_examples` with \"dengue\".\nLet's do that."
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[2]\nQ: I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\nA: chicken pox\n\n[3]\nQ: I have a rash around my nose and mouth, and it's spreading to other parts of my body. I also have a fever.\nA: impetigo\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[6]\nQ: I've been having coughing fits, back pain, and weakness in my arms and legs. I've also been having neck pain and dizziness.\nA: cervical spondylosis\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.\nA: common cold\n\n[9]\nQ: i have been suffering from dry cough and difficulty in breathing for a week now. i also feel weak throughout the day.\nA: bronchial asthma\n\n[10]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction",
+        "role": "tool",
+        "tool_call_id": "call_ce7ffee4446a4e52a4131edb"
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia",
+        "role": "tool",
+        "tool_call_id": "call_1c826dffbfc94016b753690f"
+      },
+      {
+        "content": "[1]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[2]\nQ: I have a rash on my legs that is getting worse. I have difficulty running.\nA: varicose veins\n\n[3]\nQ: I have a rash on my skin that is red, raised, and filled with fluid. It is painful to touch and I have a fever.\nA: impetigo\n\n[4]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[5]\nQ: I have rashes on my chest and back and I itch all over my body. I sometimes have flaky skin, which often leaves marks on my body.\nA: drug reaction\n\n[6]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[7]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[8]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[9]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+        "role": "tool",
+        "tool_call_id": "call_4355904c3874415c9f0b026c"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_345bec2c47c74dcdaae662c6",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"dengue\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_5c9e64b56e3949dc8ac62300",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"malaria\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The retrieved examples show:\n- \"I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\" -> dengue\n- \"I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\" -> dengue\n- \"I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\" -> impetigo\n- \"I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\" -> chicken pox\n\nWait, the patient symptoms are:\n\"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nLet's look at another search for \"dengue\" or \"malaria\".\nCould it be Dengue? High fever, shivering/chills, rash on arms and red patches on neck. Dengue typically presents with high fever, severe headache, pain behind the eyes, joint/muscle pain, nausea/vomiting, and rash. The rash often appears a few days after the fever starts.\nCould it be Malaria? Chills, shivering, high fever, sweating. Rash is not typical.\nCould it be Typhoid? Stepwise fever, abdominal pain, rose spots (rash), but usually GI symptoms dominate.\nCould it be Chicken pox? Fever, rash (vesicular), usually starts on trunk/face, spreads. Itching is prominent.\nCould it be Impetigo? Sores near nose, rashes on neck, fever. But impetigo is a bacterial skin infection, usually honey-colored crusts.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\n\nLet's search for \"dengue\" in the references to see if there's a better match."
+      },
+      {
+        "content": "[1]\nQ: I've been having a lot of joint pain, and it's been really hard to walk. I've also lost my appetite, and I feel really weak and nauseous.\nA: dengue\n\n[2]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[3]\nQ: I've been vomiting a lot and I'm not hungry. My muscles, joints and back hurt all the time. I'm starting to have a fever too. I'm really worried and not sure what to do.\nA: dengue\n\n[4]\nQ: I have a high fever and a severe headache. My body aches and I feel chills every night. I also have a pain behind my eyes.\nA: dengue\n\n[5]\nQ: I have been vomiting frequently and have lost my appetite as a result. There are rashes on my skin and my eyes pain, because of which I cannot sleep properly.\nA: dengue\n\n[6]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been vomiting for the past few days and I have stomach cramps. I feel dizzy and weak. I also have a pain behind my eyes.\nA: dengue\n\n[9]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[10]\nQ: I have a skin rash that is red and swollen. I also have a severe fever and body pain.\nA: dengue",
+        "role": "tool",
+        "tool_call_id": "call_345bec2c47c74dcdaae662c6"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria\n\n[5]\nQ: I've been feeling really sick lately. I've been having a high fever, chills, and vomiting. I'm also sweating a lot and have a headache. I feel nauseous and my muscles are really sore.\nA: malaria\n\n[6]\nQ: I've been feeling really sick. I've had a fever, chills, vomiting, and severe itching. I've also had a headache, and I've been perspiring a lot. I've been feeling really nauseous and my muscles ache.\nA: malaria\n\n[7]\nQ: I've been really itchy all over my body, and I've been getting chills and vomiting. My fever is really high, and I've been sweating a lot. I also have a headache, and I feel nauseous. My muscles are really sore.\nA: malaria\n\n[8]\nQ: I've been having a really high fever, chills, and nausea. I've also been sweating a lot and my muscles hurt. I feel really queasy and have a headache.\nA: malaria\n\n[9]\nQ: I have a high fever, severe itching, chills, and vomiting. I also have a headache and have been perspiring a lot. Additionally, I have been nauseous and my muscles hurt.\nA: malaria",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_5c9e64b56e3949dc8ac62300"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "Looking at the malaria references, they mention \"high fever, chills, nausea, severe itching, headache, sweating, muscle pain\". But no rash on arms/neck specifically.\nLooking at dengue references: \"rashes all over my body\", \"red spots on arms and legs\", \"rash all over my body... worse in some places like arms and legs\", \"red spots all over the body\".\nThe patient says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nWait, let's look at another possibility: \"chicken pox\" or \"impetigo\" or \"drug reaction\".\nBut \"shivering and shivering and I feel cold. My fever is really high.\" strongly points to an infectious disease with rigors/chills. Dengue often has chills/shivering before the fever spikes. Malaria has chills.\nHowever, the rash on arms and red patches on neck is very specific.\nLet's search for \"red patches on my neck\" or \"rashes on my arms\".",
+        "tool_calls": [
+          {
+            "id": "call_266a7a1e739742a2b8e0f27e",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"red patches\", \"limit\": 10}"
+            }
+          },
+          {
+            "id": "call_59889ca4c17344aebdb8e687",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"rashes on my arms\", \"limit\": 10}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Every reference answer is a single unit, so this task's answer is one unit: name the units the question could support, then answer with the single one the facts establish. A second unit is a different answer rather than a more complete one, and a draft that carries two units is wrong even when one of them is right. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`: a candidate that call reports as not carried is a defect of the draft, and only a fact of the question rules it out - the vocabulary not listing it, the references usually answering with one unit, and another unit covering the same acts do not. Fix everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: every reference answer is a single part. Every reference answer is one unit, so this task's answer is one unit: a draft that carries two units is a different answer, not a more complete one, and the choice is which single unit the facts establish.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[2]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[3]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body. It is itchy and red. There are some patches that are a different color than the rest of my skin. I also have some pimples that look like little balls.\nA: fungal infection\n\n[7]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[8]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[9]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[10]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[11]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[12]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[13]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[14]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[15]\nQ: I've been having back pain, a dry cough, and stiffness in my arms and legs. I've also had problems staying balanced and experience dizziness. My neck hurts, too.\nA: cervical spondylosis\n\n[16]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[17]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[18]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[19]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[20]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first, then choosing between them. Write down every unit\n   the question could support, including the ones you are about to set aside, and for\n   each one ask which fact establishes it and which fact rules it out. A unit may only be\n   set aside for a factual reason - \"the references never use it\" and \"it is not in the\n   reference unit list\" are not factual reasons. This task's answers are one unit, so\n   the answer is the single unit the facts establish: when two candidates both look\n   supported, the one that explains the facts the other cannot is the answer, and the one\n   that leaves a distinctive fact unexplained is not. Covering a fact your choice leaves\n   out means replacing it with the unit that covers it, never appending a second unit.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, join units with the separator the profile\n   names rather than one of your own, and keep any markup the question asks for exactly as\n   the question spells it. How many units the answer carries is what the facts establish:\n   the profile reports the widths the references use, which is a fact about the corpus and\n   not a count this question has to match.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). Every candidate your draft does not carry comes back as a defect\n   of the draft, with the reference cases that answer it and with the answer written out as\n   it would read if it carried it; reference units that share an edge with a unit of your\n   draft are reported too. Fix everything it flags. A candidate it reports as not carried is either ruled out by a\n   fact of the question, and your draft stands, or the facts establish it and the\n   written-out form it gives replaces the unit you drafted - an answer carrying both is\n   not this task's answer.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_ce7ffee4446a4e52a4131edb",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"shivering fever rash arms neck\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_1c826dffbfc94016b753690f",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"shivering\", \"limit\": 10}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_4355904c3874415c9f0b026c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"rash\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a diagnosis based on the patient's symptoms:\n- Shivering and shivering, feeling cold.\n- High fever.\n- Rashes on arms.\n- Red patches on neck.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms analysis:\n- Shivering, feeling cold, high fever -> suggests an infectious disease or systemic illness (malaria, dengue, typhoid, pneumonia, etc.)\n- Rashes on arms, red patches on neck -> suggests a rash-related condition (dengue, chicken pox, drug reaction, allergy, impetigo, fungal infection).\n\nLet's check the reference examples for similar symptoms:\n[1] tired, weak, high fever, coughing mucus -> bronchial asthma\n[2] rashes flake off, prone to infection, fingers twitch, shake -> drug reaction\n[4] fever, headache, sores near nose, rashes on neck -> impetigo\n[6] rash all over body, itchy, red, patches different color, pimples like little balls -> fungal infection\n[8] stomach ache, vomiting, weak -> typhoid\n[12] burning up, can't catch breath, sweating, shivering, tired, heart racing, coughing brown stuff -> pneumonia\n[13] low temps, blood in urine, pee smells, head hurts -> urinary tract infection\n[16] migraines, headaches, can't sleep, muscles twitching/trembling, dizzy -> drug reaction\n\nWait, let's think about \"shivering\", \"high fever\", \"rashes on arms\", \"red patches on neck\".\nCould it be Dengue? Dengue often presents with high fever, chills/shivering, and rash.\nCould it be Malaria? Malaria presents with high fever, chills/shivering, but usually not prominent rashes.\nCould it be Typhoid? Fever, but rash is less common (rose spots), usually GI symptoms.\nCould it be Chicken pox? Fever, rash (vesicular), but usually starts on trunk/face.\nCould it be Drug reaction? Rash, maybe fever, but shivering/chills less typical unless severe.\nCould it be Allergy? Rash, but fever is not typical.\n\nLet's search for references with \"shivering\" or \"fever\" and \"rash\".\nActually, I should use `retrieve_examples` or `search_examples` to find similar cases.\nQuery: \"shivering fever rash\" or \"high fever shivering rashes\"\nLet's try `retrieve_examples(query=\"shivering fever rash\")`.\nAlso, `search_examples(keyword=\"shivering\")` or `search_examples(keyword=\"rash\")`.\n\nWait, the prompt says: \"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\nThis matches Dengue very well. Dengue is known for high fever, chills/shivering, and rash (often on arms/neck/trunk).\nLet's check if there's any reference with these exact words.\nI will run `retrieve_examples` with query \"shivering fever rash\".\nAnd `search_examples` with \"dengue\".\nLet's do that."
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia\n\n[2]\nQ: I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\nA: chicken pox\n\n[3]\nQ: I have a rash around my nose and mouth, and it's spreading to other parts of my body. I also have a fever.\nA: impetigo\n\n[4]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[5]\nQ: I have small dents in my nails and they are often inflamed and tender to the touch. I also have minor rashes on my arms.\nA: psoriasis\n\n[6]\nQ: I've been having coughing fits, back pain, and weakness in my arms and legs. I've also been having neck pain and dizziness.\nA: cervical spondylosis\n\n[7]\nQ: I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\nA: dengue\n\n[8]\nQ: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.\nA: common cold\n\n[9]\nQ: i have been suffering from dry cough and difficulty in breathing for a week now. i also feel weak throughout the day.\nA: bronchial asthma\n\n[10]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction",
+        "role": "tool",
+        "tool_call_id": "call_ce7ffee4446a4e52a4131edb"
+      },
+      {
+        "content": "[1]\nQ: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.\nA: pneumonia",
+        "role": "tool",
+        "tool_call_id": "call_1c826dffbfc94016b753690f"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[2]\nQ: I have a rash on my legs that is getting worse. I have difficulty running.\nA: varicose veins\n\n[3]\nQ: I have a rash on my skin that is red, raised, and filled with fluid. It is painful to touch and I have a fever.\nA: impetigo\n\n[4]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[5]\nQ: I have rashes on my chest and back and I itch all over my body. I sometimes have flaky skin, which often leaves marks on my body.\nA: drug reaction\n\n[6]\nQ: I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\nA: impetigo\n\n[7]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[8]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[9]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_4355904c3874415c9f0b026c"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The retrieved examples show:\n- \"I have a rash all over my body. It's red and swollen, and it's worse in some places, like my arms and legs. I also don't feel like eating.\" -> dengue\n- \"I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\" -> dengue\n- \"I have a fever and a headache. I have sores near my nose and rashes on my neck. I'm really struggling right now.\" -> impetigo\n- \"I have a rash on my arms and neck that itches like crazy. I've been feeling really uncomfortable all day.\" -> chicken pox\n\nWait, the patient symptoms are:\n\"I've been shivering and shivering and I feel cold. My fever is really high. I have rashes on my arms and red patches on my neck.\"\n\nLet's look at another search for \"dengue\" or \"malaria\".\nCould it be Dengue? High fever, shivering/chills, rash on arms and red patches on neck. Dengue typically presents with high fever, severe headache, pain behind the eyes, joint/muscle pain, nausea/vomiting, and rash. The rash often appears a few days after the fever starts.\nCould it be Malaria? Chills, shivering, high fever, sweating. Rash is not typical.\nCould it be Typhoid? Stepwise fever, abdominal pain, rose spots (rash), but usually GI symptoms dominate.\nCould it be Chicken pox? Fever, rash (vesicular), usually starts on trunk/face, spreads. Itching is prominent.\nCould it be Impetigo? Sores near nose, rashes on neck, fever. But impetigo is a bacterial skin infection, usually honey-colored crusts.\nCould it be Drug reaction? Rash, maybe fever, but shivering less common.\n\nLet's search for \"dengue\" in the references to see if there's a better match.",
+        "tool_calls": [
+          {
+            "id": "call_345bec2c47c74dcdaae662c6",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"dengue\", \"limit\": 10}"
+            }
+          },
+          {
+            "id": "call_5c9e64b56e3949dc8ac62300",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"malaria\", \"limit\": 10}"
+            }
+          }
+        ]
+      }
+    ]
+  ]
+}

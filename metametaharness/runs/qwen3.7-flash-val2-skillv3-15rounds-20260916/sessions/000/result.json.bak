@@ -1,0 +1,74 @@
+{
+  "session_id": "2ea6dced-f406-4e7d-acdc-127c1cf3970b",
+  "commits_before": [
+    "f0b6817a6c9c5920d4398ea87db7d5dcc9e5cef3"
+  ],
+  "completed": false,
+  "activity_seconds": 228.23569416999817,
+  "benchmark_seconds": 1455.6270062923431,
+  "wall_seconds": 1683.8627004623413,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 158859,
+    "num_turns": 23,
+    "stop_reason": "end_turn",
+    "session_id": "2ea6dced-f406-4e7d-acdc-127c1cf3970b",
+    "total_cost_usd": 1.6498730000000001,
+    "usage": {
+      "input_tokens": 55554,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 1299456,
+      "output_tokens": 28895,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 55554,
+        "outputTokens": 28895,
+        "cacheReadInputTokens": 1299456,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 1.6498730000000001,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round 0 complete. Both nodes exist and are audited.\n\n## Stage 0 — Baseline (N0, `f0b6817`)\nEvaluated once with the runner; notes attached to the existing commit, no new commit created.\n\n`{\"USPTO\": 0.1833, \"Symptom2Disease\": 0.84, \"LawBench\": 0.27, \"average\": 0.4311}` — rankable, 256/260 samples.\n\nTrace analysis showed the real defect: **the harness never exposed the examples' answers as the answer space.** 23 of 96 successful LawBench runs produced the correct charge with a trailing `罪` the Train targets never carry (`单位行贿罪` vs `单位行贿`); only 1/96 predictions was character-identical to any Train target. USPTO was partly a retrieval-usage problem (13/60 runs never called the tool; 27/60 dumped raw `memory.json` through the shell).\n\n## Stage 1/2 — Candidate (N1, `913ebd4`, branch `verbatim-answer-grounding`)\n**One mechanism change — verbatim answer grounding:** the retriever now emits an answer key (deduplicated frozen-Train targets, most frequent first, 4000-char budget) after the example block, and the skill requires character-exact copying with the examples' own multi-part separator.\n\n| | baseline | candidate |\n|---|---|---|\n| USPTO | 0.1833 | **0.2333** |\n| Symptom2Disease | 0.84 | **0.88** |\n| LawBench | 0.27 | **0.46** |\n| **average** | 0.4311 | **0.5244** (+0.0933) |\n\nExpected effect achieved. The predicted LawBench failure mode shrank 23 → 5 remaining suffix-only losses and trace `0000/sample-0.json` now answers `[罪名]单位行贿<eoa>` where the baseline answered `单位行贿罪`; no-tool-call USPTO executions fell 13 → 4. Still `partial` only from 1 timeout + 1 non-retryable `content_filter` (258/260 scored).\n\n**Audit:** commit tree `57747d4b…` is byte-identical to the evaluated tree; working tree clean; only the two in-scope harness files changed; the answer key derives from `load_task(..., \"train\")` memory only, so no Val/Test labels reach the harness; no dataset names, label lists, or identity branching anywhere in the source.",
+    "ttft_ms": 20065,
+    "ttft_stream_ms": 411,
+    "time_to_request_ms": 35,
+    "type": "result",
+    "duration_ms": 1101965,
+    "uuid": "f7d4becc-3621-440b-8b4e-518f8d2cdfe4"
+  },
+  "session_file": "projects/-workspace-harness/2ea6dced-f406-4e7d-acdc-127c1cf3970b.jsonl",
+  "usage": {
+    "input_tokens": 55554,
+    "output_tokens": 28895,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 1299456
+  },
+  "cost_usd": 1.6498730000000001,
+  "num_turns": 23,
+  "duration_api_ms": 158859,
+  "error": null
+}

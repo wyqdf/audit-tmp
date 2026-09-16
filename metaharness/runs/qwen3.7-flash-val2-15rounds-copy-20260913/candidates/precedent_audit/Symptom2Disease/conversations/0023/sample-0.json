@@ -1,0 +1,783 @@
+{
+  "task": "Symptom2Disease",
+  "candidate": "precedent_audit",
+  "split": "val",
+  "example_index": 23,
+  "sample_index": 0,
+  "status": "ok",
+  "error": null,
+  "was_correct": true,
+  "prediction": "[DIAGNOSIS]diabetes[/DIAGNOSIS]",
+  "target": "diabetes",
+  "metric": {},
+  "usage": {
+    "model_calls": 6,
+    "input_tokens": 42798,
+    "output_tokens": 4082
+  },
+  "elapsed_seconds": 45.89965693466365,
+  "memory_context_chars": 5320,
+  "tool_calls": [
+    "search_examples",
+    "search_examples",
+    "retrieve_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "search_examples",
+    "check_answer"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "stop",
+    "tool_calls",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by grounding it in the frozen training references. Name every answer unit the question could support before you choose, and set a unit aside only for a factual reason: being absent from the reference vocabulary, or being less common there than another unit, is not one. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape. The answer is compared as an exact set of units: a unit that does not match the facts is wrong even when it is the more common one, a broader unit that covers the same facts is a different answer rather than a safer one, and the reference case closest to this question is the evidence for how this task names the situation it describes. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`, and make the final answer reflect everything that call reports.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[2]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[3]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[4]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[7]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[8]\nQ: I have a red, itchy rash on my face, especially around my nose, mouth, and eyes. My nails are also inflamed.\nA: psoriasis\n\n[9]\nQ: I have a skin condition that causes dry, red, scaly patches on my skin. It can be itchy and painful, and it can get worse when I'm stressed or if I'm exposed to certain triggers, like sunlight or certain chemicals.\nA: psoriasis\n\n[10]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[11]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[12]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[13]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n[14]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[15]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction\n\n[16]\nQ: I feel sick, queasy, and wobbly. My throat is swollen and makes it hard for me to breathe. My chest hurts sometimes at night, and I sometimes feel sick.\nA: allergy\n\n[17]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[18]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[19]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[20]\nQ: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.\nA: hypertension\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason -\n   \"the references never use it\", \"it is not in the reference unit list\", and \"the\n   references use a commoner unit\" are not factual reasons. A missing unit and an extra\n   unit both count as wrong, so be complete and precise, and check the answer length the\n   profile reports for the question type you are answering.\n   Two rules settle the hard cases:\n   - *Specificity.* When two units differ only by an element one of them adds, they are\n     different answers, not two spellings of one. Ask whether the facts establish that\n     element. If they do, the unit that contains it is the answer and the broader one is\n     wrong here - it is not the safe choice, and being commoner in the references does not\n     make it likelier for this question.\n   - *Precedent.* The reference case closest to this question, and the unit its answer\n     uses, is the evidence for how this task names the situation the question describes.\n     Where your own reading of the facts conflicts with a case that matches them closely,\n     the case is the better guide to what this task's answers look like.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). That call re-opens the candidates you left out, closest case\n   first, quotes the reference case that answers each of them, spells out the element that\n   separates a unit of your draft from its attested relative, and flags a draft unit that\n   is only one element of a reference unit. Nothing it reports may be left unaddressed:\n   add every candidate the facts establish, replace a fragment with the whole unit, and\n   for anything you keep out of the answer state the fact that rules it out. Then answer\n   with the corrected draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_87ffb3ec5b804492a8f8be27",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"yeast\", \"limit\": 5}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_53bb28fc9a524cc6969cc30e",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"diabetes\", \"limit\": 5}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_f3c956986ee540e38c48c211",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{\"query\": \"trouble breathing when I exercise sweat a lot yeast infections\", \"limit\": 5}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants a medical diagnosis based on the patient's symptoms.\nSymptoms:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptom analysis:\n1. \"Trouble breathing when I exercise\" -> Could be asthma, but also could be related to other conditions. Wait, \"trouble breathing when I exercise\" is often associated with asthma or just general fitness, but let's see.\n2. \"Sweat a lot and get hot easily\" -> Hyperhidrosis, hyperthyroidism, or diabetes (insulin resistance can cause sweating/heat intolerance).\n3. \"Get yeast infections a lot\" -> Recurrent yeast infections are a classic sign of diabetes (high blood sugar feeds yeast). Also, antibiotics for other things can cause it, but diabetes is a primary systemic cause.\n\nLet's check the reference cases for clues.\nReference 11: \"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\nWait, the prompt says \"sweat a lot and get hot easily\", \"get yeast infections a lot\". These are very specific to diabetes. High blood sugar leads to recurrent yeast infections (Candida). Sweating and getting hot easily can be due to autonomic neuropathy or just metabolic issues in diabetes.\n\nLet's search for \"yeast infections\" in the references.\n`search_examples(keyword=\"yeast\")`\n`search_examples(keyword=\"diabetes\")`\n`retrieve_examples(query=\"trouble breathing when I exercise sweat a lot yeast infections\")`\n\nLet's do that.\n"
+    },
+    {
+      "content": "No reference case matches 'yeast'.",
+      "role": "tool",
+      "tool_call_id": "call_87ffb3ec5b804492a8f8be27"
+    },
+    {
+      "content": "[1]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[2]\nQ: I've been having trouble seeing things clearly, and it seems to be getting worse. I'm also always tired and worn out, and I get dizzy and lightheaded a lot.\nA: diabetes\n\n[3]\nQ: I have to pee a lot and I'm always thirsty. I get dizzy and confused sometimes. I've also lost a lot of my vision.\nA: diabetes\n\n[4]\nQ: I'm always thirsty and I pee a lot. I feel really tired and I'm always getting lost. I can't see very well anymore.\nA: diabetes\n\n[5]\nQ: I have been feeling really thirsty and have been urinating a lot more than usual. My mouth and throat are always dry. I have also been feeling really hungry and have been eating a lot more than usual.\nA: diabetes",
+      "role": "tool",
+      "tool_call_id": "call_53bb28fc9a524cc6969cc30e"
+    },
+    {
+      "content": "[1]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[2]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[3]\nQ: I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\nA: drug reaction\n\n[4]\nQ: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.\nA: gastroesophageal reflux disease\n\n[5]\nQ: I have red, watery eyes and my sinuses are tight. I have trouble breathing and I'm tired. My lymph nodes are swollen and I have a lot of throat mucous.\nA: common cold",
+      "role": "tool",
+      "tool_call_id": "call_f3c956986ee540e38c48c211"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_7e938c0d9dfd47dda8b3ea7c",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"sweat\", \"limit\": 5}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_42c6b88af46342aea730322e",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"exercise\", \"limit\": 5}"
+          }
+        }
+      ],
+      "reasoning_content": "The search for \"yeast\" returned no matches.\nLet's look at the symptoms again:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nWait, is there another condition? Let's check \"fungal infection\". Yeast infections are fungal infections. But the prompt says \"get yeast infections a lot\", which implies a systemic cause like diabetes.\nLet's search for \"sweat\" or \"hot easily\" or \"breathing when I exercise\".\n"
+    },
+    {
+      "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[5]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria",
+      "role": "tool",
+      "tool_call_id": "call_7e938c0d9dfd47dda8b3ea7c"
+    },
+    {
+      "content": "No reference case matches 'exercise'.",
+      "role": "tool",
+      "tool_call_id": "call_42c6b88af46342aea730322e"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_9461883fc7184a9a80d27845",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"hot easily\", \"limit\": 5}"
+          }
+        },
+        {
+          "type": "function",
+          "id": "call_fb7c9fd1b4d344f792a041aa",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"trouble breathing\", \"limit\": 5}"
+          }
+        }
+      ],
+      "reasoning_content": "Let's consider \"diabetes\" again.\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (like yeast infections).\nThe patient says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nRecurrent yeast infections are a hallmark of diabetes. Sweating and getting hot easily can be due to autonomic neuropathy or just hyperglycemia. Trouble breathing on exertion could be related to cardiovascular complications of diabetes or just general deconditioning/weakness.\n\nWait, is there any other diagnosis that fits better?\nWhat about \"bronchial asthma\"? Asthma causes trouble breathing when exercising (exercise-induced asthma). But asthma doesn't cause yeast infections or sweating/getting hot easily as primary symptoms.\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the underlying condition causing them is likely diabetes. In medical diagnostic datasets (like this one seems to be from), recurrent yeast infections + sweating/heat intolerance = diabetes.\n\nLet's check if there's any reference with \"yeast\" or \"infections\".\nReference 2 in the first search: \"My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\" -> psoriasis.\nReference 3 in the second search: \"I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\" -> drug reaction.\n\nLet's look at the exact wording of the prompt's symptoms:\n\"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\n\nCould it be diabetes? Yes, diabetes often presents with recurrent fungal/yeast infections, polyuria, polydipsia, fatigue, and sometimes sweating/heat intolerance due to autonomic dysfunction or insulin resistance. Exercise intolerance/dyspnea can also occur.\n\nLet's do a broader search for \"breathing\" or \"hot easily\"."
+    },
+    {
+      "content": "No reference case matches 'hot easily'.",
+      "role": "tool",
+      "tool_call_id": "call_9461883fc7184a9a80d27845"
+    },
+    {
+      "content": "[1]\nQ: I've been having trouble breathing, coughing a lot, and feeling exhausted. I have a fever and have been coughing up a lot of thick, sticky mucus. I'm just so tired and worn out from dealing with this.\nA: bronchial asthma\n\n[2]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[3]\nQ: I've been feeling really sick lately. I've been coughing a lot, and I've been having trouble breathing. I've also been having chills and a fever. I've been feeling really weak and tired. I've also been coughing up a lot of phlegm.\nA: pneumonia\n\n[4]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[5]\nQ: I've been having trouble breathing, and I've been coughing a lot. I'm also really tired. I've been coughing up a lot of thick, mucusy stuff. It's been really hard to deal with all of this.\nA: bronchial asthma",
+      "role": "tool",
+      "tool_call_id": "call_fb7c9fd1b4d344f792a041aa"
+    },
+    {
+      "content": "```json\n{\n  \"reasoning\": \"The patient presents with three main symptoms: trouble breathing during exercise, excessive sweating/heat intolerance, and recurrent yeast infections. \\n\\n1. Troubled breathing during exercise suggests reduced physical stamina or cardiovascular strain, which can occur in metabolic disorders.\\n2. Sweating a lot and getting hot easily points toward autonomic nervous system dysfunction or metabolic dysregulation, both of which are common complications of long-standing or poorly controlled diabetes.\\n3. Recurrent yeast infections are a classic clinical hallmark of diabetes mellitus. Elevated blood glucose levels provide an ideal environment for Candida (yeast) overgrowth, making frequent fungal infections a strong diagnostic indicator.\\n\\nWhile 'bronchial asthma' could explain the exercise-induced breathing difficulty, it does not account for the yeast infections or the sweating/heat intolerance. 'Fungal infection' describes the symptom but not the underlying systemic cause. Among the provided options, diabetes is the only condition that comprehensively explains the triad of metabolic, autonomic, and immunological symptoms.\",\n  \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"\n}\n```",
+      "role": "assistant",
+      "reasoning_content": "The symptoms are:\n1. Trouble breathing when I exercise.\n2. Sweat a lot and get hot easily.\n3. Get yeast infections a lot.\n\nLet's think about \"diabetes\". In many medical QA datasets, recurrent yeast infections are a strong pointer to diabetes. Sweating and getting hot easily can be related to autonomic neuropathy or just general metabolic issues. Trouble breathing on exertion could be due to cardiovascular complications or just weakness.\n\nWait, is there a chance it's \"bronchial asthma\"? Exercise-induced bronchoconstriction causes trouble breathing when exercising. But asthma doesn't explain yeast infections or sweating/getting hot easily.\n\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the question asks for a diagnosis based on the symptoms. Usually, the underlying systemic disease is the answer. Diabetes is a very common answer for \"recurrent yeast infections\" + other metabolic symptoms.\n\nLet's check if there's any reference with \"yeast infections\". None found in the search.\nBut let's look at Reference 11 from the initial prompt:\n\"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\n\nAnother possibility: Could it be \"hypothyroidism\" or \"hyperthyroidism\"? Not in the list of possible diagnoses.\nPossible diagnoses: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nGiven the list, \"diabetes\" is the best fit for recurrent yeast infections + sweating/heat intolerance. Dyspnea on exertion is also a known complication (cardiovascular).\n\nLet's consider \"fungal infection\". If the answer were fungal infection, the symptoms would likely focus on the rash itself (itchy, red patches, etc.), not the systemic issues like sweating and exercise intolerance. The fact that the patient *gets* yeast infections a lot implies a predisposing condition.\n\nLet's do one more check. Is there any reference that mentions \"sweat a lot\" and \"breathing\"?\nReference 4 in the second search: \"I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\" -> pneumonia. But no yeast infections.\n\nWhat about \"diabetes\"?\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (yeast), tingling/numbness in hands/feet.\nThe prompt says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nThis matches diabetes well enough for a multiple-choice diagnostic task. Recurrent yeast infections are a classic board-exam clue for diabetes. Sweating and heat intolerance can be due to autonomic neuropathy or insulin resistance. Exercise intolerance/dyspnea can be due to deconditioning or early cardiovascular disease.\n\nLet's formulate the reasoning.\nStep 1: Analyze symptoms.\n- \"Trouble breathing when I exercise\": Could indicate cardiovascular issues, deconditioning, or respiratory conditions. In the context of the other symptoms, it may point to systemic metabolic issues affecting endurance.\n- \"Sweat a lot and get hot easily\": Suggests autonomic dysfunction or metabolic hyperactivity, commonly seen in diabetes (autonomic neuropathy or insulin resistance).\n- \"Get yeast infections a lot\": Recurrent fungal/yeast infections are a hallmark sign of diabetes mellitus, as elevated blood glucose levels create an environment conducive to yeast overgrowth.\n\nStep 2: Match with possible diagnoses.\nAmong the options, diabetes is the only systemic condition that classically presents with recurrent yeast infections alongside metabolic/autonomic symptoms like excessive sweating and heat intolerance. While bronchial asthma explains exercise-induced breathing trouble, it does not account for the yeast infections or sweating. Fungal infection describes the symptom but not the underlying cause implied by the systemic presentation.\n\nStep 3: Verify with reference patterns.\nThe reference cases for diabetes emphasize metabolic and systemic symptoms (thirst, frequent urination, fatigue, vision changes). Although this specific combination of symptoms isn't in the top references, the presence of recurrent yeast infections strongly anchors the diagnosis to diabetes in medical diagnostic contexts.\n\nFinal Diagnosis: diabetes.\n\nWait, let me double check the exact wording of the prompt's symptoms. \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nCould it be \"bronchial asthma\"? No, asthma doesn't cause yeast infections.\nCould it be \"fungal infection\"? The prompt says \"I get yeast infections a lot\", which is a symptom of an underlying condition, not the diagnosis itself usually. But sometimes datasets are literal. However, \"diabetes\" is a much stronger fit for the triad.\n\nLet's check if there's any other option. \"drug reaction\"? No. \"allergy\"? No. \"psoriasis\"? No. \"hypertension\"? No. \"cervical spondylosis\"? No. \"varicose veins\"? No. \"malaria\"? No. \"dengue\"? No. \"arthritis\"? No. \"impetigo\"? No. \"common cold\"? No. \"gastroesophageal reflux disease\"? No. \"urinary tract infection\"? No. \"typhoid\"? No. \"pneumonia\"? No. \"peptic ulcer disease\"? No. \"jaundice\"? No. \"migraine\"? No.\n\nSo \"diabetes\" is the only logical choice.\n\nLet's construct the JSON response.\nReasoning should outline the step-by-step analysis.\nFinal answer: [DIAGNOSIS]diabetes[/DIAGNOSIS]\n\nOne thing to consider: Is there any chance \"trouble breathing when I exercise\" + \"sweat a lot\" points to something else? Like heart failure? Not in the list.\nWhat about \"bronchial asthma\"? Exercise-induced asthma is common. But again, yeast infections don't fit.\nTherefore, diabetes is the intended answer.\n\nLet's quickly review the reference profile. It lists \"diabetes (10)\".\nThe answer shape is 1 part.\nI will output the JSON.\nCheck format: `{\"reasoning\": \"...\", \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"}`\nAll good.\nI will write out the reasoning clearly.\nSymptom 1: Trouble breathing during exercise -> indicates reduced physical tolerance, often seen in metabolic disorders like diabetes due to cardiovascular strain or general weakness.\nSymptom 2: Sweating a lot and getting hot easily -> indicative of autonomic nervous system involvement or metabolic dysregulation, both common in diabetes.\nSymptom 3: Frequent yeast infections -> a classic clinical marker for diabetes, as high blood sugar promotes fungal growth.\nConclusion: The combination of these systemic and metabolic symptoms points directly to diabetes.\nMatches the required format.\nProceeding. \nSelf-Correction/Verification during thought: \nCould \"trouble breathing when I exercise\" be a distractor? Yes, in these types of datasets, they often mix a primary symptom with secondary ones. The yeast infections are the key discriminator here. \nI am confident in \"diabetes\".\nOutput matches requirements.✅"
+    },
+    {
+      "content": "Before you submit: the draft has not been verified. Call check_answer once with your draft answer, and pass `considered` = the candidate units you named while deciding, comma separated, including the ones you set aside. Then work through everything it reports: every candidate it re-opens is either added to the answer or ruled out by a fact you can point to in the question, and every fragment or relative it flags is replaced by the whole reference unit the facts establish. Submit the final JSON only after that.",
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_60412f51b05c4ec69ef24731",
+          "function": {
+            "name": "check_answer",
+            "arguments": "{\"draft_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\", \"considered\": \"diabetes, bronchial asthma, fungal infection\"}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants me to verify my draft answer using `check_answer`.\nMy draft answer is `[DIAGNOSIS]diabetes[/DIAGNOSIS]`.\nThe candidate units I considered while deciding were:\n- diabetes (kept)\n- bronchial asthma (set aside - doesn't explain yeast infections)\n- fungal infection (set aside - symptom, not underlying cause)\n\nI need to call `check_answer` with the draft answer and the list of considered units.\nThen I will process the output and submit the final JSON.\n\nDraft Answer: `[DIAGNOSIS]diabetes[/DIAGNOSIS]`\nConsidered: `diabetes, bronchial asthma, fungal infection`\n\nLet's do this."
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "No surface problem found. Surface checking cannot show that the answer is complete or correct - work through the points below before submitting.\n- Considered units: your notes name 'bronchial asthma', 'fungal infection', which the draft does not include.\n  Closest reference case(s) that answer 'bronchial asthma':\n  Q: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\n     A: bronchial asthma\n  Closest reference case(s) that answer 'fungal infection':\n  Q: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\n     A: fungal infection\n  For each one: if the facts establish it, put it in the answer verbatim (units joined the way the references join them); if a fact rules it out, say which fact and keep your draft. The case quoted for a unit is the local evidence about how this task names this situation, and the answer is compared as an exact set of units - a unit that does not match the facts is wrong even when it is the more common one in the references, and a broader unit that covers the same facts is a different answer, not a safer one.\n- Shape: your answer has 1 part(s); every reference answer has 1 part(s).\n- Units: all 1 unit(s) are reference units, spelled verbatim. That only means the spelling is right, not that the set is complete.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "tool",
+      "tool_call_id": "call_60412f51b05c4ec69ef24731"
+    },
+    {
+      "role": "assistant",
+      "content": "```json\n{\n  \"reasoning\": \"The check_answer tool confirmed no surface problems. I reviewed the re-opened candidates:\\n\\n1. **Bronchial Asthma**: The closest reference case involves fever, weakness, and coughing up mucus. The patient's symptoms are exercise-induced breathing difficulty, excessive sweating, and recurrent yeast infections. These do not match the asthma reference presentation. The breathing issue here is likely due to metabolic strain or cardiovascular impact of diabetes rather than airway obstruction.\\n\\n2. **Fungal Infection**: The closest reference case describes itching, rashes, and skin patches. While the patient has yeast infections, they are recurrent and accompanied by systemic symptoms (exercise intolerance, heat intolerance). In medical diagnostics, recurrent yeast infections are a hallmark sign of underlying diabetes mellitus. Diagnosing just 'fungal infection' would be incomplete as it ignores the systemic causes established by the other symptoms. Diabetes is the unifying diagnosis.\\n\\nTherefore, the draft answer [DIAGNOSIS]diabetes[/DIAGNOSIS] is correct and complete.\",\n  \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"\n}\n```",
+      "reasoning_content": "The `check_answer` tool reports that I considered 'bronchial asthma' and 'fungal infection' but did not include them in the draft. It provides the closest reference cases for these units.\n\n1.  **Bronchial Asthma**: The closest reference case is \"I'm so tired and weak, and my fever is really high... coughing up a lot of mucus.\" This does not match the patient's symptoms (trouble breathing when exercising, sweating, yeast infections). The patient's breathing trouble is specifically exercise-induced, which is more consistent with cardiovascular/metabolic issues like diabetes than typical asthma presentations in this dataset context (which often involve fever/mucus/coughing). Therefore, 'bronchial asthma' is ruled out by the facts.\n\n2.  **Fungal Infection**: The closest reference case is \"itching on my skin... rash... weird patches... pimples\". While the patient has yeast infections (a type of fungal infection), the prompt asks for a diagnosis based on the *combination* of symptoms. Recurrent yeast infections are a specific symptom pointing to an underlying systemic cause (diabetes) rather than just a localized fungal infection being the primary diagnosis. Furthermore, the reference profile lists 'diabetes' as a unit. The presence of recurrent yeast infections + exercise intolerance + heat intolerance strongly points to diabetes as the unifying diagnosis. A 'fungal infection' answer would miss the systemic nature of the other symptoms. Thus, 'fungal infection' is ruled out because the facts establish a broader, unifying condition (diabetes) that explains all symptoms, whereas 'fungal infection' only covers one aspect.\n\nMy draft `[DIAGNOSIS]diabetes[/DIAGNOSIS]` remains the best fit. The shape is correct (1 part). The spelling is verbatim from the reference units.\n\nI will submit the final JSON.\n"
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Name every answer unit the question could support before you choose, and set a unit aside only for a factual reason: being absent from the reference vocabulary, or being less common there than another unit, is not one. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape. The answer is compared as an exact set of units: a unit that does not match the facts is wrong even when it is the more common one, a broader unit that covers the same facts is a different answer rather than a safer one, and the reference case closest to this question is the evidence for how this task names the situation it describes. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`, and make the final answer reflect everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[2]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[3]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[4]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[7]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[8]\nQ: I have a red, itchy rash on my face, especially around my nose, mouth, and eyes. My nails are also inflamed.\nA: psoriasis\n\n[9]\nQ: I have a skin condition that causes dry, red, scaly patches on my skin. It can be itchy and painful, and it can get worse when I'm stressed or if I'm exposed to certain triggers, like sunlight or certain chemicals.\nA: psoriasis\n\n[10]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[11]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[12]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[13]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n[14]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[15]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction\n\n[16]\nQ: I feel sick, queasy, and wobbly. My throat is swollen and makes it hard for me to breathe. My chest hurts sometimes at night, and I sometimes feel sick.\nA: allergy\n\n[17]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[18]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[19]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[20]\nQ: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.\nA: hypertension\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason -\n   \"the references never use it\", \"it is not in the reference unit list\", and \"the\n   references use a commoner unit\" are not factual reasons. A missing unit and an extra\n   unit both count as wrong, so be complete and precise, and check the answer length the\n   profile reports for the question type you are answering.\n   Two rules settle the hard cases:\n   - *Specificity.* When two units differ only by an element one of them adds, they are\n     different answers, not two spellings of one. Ask whether the facts establish that\n     element. If they do, the unit that contains it is the answer and the broader one is\n     wrong here - it is not the safe choice, and being commoner in the references does not\n     make it likelier for this question.\n   - *Precedent.* The reference case closest to this question, and the unit its answer\n     uses, is the evidence for how this task names the situation the question describes.\n     Where your own reading of the facts conflicts with a case that matches them closely,\n     the case is the better guide to what this task's answers look like.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). That call re-opens the candidates you left out, closest case\n   first, quotes the reference case that answers each of them, spells out the element that\n   separates a unit of your draft from its attested relative, and flags a draft unit that\n   is only one element of a reference unit. Nothing it reports may be left unaddressed:\n   add every candidate the facts establish, replace a fragment with the whole unit, and\n   for anything you keep out of the answer state the fact that rules it out. Then answer\n   with the corrected draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_87ffb3ec5b804492a8f8be27",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"yeast\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_53bb28fc9a524cc6969cc30e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"diabetes\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_f3c956986ee540e38c48c211",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"trouble breathing when I exercise sweat a lot yeast infections\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a medical diagnosis based on the patient's symptoms.\nSymptoms:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptom analysis:\n1. \"Trouble breathing when I exercise\" -> Could be asthma, but also could be related to other conditions. Wait, \"trouble breathing when I exercise\" is often associated with asthma or just general fitness, but let's see.\n2. \"Sweat a lot and get hot easily\" -> Hyperhidrosis, hyperthyroidism, or diabetes (insulin resistance can cause sweating/heat intolerance).\n3. \"Get yeast infections a lot\" -> Recurrent yeast infections are a classic sign of diabetes (high blood sugar feeds yeast). Also, antibiotics for other things can cause it, but diabetes is a primary systemic cause.\n\nLet's check the reference cases for clues.\nReference 11: \"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\nWait, the prompt says \"sweat a lot and get hot easily\", \"get yeast infections a lot\". These are very specific to diabetes. High blood sugar leads to recurrent yeast infections (Candida). Sweating and getting hot easily can be due to autonomic neuropathy or just metabolic issues in diabetes.\n\nLet's search for \"yeast infections\" in the references.\n`search_examples(keyword=\"yeast\")`\n`search_examples(keyword=\"diabetes\")`\n`retrieve_examples(query=\"trouble breathing when I exercise sweat a lot yeast infections\")`\n\nLet's do that.\n"
+      },
+      {
+        "content": "No reference case matches 'yeast'.",
+        "role": "tool",
+        "tool_call_id": "call_87ffb3ec5b804492a8f8be27"
+      },
+      {
+        "content": "[1]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[2]\nQ: I've been having trouble seeing things clearly, and it seems to be getting worse. I'm also always tired and worn out, and I get dizzy and lightheaded a lot.\nA: diabetes\n\n[3]\nQ: I have to pee a lot and I'm always thirsty. I get dizzy and confused sometimes. I've also lost a lot of my vision.\nA: diabetes\n\n[4]\nQ: I'm always thirsty and I pee a lot. I feel really tired and I'm always getting lost. I can't see very well anymore.\nA: diabetes\n\n[5]\nQ: I have been feeling really thirsty and have been urinating a lot more than usual. My mouth and throat are always dry. I have also been feeling really hungry and have been eating a lot more than usual.\nA: diabetes",
+        "role": "tool",
+        "tool_call_id": "call_53bb28fc9a524cc6969cc30e"
+      },
+      {
+        "content": "[1]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[2]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[3]\nQ: I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\nA: drug reaction\n\n[4]\nQ: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.\nA: gastroesophageal reflux disease\n\n[5]\nQ: I have red, watery eyes and my sinuses are tight. I have trouble breathing and I'm tired. My lymph nodes are swollen and I have a lot of throat mucous.\nA: common cold",
+        "role": "tool",
+        "tool_call_id": "call_f3c956986ee540e38c48c211"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_7e938c0d9dfd47dda8b3ea7c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"sweat\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_42c6b88af46342aea730322e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"exercise\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The search for \"yeast\" returned no matches.\nLet's look at the symptoms again:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nWait, is there another condition? Let's check \"fungal infection\". Yeast infections are fungal infections. But the prompt says \"get yeast infections a lot\", which implies a systemic cause like diabetes.\nLet's search for \"sweat\" or \"hot easily\" or \"breathing when I exercise\".\n"
+      },
+      {
+        "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[5]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria",
+        "role": "tool",
+        "tool_call_id": "call_7e938c0d9dfd47dda8b3ea7c"
+      },
+      {
+        "content": "No reference case matches 'exercise'.",
+        "role": "tool",
+        "tool_call_id": "call_42c6b88af46342aea730322e"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_9461883fc7184a9a80d27845",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"hot easily\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_fb7c9fd1b4d344f792a041aa",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"trouble breathing\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "Let's consider \"diabetes\" again.\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (like yeast infections).\nThe patient says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nRecurrent yeast infections are a hallmark of diabetes. Sweating and getting hot easily can be due to autonomic neuropathy or just hyperglycemia. Trouble breathing on exertion could be related to cardiovascular complications of diabetes or just general deconditioning/weakness.\n\nWait, is there any other diagnosis that fits better?\nWhat about \"bronchial asthma\"? Asthma causes trouble breathing when exercising (exercise-induced asthma). But asthma doesn't cause yeast infections or sweating/getting hot easily as primary symptoms.\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the underlying condition causing them is likely diabetes. In medical diagnostic datasets (like this one seems to be from), recurrent yeast infections + sweating/heat intolerance = diabetes.\n\nLet's check if there's any reference with \"yeast\" or \"infections\".\nReference 2 in the first search: \"My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\" -> psoriasis.\nReference 3 in the second search: \"I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\" -> drug reaction.\n\nLet's look at the exact wording of the prompt's symptoms:\n\"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\n\nCould it be diabetes? Yes, diabetes often presents with recurrent fungal/yeast infections, polyuria, polydipsia, fatigue, and sometimes sweating/heat intolerance due to autonomic dysfunction or insulin resistance. Exercise intolerance/dyspnea can also occur.\n\nLet's do a broader search for \"breathing\" or \"hot easily\"."
+      },
+      {
+        "content": "No reference case matches 'hot easily'.",
+        "role": "tool",
+        "tool_call_id": "call_9461883fc7184a9a80d27845"
+      },
+      {
+        "content": "[1]\nQ: I've been having trouble breathing, coughing a lot, and feeling exhausted. I have a fever and have been coughing up a lot of thick, sticky mucus. I'm just so tired and worn out from dealing with this.\nA: bronchial asthma\n\n[2]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[3]\nQ: I've been feeling really sick lately. I've been coughing a lot, and I've been having trouble breathing. I've also been having chills and a fever. I've been feeling really weak and tired. I've also been coughing up a lot of phlegm.\nA: pneumonia\n\n[4]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[5]\nQ: I've been having trouble breathing, and I've been coughing a lot. I'm also really tired. I've been coughing up a lot of thick, mucusy stuff. It's been really hard to deal with all of this.\nA: bronchial asthma",
+        "role": "tool",
+        "tool_call_id": "call_fb7c9fd1b4d344f792a041aa"
+      },
+      {
+        "content": "```json\n{\n  \"reasoning\": \"The patient presents with three main symptoms: trouble breathing during exercise, excessive sweating/heat intolerance, and recurrent yeast infections. \\n\\n1. Troubled breathing during exercise suggests reduced physical stamina or cardiovascular strain, which can occur in metabolic disorders.\\n2. Sweating a lot and getting hot easily points toward autonomic nervous system dysfunction or metabolic dysregulation, both of which are common complications of long-standing or poorly controlled diabetes.\\n3. Recurrent yeast infections are a classic clinical hallmark of diabetes mellitus. Elevated blood glucose levels provide an ideal environment for Candida (yeast) overgrowth, making frequent fungal infections a strong diagnostic indicator.\\n\\nWhile 'bronchial asthma' could explain the exercise-induced breathing difficulty, it does not account for the yeast infections or the sweating/heat intolerance. 'Fungal infection' describes the symptom but not the underlying systemic cause. Among the provided options, diabetes is the only condition that comprehensively explains the triad of metabolic, autonomic, and immunological symptoms.\",\n  \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"\n}\n```",
+        "role": "assistant",
+        "reasoning_content": "The symptoms are:\n1. Trouble breathing when I exercise.\n2. Sweat a lot and get hot easily.\n3. Get yeast infections a lot.\n\nLet's think about \"diabetes\". In many medical QA datasets, recurrent yeast infections are a strong pointer to diabetes. Sweating and getting hot easily can be related to autonomic neuropathy or just general metabolic issues. Trouble breathing on exertion could be due to cardiovascular complications or just weakness.\n\nWait, is there a chance it's \"bronchial asthma\"? Exercise-induced bronchoconstriction causes trouble breathing when exercising. But asthma doesn't explain yeast infections or sweating/getting hot easily.\n\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the question asks for a diagnosis based on the symptoms. Usually, the underlying systemic disease is the answer. Diabetes is a very common answer for \"recurrent yeast infections\" + other metabolic symptoms.\n\nLet's check if there's any reference with \"yeast infections\". None found in the search.\nBut let's look at Reference 11 from the initial prompt:\n\"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\n\nAnother possibility: Could it be \"hypothyroidism\" or \"hyperthyroidism\"? Not in the list of possible diagnoses.\nPossible diagnoses: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nGiven the list, \"diabetes\" is the best fit for recurrent yeast infections + sweating/heat intolerance. Dyspnea on exertion is also a known complication (cardiovascular).\n\nLet's consider \"fungal infection\". If the answer were fungal infection, the symptoms would likely focus on the rash itself (itchy, red patches, etc.), not the systemic issues like sweating and exercise intolerance. The fact that the patient *gets* yeast infections a lot implies a predisposing condition.\n\nLet's do one more check. Is there any reference that mentions \"sweat a lot\" and \"breathing\"?\nReference 4 in the second search: \"I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\" -> pneumonia. But no yeast infections.\n\nWhat about \"diabetes\"?\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (yeast), tingling/numbness in hands/feet.\nThe prompt says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nThis matches diabetes well enough for a multiple-choice diagnostic task. Recurrent yeast infections are a classic board-exam clue for diabetes. Sweating and heat intolerance can be due to autonomic neuropathy or insulin resistance. Exercise intolerance/dyspnea can be due to deconditioning or early cardiovascular disease.\n\nLet's formulate the reasoning.\nStep 1: Analyze symptoms.\n- \"Trouble breathing when I exercise\": Could indicate cardiovascular issues, deconditioning, or respiratory conditions. In the context of the other symptoms, it may point to systemic metabolic issues affecting endurance.\n- \"Sweat a lot and get hot easily\": Suggests autonomic dysfunction or metabolic hyperactivity, commonly seen in diabetes (autonomic neuropathy or insulin resistance).\n- \"Get yeast infections a lot\": Recurrent fungal/yeast infections are a hallmark sign of diabetes mellitus, as elevated blood glucose levels create an environment conducive to yeast overgrowth.\n\nStep 2: Match with possible diagnoses.\nAmong the options, diabetes is the only systemic condition that classically presents with recurrent yeast infections alongside metabolic/autonomic symptoms like excessive sweating and heat intolerance. While bronchial asthma explains exercise-induced breathing trouble, it does not account for the yeast infections or sweating. Fungal infection describes the symptom but not the underlying cause implied by the systemic presentation.\n\nStep 3: Verify with reference patterns.\nThe reference cases for diabetes emphasize metabolic and systemic symptoms (thirst, frequent urination, fatigue, vision changes). Although this specific combination of symptoms isn't in the top references, the presence of recurrent yeast infections strongly anchors the diagnosis to diabetes in medical diagnostic contexts.\n\nFinal Diagnosis: diabetes.\n\nWait, let me double check the exact wording of the prompt's symptoms. \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nCould it be \"bronchial asthma\"? No, asthma doesn't cause yeast infections.\nCould it be \"fungal infection\"? The prompt says \"I get yeast infections a lot\", which is a symptom of an underlying condition, not the diagnosis itself usually. But sometimes datasets are literal. However, \"diabetes\" is a much stronger fit for the triad.\n\nLet's check if there's any other option. \"drug reaction\"? No. \"allergy\"? No. \"psoriasis\"? No. \"hypertension\"? No. \"cervical spondylosis\"? No. \"varicose veins\"? No. \"malaria\"? No. \"dengue\"? No. \"arthritis\"? No. \"impetigo\"? No. \"common cold\"? No. \"gastroesophageal reflux disease\"? No. \"urinary tract infection\"? No. \"typhoid\"? No. \"pneumonia\"? No. \"peptic ulcer disease\"? No. \"jaundice\"? No. \"migraine\"? No.\n\nSo \"diabetes\" is the only logical choice.\n\nLet's construct the JSON response.\nReasoning should outline the step-by-step analysis.\nFinal answer: [DIAGNOSIS]diabetes[/DIAGNOSIS]\n\nOne thing to consider: Is there any chance \"trouble breathing when I exercise\" + \"sweat a lot\" points to something else? Like heart failure? Not in the list.\nWhat about \"bronchial asthma\"? Exercise-induced asthma is common. But again, yeast infections don't fit.\nTherefore, diabetes is the intended answer.\n\nLet's quickly review the reference profile. It lists \"diabetes (10)\".\nThe answer shape is 1 part.\nI will output the JSON.\nCheck format: `{\"reasoning\": \"...\", \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"}`\nAll good.\nI will write out the reasoning clearly.\nSymptom 1: Trouble breathing during exercise -> indicates reduced physical tolerance, often seen in metabolic disorders like diabetes due to cardiovascular strain or general weakness.\nSymptom 2: Sweating a lot and getting hot easily -> indicative of autonomic nervous system involvement or metabolic dysregulation, both common in diabetes.\nSymptom 3: Frequent yeast infections -> a classic clinical marker for diabetes, as high blood sugar promotes fungal growth.\nConclusion: The combination of these systemic and metabolic symptoms points directly to diabetes.\nMatches the required format.\nProceeding. \nSelf-Correction/Verification during thought: \nCould \"trouble breathing when I exercise\" be a distractor? Yes, in these types of datasets, they often mix a primary symptom with secondary ones. The yeast infections are the key discriminator here. \nI am confident in \"diabetes\".\nOutput matches requirements.✅"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Before you submit: the draft has not been verified. Call check_answer once with your draft answer, and pass `considered` = the candidate units you named while deciding, comma separated, including the ones you set aside. Then work through everything it reports: every candidate it re-opens is either added to the answer or ruled out by a fact you can point to in the question, and every fragment or relative it flags is replaced by the whole reference unit the facts establish. Submit the final JSON only after that.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The user wants me to verify my draft answer using `check_answer`.\nMy draft answer is `[DIAGNOSIS]diabetes[/DIAGNOSIS]`.\nThe candidate units I considered while deciding were:\n- diabetes (kept)\n- bronchial asthma (set aside - doesn't explain yeast infections)\n- fungal infection (set aside - symptom, not underlying cause)\n\nI need to call `check_answer` with the draft answer and the list of considered units.\nThen I will process the output and submit the final JSON.\n\nDraft Answer: `[DIAGNOSIS]diabetes[/DIAGNOSIS]`\nConsidered: `diabetes, bronchial asthma, fungal infection`\n\nLet's do this.",
+        "tool_calls": [
+          {
+            "id": "call_60412f51b05c4ec69ef24731",
+            "type": "function",
+            "function": {
+              "name": "check_answer",
+              "arguments": "{\"draft_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\", \"considered\": \"diabetes, bronchial asthma, fungal infection\"}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Name every answer unit the question could support before you choose, and set a unit aside only for a factual reason: being absent from the reference vocabulary, or being less common there than another unit, is not one. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape. The answer is compared as an exact set of units: a unit that does not match the facts is wrong even when it is the more common one, a broader unit that covers the same facts is a different answer rather than a safer one, and the reference case closest to this question is the evidence for how this task names the situation it describes. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`, and make the final answer reflect everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[2]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[3]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[4]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[7]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[8]\nQ: I have a red, itchy rash on my face, especially around my nose, mouth, and eyes. My nails are also inflamed.\nA: psoriasis\n\n[9]\nQ: I have a skin condition that causes dry, red, scaly patches on my skin. It can be itchy and painful, and it can get worse when I'm stressed or if I'm exposed to certain triggers, like sunlight or certain chemicals.\nA: psoriasis\n\n[10]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[11]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[12]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[13]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n[14]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[15]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction\n\n[16]\nQ: I feel sick, queasy, and wobbly. My throat is swollen and makes it hard for me to breathe. My chest hurts sometimes at night, and I sometimes feel sick.\nA: allergy\n\n[17]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[18]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[19]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[20]\nQ: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.\nA: hypertension\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason -\n   \"the references never use it\", \"it is not in the reference unit list\", and \"the\n   references use a commoner unit\" are not factual reasons. A missing unit and an extra\n   unit both count as wrong, so be complete and precise, and check the answer length the\n   profile reports for the question type you are answering.\n   Two rules settle the hard cases:\n   - *Specificity.* When two units differ only by an element one of them adds, they are\n     different answers, not two spellings of one. Ask whether the facts establish that\n     element. If they do, the unit that contains it is the answer and the broader one is\n     wrong here - it is not the safe choice, and being commoner in the references does not\n     make it likelier for this question.\n   - *Precedent.* The reference case closest to this question, and the unit its answer\n     uses, is the evidence for how this task names the situation the question describes.\n     Where your own reading of the facts conflicts with a case that matches them closely,\n     the case is the better guide to what this task's answers look like.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). That call re-opens the candidates you left out, closest case\n   first, quotes the reference case that answers each of them, spells out the element that\n   separates a unit of your draft from its attested relative, and flags a draft unit that\n   is only one element of a reference unit. Nothing it reports may be left unaddressed:\n   add every candidate the facts establish, replace a fragment with the whole unit, and\n   for anything you keep out of the answer state the fact that rules it out. Then answer\n   with the corrected draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_87ffb3ec5b804492a8f8be27",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"yeast\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_53bb28fc9a524cc6969cc30e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"diabetes\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_f3c956986ee540e38c48c211",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"trouble breathing when I exercise sweat a lot yeast infections\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a medical diagnosis based on the patient's symptoms.\nSymptoms:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptom analysis:\n1. \"Trouble breathing when I exercise\" -> Could be asthma, but also could be related to other conditions. Wait, \"trouble breathing when I exercise\" is often associated with asthma or just general fitness, but let's see.\n2. \"Sweat a lot and get hot easily\" -> Hyperhidrosis, hyperthyroidism, or diabetes (insulin resistance can cause sweating/heat intolerance).\n3. \"Get yeast infections a lot\" -> Recurrent yeast infections are a classic sign of diabetes (high blood sugar feeds yeast). Also, antibiotics for other things can cause it, but diabetes is a primary systemic cause.\n\nLet's check the reference cases for clues.\nReference 11: \"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\nWait, the prompt says \"sweat a lot and get hot easily\", \"get yeast infections a lot\". These are very specific to diabetes. High blood sugar leads to recurrent yeast infections (Candida). Sweating and getting hot easily can be due to autonomic neuropathy or just metabolic issues in diabetes.\n\nLet's search for \"yeast infections\" in the references.\n`search_examples(keyword=\"yeast\")`\n`search_examples(keyword=\"diabetes\")`\n`retrieve_examples(query=\"trouble breathing when I exercise sweat a lot yeast infections\")`\n\nLet's do that.\n"
+      },
+      {
+        "content": "No reference case matches 'yeast'.",
+        "role": "tool",
+        "tool_call_id": "call_87ffb3ec5b804492a8f8be27"
+      },
+      {
+        "content": "[1]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[2]\nQ: I've been having trouble seeing things clearly, and it seems to be getting worse. I'm also always tired and worn out, and I get dizzy and lightheaded a lot.\nA: diabetes\n\n[3]\nQ: I have to pee a lot and I'm always thirsty. I get dizzy and confused sometimes. I've also lost a lot of my vision.\nA: diabetes\n\n[4]\nQ: I'm always thirsty and I pee a lot. I feel really tired and I'm always getting lost. I can't see very well anymore.\nA: diabetes\n\n[5]\nQ: I have been feeling really thirsty and have been urinating a lot more than usual. My mouth and throat are always dry. I have also been feeling really hungry and have been eating a lot more than usual.\nA: diabetes",
+        "role": "tool",
+        "tool_call_id": "call_53bb28fc9a524cc6969cc30e"
+      },
+      {
+        "content": "[1]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[2]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[3]\nQ: I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\nA: drug reaction\n\n[4]\nQ: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.\nA: gastroesophageal reflux disease\n\n[5]\nQ: I have red, watery eyes and my sinuses are tight. I have trouble breathing and I'm tired. My lymph nodes are swollen and I have a lot of throat mucous.\nA: common cold",
+        "role": "tool",
+        "tool_call_id": "call_f3c956986ee540e38c48c211"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_7e938c0d9dfd47dda8b3ea7c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"sweat\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_42c6b88af46342aea730322e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"exercise\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The search for \"yeast\" returned no matches.\nLet's look at the symptoms again:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nWait, is there another condition? Let's check \"fungal infection\". Yeast infections are fungal infections. But the prompt says \"get yeast infections a lot\", which implies a systemic cause like diabetes.\nLet's search for \"sweat\" or \"hot easily\" or \"breathing when I exercise\".\n"
+      },
+      {
+        "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[5]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria",
+        "role": "tool",
+        "tool_call_id": "call_7e938c0d9dfd47dda8b3ea7c"
+      },
+      {
+        "content": "No reference case matches 'exercise'.",
+        "role": "tool",
+        "tool_call_id": "call_42c6b88af46342aea730322e"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_9461883fc7184a9a80d27845",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"hot easily\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_fb7c9fd1b4d344f792a041aa",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"trouble breathing\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "Let's consider \"diabetes\" again.\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (like yeast infections).\nThe patient says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nRecurrent yeast infections are a hallmark of diabetes. Sweating and getting hot easily can be due to autonomic neuropathy or just hyperglycemia. Trouble breathing on exertion could be related to cardiovascular complications of diabetes or just general deconditioning/weakness.\n\nWait, is there any other diagnosis that fits better?\nWhat about \"bronchial asthma\"? Asthma causes trouble breathing when exercising (exercise-induced asthma). But asthma doesn't cause yeast infections or sweating/getting hot easily as primary symptoms.\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the underlying condition causing them is likely diabetes. In medical diagnostic datasets (like this one seems to be from), recurrent yeast infections + sweating/heat intolerance = diabetes.\n\nLet's check if there's any reference with \"yeast\" or \"infections\".\nReference 2 in the first search: \"My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\" -> psoriasis.\nReference 3 in the second search: \"I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\" -> drug reaction.\n\nLet's look at the exact wording of the prompt's symptoms:\n\"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\n\nCould it be diabetes? Yes, diabetes often presents with recurrent fungal/yeast infections, polyuria, polydipsia, fatigue, and sometimes sweating/heat intolerance due to autonomic dysfunction or insulin resistance. Exercise intolerance/dyspnea can also occur.\n\nLet's do a broader search for \"breathing\" or \"hot easily\"."
+      },
+      {
+        "content": "No reference case matches 'hot easily'.",
+        "role": "tool",
+        "tool_call_id": "call_9461883fc7184a9a80d27845"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I've been having trouble breathing, coughing a lot, and feeling exhausted. I have a fever and have been coughing up a lot of thick, sticky mucus. I'm just so tired and worn out from dealing with this.\nA: bronchial asthma\n\n[2]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[3]\nQ: I've been feeling really sick lately. I've been coughing a lot, and I've been having trouble breathing. I've also been having chills and a fever. I've been feeling really weak and tired. I've also been coughing up a lot of phlegm.\nA: pneumonia\n\n[4]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[5]\nQ: I've been having trouble breathing, and I've been coughing a lot. I'm also really tired. I've been coughing up a lot of thick, mucusy stuff. It's been really hard to deal with all of this.\nA: bronchial asthma",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_fb7c9fd1b4d344f792a041aa"
+      },
+      {
+        "role": "assistant",
+        "content": "```json\n{\n  \"reasoning\": \"The patient presents with three main symptoms: trouble breathing during exercise, excessive sweating/heat intolerance, and recurrent yeast infections. \\n\\n1. Troubled breathing during exercise suggests reduced physical stamina or cardiovascular strain, which can occur in metabolic disorders.\\n2. Sweating a lot and getting hot easily points toward autonomic nervous system dysfunction or metabolic dysregulation, both of which are common complications of long-standing or poorly controlled diabetes.\\n3. Recurrent yeast infections are a classic clinical hallmark of diabetes mellitus. Elevated blood glucose levels provide an ideal environment for Candida (yeast) overgrowth, making frequent fungal infections a strong diagnostic indicator.\\n\\nWhile 'bronchial asthma' could explain the exercise-induced breathing difficulty, it does not account for the yeast infections or the sweating/heat intolerance. 'Fungal infection' describes the symptom but not the underlying systemic cause. Among the provided options, diabetes is the only condition that comprehensively explains the triad of metabolic, autonomic, and immunological symptoms.\",\n  \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"\n}\n```",
+        "reasoning_content": "The symptoms are:\n1. Trouble breathing when I exercise.\n2. Sweat a lot and get hot easily.\n3. Get yeast infections a lot.\n\nLet's think about \"diabetes\". In many medical QA datasets, recurrent yeast infections are a strong pointer to diabetes. Sweating and getting hot easily can be related to autonomic neuropathy or just general metabolic issues. Trouble breathing on exertion could be due to cardiovascular complications or just weakness.\n\nWait, is there a chance it's \"bronchial asthma\"? Exercise-induced bronchoconstriction causes trouble breathing when exercising. But asthma doesn't explain yeast infections or sweating/getting hot easily.\n\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the question asks for a diagnosis based on the symptoms. Usually, the underlying systemic disease is the answer. Diabetes is a very common answer for \"recurrent yeast infections\" + other metabolic symptoms.\n\nLet's check if there's any reference with \"yeast infections\". None found in the search.\nBut let's look at Reference 11 from the initial prompt:\n\"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\n\nAnother possibility: Could it be \"hypothyroidism\" or \"hyperthyroidism\"? Not in the list of possible diagnoses.\nPossible diagnoses: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nGiven the list, \"diabetes\" is the best fit for recurrent yeast infections + sweating/heat intolerance. Dyspnea on exertion is also a known complication (cardiovascular).\n\nLet's consider \"fungal infection\". If the answer were fungal infection, the symptoms would likely focus on the rash itself (itchy, red patches, etc.), not the systemic issues like sweating and exercise intolerance. The fact that the patient *gets* yeast infections a lot implies a predisposing condition.\n\nLet's do one more check. Is there any reference that mentions \"sweat a lot\" and \"breathing\"?\nReference 4 in the second search: \"I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\" -> pneumonia. But no yeast infections.\n\nWhat about \"diabetes\"?\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (yeast), tingling/numbness in hands/feet.\nThe prompt says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nThis matches diabetes well enough for a multiple-choice diagnostic task. Recurrent yeast infections are a classic board-exam clue for diabetes. Sweating and heat intolerance can be due to autonomic neuropathy or insulin resistance. Exercise intolerance/dyspnea can be due to deconditioning or early cardiovascular disease.\n\nLet's formulate the reasoning.\nStep 1: Analyze symptoms.\n- \"Trouble breathing when I exercise\": Could indicate cardiovascular issues, deconditioning, or respiratory conditions. In the context of the other symptoms, it may point to systemic metabolic issues affecting endurance.\n- \"Sweat a lot and get hot easily\": Suggests autonomic dysfunction or metabolic hyperactivity, commonly seen in diabetes (autonomic neuropathy or insulin resistance).\n- \"Get yeast infections a lot\": Recurrent fungal/yeast infections are a hallmark sign of diabetes mellitus, as elevated blood glucose levels create an environment conducive to yeast overgrowth.\n\nStep 2: Match with possible diagnoses.\nAmong the options, diabetes is the only systemic condition that classically presents with recurrent yeast infections alongside metabolic/autonomic symptoms like excessive sweating and heat intolerance. While bronchial asthma explains exercise-induced breathing trouble, it does not account for the yeast infections or sweating. Fungal infection describes the symptom but not the underlying cause implied by the systemic presentation.\n\nStep 3: Verify with reference patterns.\nThe reference cases for diabetes emphasize metabolic and systemic symptoms (thirst, frequent urination, fatigue, vision changes). Although this specific combination of symptoms isn't in the top references, the presence of recurrent yeast infections strongly anchors the diagnosis to diabetes in medical diagnostic contexts.\n\nFinal Diagnosis: diabetes.\n\nWait, let me double check the exact wording of the prompt's symptoms. \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nCould it be \"bronchial asthma\"? No, asthma doesn't cause yeast infections.\nCould it be \"fungal infection\"? The prompt says \"I get yeast infections a lot\", which is a symptom of an underlying condition, not the diagnosis itself usually. But sometimes datasets are literal. However, \"diabetes\" is a much stronger fit for the triad.\n\nLet's check if there's any other option. \"drug reaction\"? No. \"allergy\"? No. \"psoriasis\"? No. \"hypertension\"? No. \"cervical spondylosis\"? No. \"varicose veins\"? No. \"malaria\"? No. \"dengue\"? No. \"arthritis\"? No. \"impetigo\"? No. \"common cold\"? No. \"gastroesophageal reflux disease\"? No. \"urinary tract infection\"? No. \"typhoid\"? No. \"pneumonia\"? No. \"peptic ulcer disease\"? No. \"jaundice\"? No. \"migraine\"? No.\n\nSo \"diabetes\" is the only logical choice.\n\nLet's construct the JSON response.\nReasoning should outline the step-by-step analysis.\nFinal answer: [DIAGNOSIS]diabetes[/DIAGNOSIS]\n\nOne thing to consider: Is there any chance \"trouble breathing when I exercise\" + \"sweat a lot\" points to something else? Like heart failure? Not in the list.\nWhat about \"bronchial asthma\"? Exercise-induced asthma is common. But again, yeast infections don't fit.\nTherefore, diabetes is the intended answer.\n\nLet's quickly review the reference profile. It lists \"diabetes (10)\".\nThe answer shape is 1 part.\nI will output the JSON.\nCheck format: `{\"reasoning\": \"...\", \"final_answer\": \"[DIAGNOSIS]diabetes[/DIAGNOSIS]\"}`\nAll good.\nI will write out the reasoning clearly.\nSymptom 1: Trouble breathing during exercise -> indicates reduced physical tolerance, often seen in metabolic disorders like diabetes due to cardiovascular strain or general weakness.\nSymptom 2: Sweating a lot and getting hot easily -> indicative of autonomic nervous system involvement or metabolic dysregulation, both common in diabetes.\nSymptom 3: Frequent yeast infections -> a classic clinical marker for diabetes, as high blood sugar promotes fungal growth.\nConclusion: The combination of these systemic and metabolic symptoms points directly to diabetes.\nMatches the required format.\nProceeding. \nSelf-Correction/Verification during thought: \nCould \"trouble breathing when I exercise\" be a distractor? Yes, in these types of datasets, they often mix a primary symptom with secondary ones. The yeast infections are the key discriminator here. \nI am confident in \"diabetes\".\nOutput matches requirements.✅"
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Name every answer unit the question could support before you choose, and set a unit aside only for a factual reason: being absent from the reference vocabulary, or being less common there than another unit, is not one. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape. The answer is compared as an exact set of units: a unit that does not match the facts is wrong even when it is the more common one, a broader unit that covers the same facts is a different answer rather than a safer one, and the reference case closest to this question is the evidence for how this task names the situation it describes. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`, and make the final answer reflect everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[2]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[3]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[4]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[7]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[8]\nQ: I have a red, itchy rash on my face, especially around my nose, mouth, and eyes. My nails are also inflamed.\nA: psoriasis\n\n[9]\nQ: I have a skin condition that causes dry, red, scaly patches on my skin. It can be itchy and painful, and it can get worse when I'm stressed or if I'm exposed to certain triggers, like sunlight or certain chemicals.\nA: psoriasis\n\n[10]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[11]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[12]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[13]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n[14]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[15]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction\n\n[16]\nQ: I feel sick, queasy, and wobbly. My throat is swollen and makes it hard for me to breathe. My chest hurts sometimes at night, and I sometimes feel sick.\nA: allergy\n\n[17]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[18]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[19]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[20]\nQ: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.\nA: hypertension\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason -\n   \"the references never use it\", \"it is not in the reference unit list\", and \"the\n   references use a commoner unit\" are not factual reasons. A missing unit and an extra\n   unit both count as wrong, so be complete and precise, and check the answer length the\n   profile reports for the question type you are answering.\n   Two rules settle the hard cases:\n   - *Specificity.* When two units differ only by an element one of them adds, they are\n     different answers, not two spellings of one. Ask whether the facts establish that\n     element. If they do, the unit that contains it is the answer and the broader one is\n     wrong here - it is not the safe choice, and being commoner in the references does not\n     make it likelier for this question.\n   - *Precedent.* The reference case closest to this question, and the unit its answer\n     uses, is the evidence for how this task names the situation the question describes.\n     Where your own reading of the facts conflicts with a case that matches them closely,\n     the case is the better guide to what this task's answers look like.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). That call re-opens the candidates you left out, closest case\n   first, quotes the reference case that answers each of them, spells out the element that\n   separates a unit of your draft from its attested relative, and flags a draft unit that\n   is only one element of a reference unit. Nothing it reports may be left unaddressed:\n   add every candidate the facts establish, replace a fragment with the whole unit, and\n   for anything you keep out of the answer state the fact that rules it out. Then answer\n   with the corrected draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_87ffb3ec5b804492a8f8be27",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"yeast\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_53bb28fc9a524cc6969cc30e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"diabetes\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_f3c956986ee540e38c48c211",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"trouble breathing when I exercise sweat a lot yeast infections\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a medical diagnosis based on the patient's symptoms.\nSymptoms:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptom analysis:\n1. \"Trouble breathing when I exercise\" -> Could be asthma, but also could be related to other conditions. Wait, \"trouble breathing when I exercise\" is often associated with asthma or just general fitness, but let's see.\n2. \"Sweat a lot and get hot easily\" -> Hyperhidrosis, hyperthyroidism, or diabetes (insulin resistance can cause sweating/heat intolerance).\n3. \"Get yeast infections a lot\" -> Recurrent yeast infections are a classic sign of diabetes (high blood sugar feeds yeast). Also, antibiotics for other things can cause it, but diabetes is a primary systemic cause.\n\nLet's check the reference cases for clues.\nReference 11: \"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\nWait, the prompt says \"sweat a lot and get hot easily\", \"get yeast infections a lot\". These are very specific to diabetes. High blood sugar leads to recurrent yeast infections (Candida). Sweating and getting hot easily can be due to autonomic neuropathy or just metabolic issues in diabetes.\n\nLet's search for \"yeast infections\" in the references.\n`search_examples(keyword=\"yeast\")`\n`search_examples(keyword=\"diabetes\")`\n`retrieve_examples(query=\"trouble breathing when I exercise sweat a lot yeast infections\")`\n\nLet's do that.\n"
+      },
+      {
+        "content": "No reference case matches 'yeast'.",
+        "role": "tool",
+        "tool_call_id": "call_87ffb3ec5b804492a8f8be27"
+      },
+      {
+        "content": "[1]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[2]\nQ: I've been having trouble seeing things clearly, and it seems to be getting worse. I'm also always tired and worn out, and I get dizzy and lightheaded a lot.\nA: diabetes\n\n[3]\nQ: I have to pee a lot and I'm always thirsty. I get dizzy and confused sometimes. I've also lost a lot of my vision.\nA: diabetes\n\n[4]\nQ: I'm always thirsty and I pee a lot. I feel really tired and I'm always getting lost. I can't see very well anymore.\nA: diabetes\n\n[5]\nQ: I have been feeling really thirsty and have been urinating a lot more than usual. My mouth and throat are always dry. I have also been feeling really hungry and have been eating a lot more than usual.\nA: diabetes",
+        "role": "tool",
+        "tool_call_id": "call_53bb28fc9a524cc6969cc30e"
+      },
+      {
+        "content": "[1]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[2]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[3]\nQ: I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\nA: drug reaction\n\n[4]\nQ: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.\nA: gastroesophageal reflux disease\n\n[5]\nQ: I have red, watery eyes and my sinuses are tight. I have trouble breathing and I'm tired. My lymph nodes are swollen and I have a lot of throat mucous.\nA: common cold",
+        "role": "tool",
+        "tool_call_id": "call_f3c956986ee540e38c48c211"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_7e938c0d9dfd47dda8b3ea7c",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"sweat\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_42c6b88af46342aea730322e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"exercise\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The search for \"yeast\" returned no matches.\nLet's look at the symptoms again:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nWait, is there another condition? Let's check \"fungal infection\". Yeast infections are fungal infections. But the prompt says \"get yeast infections a lot\", which implies a systemic cause like diabetes.\nLet's search for \"sweat\" or \"hot easily\" or \"breathing when I exercise\".\n"
+      },
+      {
+        "content": "[1]\nQ: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.\nA: malaria\n\n[2]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[3]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[4]\nQ: I'm having trouble breathing and have a fever. I'm sweating a lot and feel really tired and cold. My heart is racing and I'm coughing up some brown mucus.\nA: pneumonia\n\n[5]\nQ: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.\nA: malaria",
+        "role": "tool",
+        "tool_call_id": "call_7e938c0d9dfd47dda8b3ea7c"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "No reference case matches 'exercise'.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_42c6b88af46342aea730322e"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "Let's consider \"diabetes\" again.\nSymptoms of diabetes: frequent urination, excessive thirst, unexplained weight loss, fatigue, blurred vision, slow-healing sores, frequent infections (like yeast infections).\nThe patient says: \"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\nRecurrent yeast infections are a hallmark of diabetes. Sweating and getting hot easily can be due to autonomic neuropathy or just hyperglycemia. Trouble breathing on exertion could be related to cardiovascular complications of diabetes or just general deconditioning/weakness.\n\nWait, is there any other diagnosis that fits better?\nWhat about \"bronchial asthma\"? Asthma causes trouble breathing when exercising (exercise-induced asthma). But asthma doesn't cause yeast infections or sweating/getting hot easily as primary symptoms.\nWhat about \"fungal infection\"? The patient *gets* yeast infections, but the underlying condition causing them is likely diabetes. In medical diagnostic datasets (like this one seems to be from), recurrent yeast infections + sweating/heat intolerance = diabetes.\n\nLet's check if there's any reference with \"yeast\" or \"infections\".\nReference 2 in the first search: \"My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\" -> psoriasis.\nReference 3 in the second search: \"I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\" -> drug reaction.\n\nLet's look at the exact wording of the prompt's symptoms:\n\"I have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\"\n\nCould it be diabetes? Yes, diabetes often presents with recurrent fungal/yeast infections, polyuria, polydipsia, fatigue, and sometimes sweating/heat intolerance due to autonomic dysfunction or insulin resistance. Exercise intolerance/dyspnea can also occur.\n\nLet's do a broader search for \"breathing\" or \"hot easily\".",
+        "tool_calls": [
+          {
+            "id": "call_9461883fc7184a9a80d27845",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"hot easily\", \"limit\": 5}"
+            }
+          },
+          {
+            "id": "call_fb7c9fd1b4d344f792a041aa",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"trouble breathing\", \"limit\": 5}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. Name every answer unit the question could support before you choose, and set a unit aside only for a factual reason: being absent from the reference vocabulary, or being less common there than another unit, is not one. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape. The answer is compared as an exact set of units: a unit that does not match the facts is wrong even when it is the more common one, a broader unit that covers the same facts is a different answer rather than a safer one, and the reference case closest to this question is the evidence for how this task names the situation it describes. Before submitting, verify the draft with check_answer, passing the candidate units you named in `considered`, and make the final answer reflect everything that call reports.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have trouble breathing when I exercise. I sweat a lot and get hot easily. I get yeast infections a lot.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit that is not here, write that unit yourself in the same style and at the same level of specificity, and never put a listed unit in its place just because the listed one looks related:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[2]\nQ: I have been having a stomach ache for the past week. It is not getting better even with medication. I feel like vomiting and I can't eat anything. I have become very weak.\nA: typhoid\n\n[3]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[4]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[7]\nQ: I have these bulging veins on my legs that are very noticeable and are causing me a lot of discomforts. They are swollen and protrude from my skin, making them visible through my clothing.\nA: varicose veins\n\n[8]\nQ: I have a red, itchy rash on my face, especially around my nose, mouth, and eyes. My nails are also inflamed.\nA: psoriasis\n\n[9]\nQ: I have a skin condition that causes dry, red, scaly patches on my skin. It can be itchy and painful, and it can get worse when I'm stressed or if I'm exposed to certain triggers, like sunlight or certain chemicals.\nA: psoriasis\n\n[10]\nQ: I've had low temps and blood in my urine for the past three days. My pee smells terrible, and my head hurts so much. I can't control when I need to pee.\nA: urinary tract infection\n\n[11]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[12]\nQ: I've been having a lot of itching on my skin, and sometimes it turns into a rash. There are also some weird patches of skin that are a different color than the rest of me, and sometimes I get little pimples that look like nodules.\nA: fungal infection\n\n[13]\nQ: I have to go to the bathroom a lot, but only a few drops of urine come out. I have severe stomach pains and an overwhelming urge to urinate.\nA: urinary tract infection\n\n[14]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[15]\nQ: I have a hard time concentrating and my mind is not clear. I have trouble remembering things and I forget things a lot.\nA: drug reaction\n\n[16]\nQ: I feel sick, queasy, and wobbly. My throat is swollen and makes it hard for me to breathe. My chest hurts sometimes at night, and I sometimes feel sick.\nA: allergy\n\n[17]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[18]\nQ: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.\nA: gastroesophageal reflux disease\n\n[19]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[20]\nQ: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.\nA: hypertension\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. The reference units are evidence about vocabulary, not a closed list: a correct unit can\n   be missing from it. When the facts call for a unit the references do not list, write\n   that unit yourself, in the same style and at the same level of specificity as the listed\n   units. Never put a listed unit in its place because the listed one merely looks related\n   (broader, narrower, or similarly spelled).\n4. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason -\n   \"the references never use it\", \"it is not in the reference unit list\", and \"the\n   references use a commoner unit\" are not factual reasons. A missing unit and an extra\n   unit both count as wrong, so be complete and precise, and check the answer length the\n   profile reports for the question type you are answering.\n   Two rules settle the hard cases:\n   - *Specificity.* When two units differ only by an element one of them adds, they are\n     different answers, not two spellings of one. Ask whether the facts establish that\n     element. If they do, the unit that contains it is the answer and the broader one is\n     wrong here - it is not the safe choice, and being commoner in the references does not\n     make it likelier for this question.\n   - *Precedent.* The reference case closest to this question, and the unit its answer\n     uses, is the evidence for how this task names the situation the question describes.\n     Where your own reading of the facts conflicts with a case that matches them closely,\n     the case is the better guide to what this task's answers look like.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` with your draft answer and with `considered` set\n   to the candidate units from step 4, comma separated (just the units, not the\n   surrounding reasoning). That call re-opens the candidates you left out, closest case\n   first, quotes the reference case that answers each of them, spells out the element that\n   separates a unit of your draft from its attested relative, and flags a draft unit that\n   is only one element of a reference unit. Nothing it reports may be left unaddressed:\n   add every candidate the facts establish, replace a fragment with the whole unit, and\n   for anything you keep out of the answer state the fact that rules it out. Then answer\n   with the corrected draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_87ffb3ec5b804492a8f8be27",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"yeast\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_53bb28fc9a524cc6969cc30e",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"diabetes\", \"limit\": 5}"
+            }
+          },
+          {
+            "type": "function",
+            "id": "call_f3c956986ee540e38c48c211",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"trouble breathing when I exercise sweat a lot yeast infections\", \"limit\": 5}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants a medical diagnosis based on the patient's symptoms.\nSymptoms:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptom analysis:\n1. \"Trouble breathing when I exercise\" -> Could be asthma, but also could be related to other conditions. Wait, \"trouble breathing when I exercise\" is often associated with asthma or just general fitness, but let's see.\n2. \"Sweat a lot and get hot easily\" -> Hyperhidrosis, hyperthyroidism, or diabetes (insulin resistance can cause sweating/heat intolerance).\n3. \"Get yeast infections a lot\" -> Recurrent yeast infections are a classic sign of diabetes (high blood sugar feeds yeast). Also, antibiotics for other things can cause it, but diabetes is a primary systemic cause.\n\nLet's check the reference cases for clues.\nReference 11: \"I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\" -> diabetes.\nWait, the prompt says \"sweat a lot and get hot easily\", \"get yeast infections a lot\". These are very specific to diabetes. High blood sugar leads to recurrent yeast infections (Candida). Sweating and getting hot easily can be due to autonomic neuropathy or just metabolic issues in diabetes.\n\nLet's search for \"yeast infections\" in the references.\n`search_examples(keyword=\"yeast\")`\n`search_examples(keyword=\"diabetes\")`\n`retrieve_examples(query=\"trouble breathing when I exercise sweat a lot yeast infections\")`\n\nLet's do that.\n"
+      },
+      {
+        "content": "No reference case matches 'yeast'.",
+        "role": "tool",
+        "tool_call_id": "call_87ffb3ec5b804492a8f8be27"
+      },
+      {
+        "content": "[1]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[2]\nQ: I've been having trouble seeing things clearly, and it seems to be getting worse. I'm also always tired and worn out, and I get dizzy and lightheaded a lot.\nA: diabetes\n\n[3]\nQ: I have to pee a lot and I'm always thirsty. I get dizzy and confused sometimes. I've also lost a lot of my vision.\nA: diabetes\n\n[4]\nQ: I'm always thirsty and I pee a lot. I feel really tired and I'm always getting lost. I can't see very well anymore.\nA: diabetes\n\n[5]\nQ: I have been feeling really thirsty and have been urinating a lot more than usual. My mouth and throat are always dry. I have also been feeling really hungry and have been eating a lot more than usual.\nA: diabetes",
+        "role": "tool",
+        "tool_call_id": "call_53bb28fc9a524cc6969cc30e"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I'm having trouble breathing. I'm coughing up a lot of mucus. My chest hurts. I'm sweating a lot. I feel really sick.\nA: pneumonia\n\n[2]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[3]\nQ: I have rashes that sometimes peel off my skin. This makes me more likely to get infections. My hands shake and I sometimes have tremors.\nA: drug reaction\n\n[4]\nQ: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.\nA: gastroesophageal reflux disease\n\n[5]\nQ: I have red, watery eyes and my sinuses are tight. I have trouble breathing and I'm tired. My lymph nodes are swollen and I have a lot of throat mucous.\nA: common cold",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_f3c956986ee540e38c48c211"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The search for \"yeast\" returned no matches.\nLet's look at the symptoms again:\n- Trouble breathing when I exercise.\n- Sweat a lot and get hot easily.\n- Get yeast infections a lot.\n\nWait, is there another condition? Let's check \"fungal infection\". Yeast infections are fungal infections. But the prompt says \"get yeast infections a lot\", which implies a systemic cause like diabetes.\nLet's search for \"sweat\" or \"hot easily\" or \"breathing when I exercise\".\n",
+        "tool_calls": [
+          {
+            "id": "call_7e938c0d9dfd47dda8b3ea7c",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"sweat\", \"limit\": 5}"
+            }
+          },
+          {
+            "id": "call_42c6b88af46342aea730322e",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"exercise\", \"limit\": 5}"
+            }
+          }
+        ]
+      }
+    ]
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "error": null,
+  "elapsed_seconds": 431.5192025974393,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 376194,
+    "num_turns": 102,
+    "stop_reason": "end_turn",
+    "session_id": "4b9efb66-e89d-47da-9ea9-a61dec4c0d9a",
+    "total_cost_usd": 5.540555000000001,
+    "usage": {
+      "input_tokens": 59008,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 6644480,
+      "output_tokens": 76931,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 59008,
+        "outputTokens": 76931,
+        "cacheReadInputTokens": 6644480,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 5.540555000000001,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [
+      {
+        "tool_name": "Bash",
+        "tool_use_id": "call_00_0JgPWLr6BWeIszyoAWRg5843",
+        "tool_input": {
+          "command": "cd /workspace && rm -rf /harness && mkdir -p /harness && cp -r harnesses/reference_profile/solver/* /harness/ && cp /tmp/mem_crime.json /harness/memory/memory.json && python3 - <<'EOF'\nimport sys, importlib.util, json\nsys.path.insert(0,'/harness')\nsys.path.insert(0,'/workspace/benchmark')\nfrom langchain_openai import ChatOpenAI\nfrom data.loaders import _load_lawbench\nmodel = ChatOpenAI(model=\"qwen3.7-flash\", base_url=\"http://localhost:1/v1\", api_key=\"x\", temperature=0.0)\ncfg = {\"model\":\"qwen3.7-flash\",\"tool_timeout_seconds\":120}\nspec = importlib.util.spec_from_file_location(\"candidate\", \"/harness/agent.py\")\nmod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)\nq = _load_lawbench('val')[0]['input']\nagent, prompt = mod.build_agent(model, q, cfg)\nprint(\"agent built:\", type(agent).__name__)\nprint(\"prompt chars:\", len(prompt))\ni = prompt.find(\"REFERENCE PROFILE\")\nprint(prompt[:600])\nprint(\"......\")\nprint(prompt[i:i+700])\nprint(\"......TAIL......\")\nprint(prompt[-700:])\nEOF",
+          "description": "Smoke test full solver path"
+        }
+      }
+    ],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "**Iteration 1 done.** One candidate: `reference_profile`.\n\n**Analysis that drove the design** (from `history/results/samples.jsonl` — 260/260 samples, average 0.428):\n- **LawBench (0.270)**: 19/100 samples are wrong *only* on label surface form — `单位行贿罪` vs the reference spelling `单位行贿`. Stripping the extra character would take the task to 0.46. Multi-part answers (58% of cases) exact-match only 13.8% — recall is the second failure mode. The baseline prompt never states the reference vocabulary; only a shuffled example dump does.\n- **USPTO (0.183)**: co-reagents are usually right, disconnections wrong; the tool dumped all 50 references in hash-shuffled order, so same-reaction-type references (and their recurring reagents) were never adjacent.\n- **Symptom2Disease (0.830)**: residual errors are genuine near-neighbour confusions against randomly ordered context; 20/260 samples never called the tool at all.\n\n**What changed** (`harnesses/reference_profile/`, copied from baseline then rewritten):\n1. `prepare_memory.py` + `solver/tools/memory_lib.py` derive a **reference profile from training data only**: separators the reference answers actually use (validated: `.` for one task, `;`+`、` for another, none for the third), part-count distribution, a label vocabulary emitted only when answers look label-like (recurring, short, bounded distinct count — correctly *suppressed* for the free-form SMILES task), and question families with the answer parts recurring inside them (10 reaction-type families mined by shared prefix; recurring reagents surfaced).\n2. The solver prompt is `question + profile + ranked references + skill`. References are ranked by IDF-weighted char-4-gram cosine with MMR diversity, family-first; the memory is quoted in full when it fits the budget, so nothing is lost versus the baseline dump.\n3. Tools: `retrieve_examples(query)`, `search_examples(keyword)`, and `check_answer(draft)`, which flags missing markup, off-shape part counts and non-verbatim labels with their closest reference labels.\n\n**Verified locally**: memory builds for all three tasks; retrieval overlap beats a strided-random baseline ~10× (crime) and ~3.5× (symptom); profile gate correctly rejects the non-label task; the full `build_agent` path assembles a 13.5k-char USPTO prompt (all 50 references, family-ordered) and builds a `CompiledStateGraph`; no validation question or answer is stored in memory; no dataset names or dataset-specific strings appear anywhere in the candidate.\n\nCANDIDATES: reference_profile",
+    "ttft_ms": 444,
+    "ttft_stream_ms": 210,
+    "time_to_request_ms": 41,
+    "type": "result",
+    "duration_ms": 430971,
+    "uuid": "144e1d4e-6e7c-415f-8a02-e42e48dac673"
+  },
+  "usage": {
+    "input_tokens": 59008,
+    "output_tokens": 76931,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 6644480
+  },
+  "cost_usd": 5.540555000000001,
+  "num_turns": 102,
+  "duration_api_ms": 376194
+}

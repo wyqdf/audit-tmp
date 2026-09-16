@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 557.9382205735892,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 514300,
+    "num_turns": 121,
+    "stop_reason": "end_turn",
+    "session_id": "bc58f585-8563-4279-b329-a24c78670143",
+    "total_cost_usd": 9.052468000000005,
+    "usage": {
+      "input_tokens": 100459,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 12199296,
+      "output_tokens": 98021,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 100459,
+        "outputTokens": 98021,
+        "cacheReadInputTokens": 12199296,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 9.052468000000005,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 7 complete.\n\n**Step 0** — wrote the missing post-eval `reports/iteration_6_settled_draft_audit.md` (all iterations 0–6 now have reports).\n\n**Analysis that set the direction** (measured offline from `history/results/samples.jsonl`, the traces, and replays of the old checks):\n- Iteration 3 (0.584) is still the best; iterations 4–6 added machinery and lost score (0.563 / 0.559 / 0.561).\n- The pre-submit check has never repaired a sample across four iterations, and it made noise: iteration 3 demanded `[nH]` / `[N+]` / `[N-]` of drafts (atoms written once in the question, on 5 of 60 chemistry samples) and its two-sided relation notes oscillated one law sample into the call budget; iteration 6's mechanical check was silent (100/100 \"checks out\").\n- What actually moved the multi-unit task was iteration 3's *decision wording* — iteration 6 removed it and the same task fell 0.58 → 0.54 with the check silent.\n- The residual is knowledge-bound: 18 of 30 chemistry questions unsolved by every candidate, 25 of 50 missing gold units absent from every reference shown, and the single-label task's gold-carrying reference sits at similarity rank 1 for 35 of 50 questions yet the model still errs.\n- A term-overlap \"did you mean\" lookup was prototyped and **rejected**: it flagged 22 correct units against 13 useful hits, and it feeds the model's known substitution habit.\n\n**Candidate** `attested_rendering_audit` (copy of the best-scoring harness, targeted edits): the check now reports only *attested renderings* — a draft unit that is a piece of a reference unit, or an extension of a piece the references only use inside a longer unit, is answered with the whole unit they render (decisive, where iteration 6 was permissive); markup is required only when the question states it; near-miss spelling and structure stay. The re-open channel (`considered`, relation notes, evidence excerpts) is deleted, and the decision wording goes back to iteration 3's. Replayed offline, the new check fires on 7 of 100 label samples — all wrong answers — and 0 of 160 elsewhere, with no false markup alarms.\n\nCANDIDATES: attested_rendering_audit",
+    "ttft_ms": 469,
+    "ttft_stream_ms": 286,
+    "time_to_request_ms": 42,
+    "type": "result",
+    "duration_ms": 557346,
+    "uuid": "fcf63319-6d7d-4f01-9137-a0f600c5e1ea"
+  },
+  "usage": {
+    "input_tokens": 100459,
+    "output_tokens": 98021,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 12199296
+  },
+  "cost_usd": 9.052468000000005,
+  "num_turns": 121,
+  "duration_api_ms": 514300
+}

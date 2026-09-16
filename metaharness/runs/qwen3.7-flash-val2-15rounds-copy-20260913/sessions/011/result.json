@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 625.7564611639827,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 537085,
+    "num_turns": 119,
+    "stop_reason": "end_turn",
+    "session_id": "b147a7ed-d5a4-4103-9c37-1f46b8ccc130",
+    "total_cost_usd": 8.935096999999997,
+    "usage": {
+      "input_tokens": 92368,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 11758464,
+      "output_tokens": 103761,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 92368,
+        "outputTokens": 103761,
+        "cacheReadInputTokens": 11758464,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 8.935096999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 11 complete.\n\n**Analysis that set the direction** (all from recorded runs, not assumption):\n- The score is decided by the solver's *first* answer, not the check: replaying the recorded drafts, the draft scores 0.880 (single-label) / 0.541 (multi-unit); the whole check apparatus moves those to 0.890 / 0.582 (5 repaired, 0 broken over 198 samples).\n- Multi-view and view-fusion are worthless here: the two samples of a question agree 45–49/50, and pairing *different* candidates as genuine views gives an oracle of at most +1–2 questions while union/intersection do worse than the best single view.\n- Retrieval tuning (iter 9), vocabulary framing (iter 10), and check tuning (iters 4–8) are all measured dead ends; I additionally killed co-occurrence hints (2% precision), answer-width priors (33/50 vs 32/50 baseline), kNN voting (0.80 vs 0.89), and ring-digit normalization (+0 samples).\n- The live asymmetry: since iteration 3 every prompt tells the solver to *accumulate* units (\"set a unit aside only for a factual reason\", \"a missing unit and an extra unit both count as wrong\") — correct for the multi-unit corpus, wrong for the single-unit one, whose 11 errors are all substitutions *between listed units*.\n\n**Candidate `cardinality_branch`** copies iteration 3 (`considered_unit_audit`, best average 0.584) and derives the answer count from the references (`single_unit` when ≥0.98 of reference answers are one unit: measured 1.00 / 0.685 / 0.36 across the three corpora). The system prompt, the skill's decision step, the re-open instruction, and the check follow that derivation: one-unit corpora decide by choosing between named candidates (a re-opened candidate replaces the draft's unit; a two-unit draft is a defect), several-unit corpora keep iteration 3's wording byte-for-byte.\n\n**Verified separation:** system prompt, rendered skill, guide and check output are byte-identical to the parent on the two non-flagged corpora (169 replayed `check_answer` calls, 0 differences), so only the single-unit task is under test and any move in the other two bounds the noise floor.\n\nReports written: `reports/iteration_10_answer_space_closure.md` (the missing post-eval) and `reports/iteration_11_design_note.md`. Handoff written to `pending_eval.json`.\n\nCANDIDATES: cardinality_branch",
+    "ttft_ms": 760,
+    "ttft_stream_ms": 234,
+    "time_to_request_ms": 42,
+    "type": "result",
+    "duration_ms": 625178,
+    "uuid": "fc2edc0c-a2af-4b13-b77a-0de9cd235123"
+  },
+  "usage": {
+    "input_tokens": 92368,
+    "output_tokens": 103761,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 11758464
+  },
+  "cost_usd": 8.935096999999997,
+  "num_turns": 119,
+  "duration_api_ms": 537085
+}

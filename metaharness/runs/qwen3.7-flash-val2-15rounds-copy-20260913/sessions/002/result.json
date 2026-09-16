@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 324.89397254772484,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 297847,
+    "num_turns": 84,
+    "stop_reason": "end_turn",
+    "session_id": "b98c4eb0-46fd-4fb5-b06e-018dc9d33e27",
+    "total_cost_usd": 4.008451,
+    "usage": {
+      "input_tokens": 57965,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 4570752,
+      "output_tokens": 57330,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 57965,
+        "outputTokens": 57330,
+        "cacheReadInputTokens": 4570752,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 4.008451,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 2 complete.\n\n**Step 0 — reports.** `reports/iteration_1_reference_profile.md` (post-eval, was missing results analysis) and `reports/iteration_2_design_note.md`.\n\n**Step 1 — analysis.** Iteration 1 scored 0.550 (baseline 0.428): USPTO 0.183→0.250, Symptom2Disease 0.830→0.910, LawBench 0.270→0.495. The remaining LawBench errors decompose into 17/51 label *truncations* (`毁坏国家重点保护植物` for `非法采伐、毁坏国家重点保护植物`, `窝藏` for `窝藏、包庇`), 16 under-predicted label counts, 18 genuine confusions. Root cause reproduced offline: `derive_separators` accepted `、` on frequency alone (30% of answers), which shatters single labels into fragments, and those fragments then *became* the authoritative \"copy character for character\" label list — the model was obeying a corrupted inventory. Measured coverage of val gold labels: 60% before, 78.6% after the fix.\n\n**Step 2 — implementation** (`harnesses/atomic_reference_units`, copied from `reference_profile`):\n- `piece_attestation()` — a separator only cuts answers into units if its pieces also occur as complete reference answers (`[;]=0.33` validates, `、`=0.00 rejected).\n- Label inventory built only from validated separators, so no entry can be a fragment; answer shape reported from shape separators (falling back to the most frequent candidate so free-form tasks like SMILES keep part-count guidance).\n- The profile names inner punctuation explicitly and says why it must not be split.\n- `check_answer` splits shape parts vs label units, and deterministically flags a draft unit that is a fragment of a longer label (with the full label), a label with characters added, and uses word-boundary matching (`flu` in `reflux` was a false positive I caught and fixed).\n- Per-question-type answer-length spread; mandatory `check_answer` pass in the system prompt; skill rewritten around whole units.\n\nVerified offline: memory prep runs for all three tasks, profiles are correct, all three tools work, and no dataset names or answers appear in the candidate.\n\n`CANDIDATES: atomic_reference_units`",
+    "ttft_ms": 842,
+    "ttft_stream_ms": 224,
+    "time_to_request_ms": 41,
+    "type": "result",
+    "duration_ms": 324336,
+    "uuid": "0f6e04fe-597a-4594-8f68-b1626beb4b6a"
+  },
+  "usage": {
+    "input_tokens": 57965,
+    "output_tokens": 57330,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 4570752
+  },
+  "cost_usd": 4.008451,
+  "num_turns": 84,
+  "duration_api_ms": 297847
+}

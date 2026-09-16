@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 957.4217376885936,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 724199,
+    "num_turns": 136,
+    "stop_reason": "end_turn",
+    "session_id": "0a9ea22f-c71f-4b8b-9d91-01cc9902169f",
+    "total_cost_usd": 11.908803999999996,
+    "usage": {
+      "input_tokens": 95612,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 15679488,
+      "output_tokens": 143640,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 95612,
+        "outputTokens": 143640,
+        "cacheReadInputTokens": 15679488,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 11.908803999999996,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 12 is complete.\n\n**Step 0 — report written:** `reports/iteration_11_cardinality_branch.md`. Iteration 11's answer-count branch was inert by measurement: the one-unit defect fired **0 times in 171 recorded check calls** on the single-unit task (the solver never drafted a multi-unit answer), and the other two corpora were byte-identical by construction. Its 0.581 is the noise floor.\n\n**Analysis (this iteration's measurements, all from the recorded runs):**\n- On the multi-unit corpus, **all 23 wrong questions are missing-unit errors** (0 extra-only); in 16 the missing unit never appears in the solver's own text, in 7 the check re-opened a unit the solver had named and ~1 converted — the re-open asks a question under a header that says \"No surface problem found\", and the solver's stated reasons are about the corpus (\"reference cases usually find only the main charge\").\n- The harness itself supplies the corpus's modal width (\"1 part in 68%…\", \"32% of references have more parts than yours\"), which recorded reasoning cites as a case fact — in one free-form trace the draft was changed to drop a component to match the \"prevalence of 2-part answers\" and was wrong.\n- Corpus-side candidate proposal is dead: answer co-occurrence (2/23 recall, 12/27 false positives), a cue index over question n-grams (3/32 in top-10, 4-5 spurious per correct question), literal unit mentions (7%), neighbour width (1 part for 22/25 two-unit golds), retrieval coverage (shown-gold questions score 40% vs 57% for golds in no reference at all). A hard \"must include\" rule is also negative: 9 correct vs 7 wrong questions have an attested dropped candidate.\n\n**Change (`harnesses/carry_offer/`):** named-but-dropped candidates become **defects of the draft** with the answer **written out** (question markup + corpus join separator; replacement when the candidate contains the draft's units), the non-facts that cannot rule a candidate out are stated, and the modal-width percentage and more/fewer-parts clauses are removed from the profile and check. The scoping is measured: on the single-unit corpus the channel stays a remark (a candidate competes there, it cannot be missing).\n\n**Verified offline:** rebuilding memory reproduces the recorded profiles exactly on all three corpora; all 289 recorded `check_answer` calls replay through the new check with 0 exceptions and 0 renders whose parsed set differs from draft ∪ candidate (or the replacement).\n\nCANDIDATES: carry_offer",
+    "ttft_ms": 943,
+    "ttft_stream_ms": 230,
+    "time_to_request_ms": 42,
+    "type": "result",
+    "duration_ms": 956865,
+    "uuid": "58e698e8-504d-4fac-8af5-1a0a70cd41d5"
+  },
+  "usage": {
+    "input_tokens": 95612,
+    "output_tokens": 143640,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 15679488
+  },
+  "cost_usd": 11.908803999999996,
+  "num_turns": 136,
+  "duration_api_ms": 724199
+}

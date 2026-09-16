@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 645.4784616921097,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 551782,
+    "num_turns": 105,
+    "stop_reason": "end_turn",
+    "session_id": "5f1a3581-cdf6-46c3-aefe-4329476aa974",
+    "total_cost_usd": 7.7533710000000005,
+    "usage": {
+      "input_tokens": 83092,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9071872,
+      "output_tokens": 112079,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 83092,
+        "outputTokens": 112079,
+        "cacheReadInputTokens": 9071872,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.7533710000000005,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 4 complete. Summary of what I did and found:\n\n**Step 0 — missing report written.** `reports/iteration_3_considered_unit_audit.md` (iteration 3 had results but no post-eval report).\n\n**Step 1 — analysis (measured, not assumed).**\n- The iteration-3 check was causally **inert**: draft and final answer agreed in 96/100 law samples, 0 of 41 wrong drafts were repaired, 0 correct ones broken. Every unit the check re-opened was mentioned and rejected anyway — usually on a convention prior (\"the dataset labels this with the broader charge\").\n- It re-opens candidates **ranked by corpus frequency**, so one failure that named the right rare unit was shown evidence for the three commonest labels instead.\n- Replayed offline over iteration 3's own wrong samples: frequency ranking surfaces a missing gold unit in the top 3 in 4/42 law and 4/11 diagnosis samples; evidence ranking does 7/42 (11/42 at top 5) and 7/11.\n- Found a real bug: `_set_query_group` only matched a shared question header at position 0, but stored references are bare questions while the solver's input is wrapped in task boilerplate — so family matching, family-first reference selection and the family bonus were **dead code** for the only task that has families.\n- Ruled out (with numbers) several tempting directions: retrieval is at ceiling on the diagnosis task (0.88 vs model 0.89), the free-form task's missing components exist in training answers only 3/66 of the time, precedent answer-set completion covers 0–2/42, and reasoning-mining yields ~1 extra unit.\n\n**Step 2 — candidate `precedent_audit`** (copy of iteration 3's harness), with: evidence-ranked re-opening, the distinguishing element spelled out (`'X' = 'a' + 'Y'`) with symmetric wording (an aggressive version would have risked 4 already-correct samples, so I measured and softened it), fragment detection, type-aware shape/units in the free-form branch, header matching anywhere in the input, and removal of the nudge clause that licensed ignoring the check. Verified: compiles, memory build byte-identical to the parent, all 270 recorded drafts run through the new check with no exceptions and bounded output (mean 1.2k, max 2.5k chars).\n\n**Step 3 — handoff written** to `pending_eval.json` (iteration 4, one candidate). Design note in `reports/iteration_4_design_note.md` with falsifiers.\n\nCANDIDATES: precedent_audit",
+    "ttft_ms": 927,
+    "ttft_stream_ms": 229,
+    "time_to_request_ms": 50,
+    "type": "result",
+    "duration_ms": 644871,
+    "uuid": "695bcf1c-1706-4857-a664-5b859c251f9b"
+  },
+  "usage": {
+    "input_tokens": 83092,
+    "output_tokens": 112079,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9071872
+  },
+  "cost_usd": 7.7533710000000005,
+  "num_turns": 105,
+  "duration_api_ms": 551782
+}

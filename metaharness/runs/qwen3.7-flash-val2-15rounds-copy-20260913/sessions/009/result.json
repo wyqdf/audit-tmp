@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 1618.2708114450797,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 467276,
+    "num_turns": 109,
+    "stop_reason": "end_turn",
+    "session_id": "4116eced-80e0-4b75-88c3-535a43875bc0",
+    "total_cost_usd": 7.876922999999999,
+    "usage": {
+      "input_tokens": 87669,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 10365056,
+      "output_tokens": 90242,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 87669,
+        "outputTokens": 90242,
+        "cacheReadInputTokens": 10365056,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.876922999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 9 is complete. Summary of what I did:\n\n**Step 0 — missing report.** Wrote `reports/iteration_8_family_shape_audit.md` (the only evaluated candidate without a post-eval report).\n\n**Step 1 — analysis (measured, not assumed).** Replaying all prediction traces against the real evaluators showed:\n- The check channel is inert: across iterations 3/7/8 the whole apparatus repaired **3 samples in 780** and broke 0; in iteration 8, 258/260 samples submitted the check's draft unchanged.\n- The solver answers in one turn from the guide (0.95–1.4 tool calls/sample; retrieval used in <10%).\n- I ruled out three plausible mechanisms by measurement before building anything: neighbour answer-tally (neighbour consensus 0.70–0.80 < the model's 0.86 on the single-label task; on the multi-unit task **0 of 20** wrong questions had a missing gold unit carried by ≥2 of the top-8 neighbours), k-NN voting, and restoring iteration 3's re-open channel (it would fire on 46% of *correct* samples to fix 12% of missing units).\n- The remaining measured defect is retrieval quality: the feature size was a hand-set 4-character constant, while the training references themselves prefer 2 characters on the corpus whose answer units are two characters (nearest-neighbour answer agreement 0.300 vs 0.183). Replayed, the *actually shown* references carry 0.483 → 0.587 of the gold units, full coverage 0.380 → 0.480, at the same 20 references and same guide size.\n\n**Step 2 — implementation.** Copied `family_shape_audit` → `harnesses/attested_retrieval_scale` and changed only `solver/tools/memory_lib.py`: a self-supervised `select_gram_size` (leave-one-out nearest-neighbour answer agreement over candidate sizes 2/3/4/6, kept at the default unless the corpus shows a >0.05 preference), stored as `gram_size` in memory and read by `MemoryView`. The other two corpora keep the default, so the change fires only where the references asked for it. Verified: rebuilt memories are byte-identical to the parent's except the new field; prepare CLI works on normal/tiny/empty inputs; no dataset names in the harness.\n\n**Step 3 — handoff.** `pending_eval.json` written with iteration 9 and one candidate; `reports/iteration_9_design_note.md` records the hypothesis and its falsifiers.\n\nCANDIDATES: attested_retrieval_scale",
+    "ttft_ms": 601,
+    "ttft_stream_ms": 210,
+    "time_to_request_ms": 43,
+    "type": "result",
+    "duration_ms": 1617683,
+    "uuid": "31829175-d7d2-4eea-9ec8-53d931245318"
+  },
+  "usage": {
+    "input_tokens": 87669,
+    "output_tokens": 90242,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 10365056
+  },
+  "cost_usd": 7.876922999999999,
+  "num_turns": 109,
+  "duration_api_ms": 467276
+}

@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 652.5568958539516,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 382423,
+    "num_turns": 91,
+    "stop_reason": "end_turn",
+    "session_id": "c2af94ce-c69f-4151-b08a-6db0c9b12538",
+    "total_cost_usd": 5.313069,
+    "usage": {
+      "input_tokens": 65952,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 6208768,
+      "output_tokens": 75157,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 65952,
+        "outputTokens": 75157,
+        "cacheReadInputTokens": 6208768,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 5.313069,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 16 complete.\n\n**Step 0 — reports backfilled.** Iterations 14 and 15 had results but no post-eval report; both are written (`reports/iteration_14_sibling_units.md`, `reports/iteration_15_formula_coverage.md`), plus the pre-eval design note for this iteration.\n\n**Analysis.** The plateau is noise-dominated — one standard error on the average is ~0.028, so 0.5944 (it 14) and 0.5678 (it 13) are not distinguishable. The evidence that *does* separate is the per-sample flip counts: iteration 14 gained by **deleting** text the check asserted falsely, iteration 15 lost 7 free-form samples to 0 recovered by **adding** prompt text that was true of the corpus (its repair never fired — `repair_turns` is 0 across all 260 samples). Things I measured and rejected before committing: multi-draft consensus (intersection/union both ≤ single-draft on the recorded independent samples), retrieval quality on the free-form corpus (6/30 vs 7/30 random — no lift), and vocabulary visibility on the set-answering corpus (all 134 labels are already in the guide; 28 missed units were visible and still missed).\n\n**The defect found.** `_required_markup` treated *every* bracketed token in the question as output markup. A free-form question states its input as SMILES, which is written in bracket atoms, so the check told the solver \"the question asks for `[nH]`, which is missing from the draft\" — a false defect under the header the system prompt says to fix. Measured: 9 of 30 val questions and 14 of 50 train ones affected, 12 of 60 recorded samples carrying the false defect, 7 of them correct answers. Also hits the set-answering corpus (2 of 200 train questions cite a year as `[2016]`).\n\n**Change (one method + one constant).** A token is required markup only when the question *uses* it as one: it closes the token (`[X]…[/X]`) or stands within 40 chars of an angle-bracket wrapper (`[X]…<eoa>`). Verified over all 500 questions: the one-unit corpus and set-answering val are byte-identical, 198/200 set-answering train identical, and the 80 free-form questions with invented tags now yield none. Replayed over recorded answers: 260/260 set-answering and one-unit check outputs identical, 48/60 free-form identical, and on the other 12 the only differing line kind is `- Markup:` (12 → 0). 360-call fuzz raises no exception, and true positives survive (a missing `[/DIAGNOSIS]` or `<eoa>` is still reported).\n\nEverything else — memory preparation, retrieval, guide, prompts, skill, middleware — is byte-identical to the best-scoring parent.\n\nCANDIDATES: attested_delimiters",
+    "ttft_ms": 669,
+    "ttft_stream_ms": 361,
+    "time_to_request_ms": 45,
+    "type": "result",
+    "duration_ms": 651966,
+    "uuid": "5e96ea7f-ea2f-4c30-9c01-8c30da77803f"
+  },
+  "usage": {
+    "input_tokens": 65952,
+    "output_tokens": 75157,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 6208768
+  },
+  "cost_usd": 5.313069,
+  "num_turns": 91,
+  "duration_api_ms": 382423
+}

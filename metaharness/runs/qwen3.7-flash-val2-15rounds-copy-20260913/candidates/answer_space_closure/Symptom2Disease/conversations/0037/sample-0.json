@@ -1,0 +1,424 @@
+{
+  "task": "Symptom2Disease",
+  "candidate": "answer_space_closure",
+  "split": "val",
+  "example_index": 37,
+  "sample_index": 0,
+  "status": "ok",
+  "error": null,
+  "was_correct": true,
+  "prediction": "[DIAGNOSIS]chicken pox[/DIAGNOSIS]",
+  "target": "chicken pox",
+  "metric": {},
+  "usage": {
+    "model_calls": 5,
+    "input_tokens": 35928,
+    "output_tokens": 1948
+  },
+  "elapsed_seconds": 23.992482322268188,
+  "memory_context_chars": 4941,
+  "tool_calls": [
+    "search_examples",
+    "search_examples",
+    "retrieve_examples",
+    "check_answer"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "tool_calls",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by grounding it in the frozen training references. The profile states the set this task's answers are built from. Name the units the facts establish and answer with the one they establish; a unit from outside that set is a different answer rather than an alternative to one inside it, because on this task the references list the answers they accept rather than sampling a larger vocabulary. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. When the question states the shared header of a question type in the references, that type is what its answer is measured against: how many parts its answers carry and which units they carry say whether a draft is complete, and a part count that type never uses for its cases is not a count this question can have. Before submitting, call check_answer once on the draft: it reports the count this question's own type answers with, the markup the question states, and the renderings the references prove about the draft's units; a draft it reports nothing about is submitted unchanged.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units, with how many references use each. 100% of the reference answers are built only out of units that appear here more than once, so this is the set this task's answers are built from rather than a sample of a larger one: the answer is one of them; copy it character for character. A unit that is not here is not a unit this task's answers are built from, and a unit that is here but merely looks related to the one the facts establish - broader, narrower, or similarly spelled - is a different answer:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[3]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[4]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[7]\nQ: I've had a fever for the past four days, and my urine is bloody. My head hurts a lot, and my urine smells terrible. I don't feel like I can control when I need to pee.\nA: urinary tract infection\n\n[8]\nQ: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest.\nA: gastroesophageal reflux disease\n\n[9]\nQ: I've been having terrible itching and nausea. I've lost weight and am really exhausted. My skin is yellow and I have a fever. My urine is dark and I have stomach pain.\nA: jaundice\n\n[10]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[11]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[12]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[13]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[14]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[15]\nQ: I have a runny nose and sneeze a lot. My eyes are sore and watery, and I have a hoarse voice. My head hurts all the time.\nA: allergy\n\n[16]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[17]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[18]\nQ: I have noticed that my legs are swollen and have dark purple veins. They are not painful but are concerning to me.\nA: varicose veins\n\n[19]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[20]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason - a\n   prior about what the task usually answers, or about what the reference list happens to\n   contain, is not one. How much weight the reference units carry is measured and stated in\n   the profile above: either they are the set this task's answers are built from - then the\n   answer is one of them - or they are evidence about a vocabulary the references only\n   sample, and a unit the facts call for is written the same way even when the list does\n   not have it. Follow the profile's statement, and never put a listed unit in the place of\n   the one the facts establish because the listed one merely looks related (broader,\n   narrower, or similarly spelled).\n4. A missing unit and an extra unit both count as wrong, so be complete and precise: give\n   one answer unit to each thing the facts establish, and to nothing they do not. The number\n   of units follows from the facts, so neither trimming to the commoner length nor padding to\n   a longer one is safer than answering what the facts establish. When the question states\n   the shared header of a question type in the references, that type is the sharpest evidence\n   about the count: a count its own cases never use is not a count this question can have, so\n   before submitting, hold the draft's count against that type's cases.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` once with your draft answer. It reports the answer\n   count this question's own type uses - a count the references never use for this question\n   is a defect to fix, not a remark - the markup the question states that the draft is\n   missing, and the renderings the references prove about its units: the whole unit when a\n   unit of the draft is only a piece of one or stops short of one, and the exact spelling\n   when a unit is a near miss. Everything the report does not list stands as it is, so fix\n   what it lists and submit. It does not re-open the candidates you weighed and set aside,\n   and a check that reports nothing is the end of the matter: call it once, and do not call\n   it again over the same draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_cdde104f45af4b43b459c920",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"red spots\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "The patient presents with:\n- Red spots all over the body\n- Itchy\n- Fever\n- Headache\n- Exhausted\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms match:\n- \"red spots all over my body\" + \"itchy\" + \"fever\" + \"headache\" + \"exhausted\"\n\nLooking at the references:\n[1] Q: I have little red spots all over my body... lost appetite... exhausted and severe headache. A: chicken pox\n[12] Q: extreme body pain, headache and vomiting... red spots all over my body and very itchy. A: dengue\n[20] Q: small red bumps on arms and face. They are itchy... A: chicken pox\n\nWait, let's check reference [1]: \"I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\" -> chicken pox\nReference [12]: \"I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\" -> dengue\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches \"chicken pox\" or \"dengue\".\nWait, dengue usually has severe body pain, bleeding, etc. Chicken pox has red spots/bumps, itchy, fever, headache, exhaustion.\nLet's see if there's any other reference.\nReference [6] fungal infection: rash all over body, itchy and red, patches different color, lumps/pimples.\nReference [3] drug reaction: rashes flake off, prone to infection, fingers twitch.\n\nLet's search for \"red spots\" in the examples.\n"
+    },
+    {
+      "content": "[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[3]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue",
+      "role": "tool",
+      "tool_call_id": "call_cdde104f45af4b43b459c920"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_fcd91584ff364db0ae7e5cda",
+          "function": {
+            "name": "search_examples",
+            "arguments": "{\"keyword\": \"itchy\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "Let's look at the retrieved examples for \"red spots\":\n[1] chicken pox: little red spots all over body, lost appetite, exhausted, severe headache.\n[2] dengue: tired and weak, can't get enough sleep, small red spots on arms and legs.\n[3] dengue: extreme body pain, headache, vomiting, red spots all over body, very itchy.\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches both chicken pox and dengue somewhat. But let's check the exact wording of the patient vs references.\nPatient: \"red spots all over my body\", \"itchy\", \"fever\", \"headache\", \"exhausted\".\nReference [1] (chicken pox): \"little red spots all over my body\", \"lost appetite\", \"exhausted\", \"severe headache\".\nReference [3] (dengue): \"extreme body pain, headache and vomiting\", \"red spots all over my body\", \"very itchy\".\n\nWait, is there another reference? Let's check \"itchy\" or \"fever\"."
+    },
+    {
+      "content": "[1]\nQ: I have been having a lot of skin problems lately. I have red, scaly patches on my skin that are itchy and painful.\nA: psoriasis\n\n[2]\nQ: I have a lot of itchy spots on my skin. They're sometimes red or bumpy, and sometimes they're different colors than the rest of my skin. I also get these weird bumps that look like little balls.\nA: fungal infection\n\n[3]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[4]\nQ: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite.\nA: chicken pox\n\n[5]\nQ: I've been feeling really sick lately. I've been itchy and throwing up, and I've lost a lot of weight. My skin has turned yellow, and I've been having a high fever. My stomach has also been hurting.\nA: jaundice\n\n[6]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[7]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[8]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n[9]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[10]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox",
+      "role": "tool",
+      "tool_call_id": "call_fcd91584ff364db0ae7e5cda"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_aca7945a41234c7397886557",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{\"query\": \"red spots all over my body itchy fever headache exhausted\", \"limit\": 10}"
+          }
+        }
+      ],
+      "reasoning_content": "Let's look at the retrieved examples for \"itchy\":\n[4] Q: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite. A: chicken pox\n[8] Q: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable. A: chicken pox\n[10] Q: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite. A: chicken pox\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis strongly matches [4] (chicken pox) and [10] (chicken pox).\nAlso reference [1] from earlier: \"little red spots all over my body... exhausted and severe headache\" -> chicken pox.\n\nLet's check if dengue is a better match. Dengue usually has severe body pain, bleeding gums, etc. The patient doesn't mention those. Chicken pox typically presents with itchy red spots/bumps all over the body, fever, headache, exhaustion.\n\nTherefore, the diagnosis is likely chicken pox.\n\nLet's verify with `retrieve_examples` using the exact symptoms."
+    },
+    {
+      "content": "[1]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[2]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[3]\nQ: I've been really itchy all over my body, and I've been getting chills and vomiting. My fever is really high, and I've been sweating a lot. I also have a headache, and I feel nauseous. My muscles are really sore.\nA: malaria\n\n[4]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[5]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[6]\nQ: I've been feeling really sick. I've been throwing up and I'm itchy. I've also lost a lot of weight and I'm exhausted. My skin has turned yellow and my fever is high. I also have stomach ache and my urine is dark.\nA: jaundice\n\n[7]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[8]\nQ: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite.\nA: chicken pox\n\n[9]\nQ: I've been feeling really sick and exhausted lately. My throat is scratchy, and my nose is running a lot. I also have a headache and my neck feels swollen.\nA: common cold\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+      "role": "tool",
+      "tool_call_id": "call_aca7945a41234c7397886557"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_1d0d8bd9868c460c825b5981",
+          "function": {
+            "name": "check_answer",
+            "arguments": "{\"draft_answer\": \"[DIAGNOSIS]chicken pox[/DIAGNOSIS]\", \"considered\": \"dengue, malaria, fungal infection\"}"
+          }
+        }
+      ],
+      "reasoning_content": "The retrieved examples show:\n[2] \"little red spots all over my body... exhausted and severe headache\" -> chicken pox\n[4] \"rash all over the body and I feel really itchy... feeling really tired\" -> chicken pox\n[8] \"red, itchy bumps all over my body... headache and a fever\" -> chicken pox\n[10] \"rash all over the body and I feel really sick. I have a fever and a headache\" -> chicken pox\n\nThe patient's symptoms: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis is an exact match for the symptom cluster of chicken pox in the references.\n\nLet's double check dengue: [1] has \"extreme body pain, headache and vomiting... red spots all over my body and very itchy\". The patient does not mention extreme body pain or vomiting.\nMalaria: [3] has \"chills and vomiting... high fever... sweating... headache... muscles sore\". No red spots mentioned as primary.\nFungal infection: [5], [7] mentions patches different color, lumps/pimples. Not matching fever/headache/exhaustion primarily.\n\nThus, chicken pox is the correct diagnosis.\n\nDraft answer: [DIAGNOSIS]chicken pox[/DIAGNOSIS]\n\nLet's call `check_answer`."
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "The draft checks out: nothing in the references contradicts it and nothing is missing from it that this check can see.\n- Shape: your answer has 1 part(s); every reference answer has 1 part(s).\n- Units: all 1 unit(s) are the units this task's references answer with, spelled verbatim. This task's answers are drawn from exactly those units, so the answer is one of them; that only means the spelling is right, not that the facts have been read correctly.\n- Verdict: submit this draft unchanged. Re-deciding a choice the facts have already settled is how a correct answer gets lost, and calling the check again over the same draft cannot tell you anything new.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "tool",
+      "tool_call_id": "call_1d0d8bd9868c460c825b5981"
+    },
+    {
+      "role": "assistant",
+      "content": "```json\n{\n  \"reasoning\": \"The patient presents with red spots all over the body, itching, fever, headache, and exhaustion. Reviewing the training references, this specific cluster of symptoms strongly aligns with 'chicken pox'. Reference examples show patients with 'little red spots all over my body', 'exhausted', and 'severe headache' are diagnosed with chicken pox. Other references note 'red, itchy bumps all over my body' accompanied by 'headache and a fever' also result in a chicken pox diagnosis. While dengue can present with red spots and itchiness, it is typically characterized by extreme body pain and vomiting, which are absent here. Malaria and fungal infections do not match the primary symptom profile of widespread itchy red spots combined with fever and headache. Therefore, the clinical picture points definitively to chicken pox.\",\n  \"final_answer\": \"[DIAGNOSIS]chicken pox[/DIAGNOSIS]\"\n}\n```",
+      "reasoning_content": "The check confirms the draft is correct.\nShape: 1 part.\nUnits: \"chicken pox\" is spelled verbatim and matches the reference units.\nVerdict: submit unchanged.\n\nI will formulate the reasoning and final answer as requested.\nReasoning should outline the step-by-step analysis of symptoms matching chicken pox based on the references.\nFinal answer format: [DIAGNOSIS]chicken pox[/DIAGNOSIS]\nEverything looks solid.\nProceeding to output. \nLet's quickly review the prompt requirements:\n- Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n- Final message MUST be a single JSON object with exactly two string fields.\n- Put the answer itself inside \"final_answer\".\n\nAll good."
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. The profile states the set this task's answers are built from. Name the units the facts establish and answer with the one they establish; a unit from outside that set is a different answer rather than an alternative to one inside it, because on this task the references list the answers they accept rather than sampling a larger vocabulary. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. When the question states the shared header of a question type in the references, that type is what its answer is measured against: how many parts its answers carry and which units they carry say whether a draft is complete, and a part count that type never uses for its cases is not a count this question can have. Before submitting, call check_answer once on the draft: it reports the count this question's own type answers with, the markup the question states, and the renderings the references prove about the draft's units; a draft it reports nothing about is submitted unchanged.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units, with how many references use each. 100% of the reference answers are built only out of units that appear here more than once, so this is the set this task's answers are built from rather than a sample of a larger one: the answer is one of them; copy it character for character. A unit that is not here is not a unit this task's answers are built from, and a unit that is here but merely looks related to the one the facts establish - broader, narrower, or similarly spelled - is a different answer:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[3]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[4]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[7]\nQ: I've had a fever for the past four days, and my urine is bloody. My head hurts a lot, and my urine smells terrible. I don't feel like I can control when I need to pee.\nA: urinary tract infection\n\n[8]\nQ: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest.\nA: gastroesophageal reflux disease\n\n[9]\nQ: I've been having terrible itching and nausea. I've lost weight and am really exhausted. My skin is yellow and I have a fever. My urine is dark and I have stomach pain.\nA: jaundice\n\n[10]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[11]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[12]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[13]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[14]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[15]\nQ: I have a runny nose and sneeze a lot. My eyes are sore and watery, and I have a hoarse voice. My head hurts all the time.\nA: allergy\n\n[16]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[17]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[18]\nQ: I have noticed that my legs are swollen and have dark purple veins. They are not painful but are concerning to me.\nA: varicose veins\n\n[19]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[20]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason - a\n   prior about what the task usually answers, or about what the reference list happens to\n   contain, is not one. How much weight the reference units carry is measured and stated in\n   the profile above: either they are the set this task's answers are built from - then the\n   answer is one of them - or they are evidence about a vocabulary the references only\n   sample, and a unit the facts call for is written the same way even when the list does\n   not have it. Follow the profile's statement, and never put a listed unit in the place of\n   the one the facts establish because the listed one merely looks related (broader,\n   narrower, or similarly spelled).\n4. A missing unit and an extra unit both count as wrong, so be complete and precise: give\n   one answer unit to each thing the facts establish, and to nothing they do not. The number\n   of units follows from the facts, so neither trimming to the commoner length nor padding to\n   a longer one is safer than answering what the facts establish. When the question states\n   the shared header of a question type in the references, that type is the sharpest evidence\n   about the count: a count its own cases never use is not a count this question can have, so\n   before submitting, hold the draft's count against that type's cases.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` once with your draft answer. It reports the answer\n   count this question's own type uses - a count the references never use for this question\n   is a defect to fix, not a remark - the markup the question states that the draft is\n   missing, and the renderings the references prove about its units: the whole unit when a\n   unit of the draft is only a piece of one or stops short of one, and the exact spelling\n   when a unit is a near miss. Everything the report does not list stands as it is, so fix\n   what it lists and submit. It does not re-open the candidates you weighed and set aside,\n   and a check that reports nothing is the end of the matter: call it once, and do not call\n   it again over the same draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_cdde104f45af4b43b459c920",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"red spots\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The patient presents with:\n- Red spots all over the body\n- Itchy\n- Fever\n- Headache\n- Exhausted\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms match:\n- \"red spots all over my body\" + \"itchy\" + \"fever\" + \"headache\" + \"exhausted\"\n\nLooking at the references:\n[1] Q: I have little red spots all over my body... lost appetite... exhausted and severe headache. A: chicken pox\n[12] Q: extreme body pain, headache and vomiting... red spots all over my body and very itchy. A: dengue\n[20] Q: small red bumps on arms and face. They are itchy... A: chicken pox\n\nWait, let's check reference [1]: \"I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\" -> chicken pox\nReference [12]: \"I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\" -> dengue\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches \"chicken pox\" or \"dengue\".\nWait, dengue usually has severe body pain, bleeding, etc. Chicken pox has red spots/bumps, itchy, fever, headache, exhaustion.\nLet's see if there's any other reference.\nReference [6] fungal infection: rash all over body, itchy and red, patches different color, lumps/pimples.\nReference [3] drug reaction: rashes flake off, prone to infection, fingers twitch.\n\nLet's search for \"red spots\" in the examples.\n"
+      },
+      {
+        "content": "[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[3]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue",
+        "role": "tool",
+        "tool_call_id": "call_cdde104f45af4b43b459c920"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_fcd91584ff364db0ae7e5cda",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"itchy\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "Let's look at the retrieved examples for \"red spots\":\n[1] chicken pox: little red spots all over body, lost appetite, exhausted, severe headache.\n[2] dengue: tired and weak, can't get enough sleep, small red spots on arms and legs.\n[3] dengue: extreme body pain, headache, vomiting, red spots all over body, very itchy.\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches both chicken pox and dengue somewhat. But let's check the exact wording of the patient vs references.\nPatient: \"red spots all over my body\", \"itchy\", \"fever\", \"headache\", \"exhausted\".\nReference [1] (chicken pox): \"little red spots all over my body\", \"lost appetite\", \"exhausted\", \"severe headache\".\nReference [3] (dengue): \"extreme body pain, headache and vomiting\", \"red spots all over my body\", \"very itchy\".\n\nWait, is there another reference? Let's check \"itchy\" or \"fever\"."
+      },
+      {
+        "content": "[1]\nQ: I have been having a lot of skin problems lately. I have red, scaly patches on my skin that are itchy and painful.\nA: psoriasis\n\n[2]\nQ: I have a lot of itchy spots on my skin. They're sometimes red or bumpy, and sometimes they're different colors than the rest of my skin. I also get these weird bumps that look like little balls.\nA: fungal infection\n\n[3]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[4]\nQ: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite.\nA: chicken pox\n\n[5]\nQ: I've been feeling really sick lately. I've been itchy and throwing up, and I've lost a lot of weight. My skin has turned yellow, and I've been having a high fever. My stomach has also been hurting.\nA: jaundice\n\n[6]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[7]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[8]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n[9]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[10]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox",
+        "role": "tool",
+        "tool_call_id": "call_fcd91584ff364db0ae7e5cda"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_aca7945a41234c7397886557",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"red spots all over my body itchy fever headache exhausted\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "Let's look at the retrieved examples for \"itchy\":\n[4] Q: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite. A: chicken pox\n[8] Q: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable. A: chicken pox\n[10] Q: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite. A: chicken pox\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis strongly matches [4] (chicken pox) and [10] (chicken pox).\nAlso reference [1] from earlier: \"little red spots all over my body... exhausted and severe headache\" -> chicken pox.\n\nLet's check if dengue is a better match. Dengue usually has severe body pain, bleeding gums, etc. The patient doesn't mention those. Chicken pox typically presents with itchy red spots/bumps all over the body, fever, headache, exhaustion.\n\nTherefore, the diagnosis is likely chicken pox.\n\nLet's verify with `retrieve_examples` using the exact symptoms."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[2]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[3]\nQ: I've been really itchy all over my body, and I've been getting chills and vomiting. My fever is really high, and I've been sweating a lot. I also have a headache, and I feel nauseous. My muscles are really sore.\nA: malaria\n\n[4]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox\n\n[5]\nQ: I've been really itchy lately and there are these rashy spots all over my skin. There are also some areas that don't look like the normal color of my skin, and I've had some bumps that are kind of hard. I'm not sure what it is, but I'm worried about it.\nA: fungal infection\n\n[6]\nQ: I've been feeling really sick. I've been throwing up and I'm itchy. I've also lost a lot of weight and I'm exhausted. My skin has turned yellow and my fever is high. I also have stomach ache and my urine is dark.\nA: jaundice\n\n[7]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[8]\nQ: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite.\nA: chicken pox\n\n[9]\nQ: I've been feeling really sick and exhausted lately. My throat is scratchy, and my nose is running a lot. I also have a headache and my neck feels swollen.\nA: common cold\n\n[10]\nQ: I have a rash all over my body and I feel really sick. I have a fever and a headache and I don't know what's wrong.\nA: chicken pox",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_aca7945a41234c7397886557"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "The retrieved examples show:\n[2] \"little red spots all over my body... exhausted and severe headache\" -> chicken pox\n[4] \"rash all over the body and I feel really itchy... feeling really tired\" -> chicken pox\n[8] \"red, itchy bumps all over my body... headache and a fever\" -> chicken pox\n[10] \"rash all over the body and I feel really sick. I have a fever and a headache\" -> chicken pox\n\nThe patient's symptoms: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis is an exact match for the symptom cluster of chicken pox in the references.\n\nLet's double check dengue: [1] has \"extreme body pain, headache and vomiting... red spots all over my body and very itchy\". The patient does not mention extreme body pain or vomiting.\nMalaria: [3] has \"chills and vomiting... high fever... sweating... headache... muscles sore\". No red spots mentioned as primary.\nFungal infection: [5], [7] mentions patches different color, lumps/pimples. Not matching fever/headache/exhaustion primarily.\n\nThus, chicken pox is the correct diagnosis.\n\nDraft answer: [DIAGNOSIS]chicken pox[/DIAGNOSIS]\n\nLet's call `check_answer`.",
+        "tool_calls": [
+          {
+            "id": "call_1d0d8bd9868c460c825b5981",
+            "type": "function",
+            "function": {
+              "name": "check_answer",
+              "arguments": "{\"draft_answer\": \"[DIAGNOSIS]chicken pox[/DIAGNOSIS]\", \"considered\": \"dengue, malaria, fungal infection\"}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. The profile states the set this task's answers are built from. Name the units the facts establish and answer with the one they establish; a unit from outside that set is a different answer rather than an alternative to one inside it, because on this task the references list the answers they accept rather than sampling a larger vocabulary. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. When the question states the shared header of a question type in the references, that type is what its answer is measured against: how many parts its answers carry and which units they carry say whether a draft is complete, and a part count that type never uses for its cases is not a count this question can have. Before submitting, call check_answer once on the draft: it reports the count this question's own type answers with, the markup the question states, and the renderings the references prove about the draft's units; a draft it reports nothing about is submitted unchanged.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units, with how many references use each. 100% of the reference answers are built only out of units that appear here more than once, so this is the set this task's answers are built from rather than a sample of a larger one: the answer is one of them; copy it character for character. A unit that is not here is not a unit this task's answers are built from, and a unit that is here but merely looks related to the one the facts establish - broader, narrower, or similarly spelled - is a different answer:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[3]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[4]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[7]\nQ: I've had a fever for the past four days, and my urine is bloody. My head hurts a lot, and my urine smells terrible. I don't feel like I can control when I need to pee.\nA: urinary tract infection\n\n[8]\nQ: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest.\nA: gastroesophageal reflux disease\n\n[9]\nQ: I've been having terrible itching and nausea. I've lost weight and am really exhausted. My skin is yellow and I have a fever. My urine is dark and I have stomach pain.\nA: jaundice\n\n[10]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[11]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[12]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[13]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[14]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[15]\nQ: I have a runny nose and sneeze a lot. My eyes are sore and watery, and I have a hoarse voice. My head hurts all the time.\nA: allergy\n\n[16]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[17]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[18]\nQ: I have noticed that my legs are swollen and have dark purple veins. They are not painful but are concerning to me.\nA: varicose veins\n\n[19]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[20]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason - a\n   prior about what the task usually answers, or about what the reference list happens to\n   contain, is not one. How much weight the reference units carry is measured and stated in\n   the profile above: either they are the set this task's answers are built from - then the\n   answer is one of them - or they are evidence about a vocabulary the references only\n   sample, and a unit the facts call for is written the same way even when the list does\n   not have it. Follow the profile's statement, and never put a listed unit in the place of\n   the one the facts establish because the listed one merely looks related (broader,\n   narrower, or similarly spelled).\n4. A missing unit and an extra unit both count as wrong, so be complete and precise: give\n   one answer unit to each thing the facts establish, and to nothing they do not. The number\n   of units follows from the facts, so neither trimming to the commoner length nor padding to\n   a longer one is safer than answering what the facts establish. When the question states\n   the shared header of a question type in the references, that type is the sharpest evidence\n   about the count: a count its own cases never use is not a count this question can have, so\n   before submitting, hold the draft's count against that type's cases.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` once with your draft answer. It reports the answer\n   count this question's own type uses - a count the references never use for this question\n   is a defect to fix, not a remark - the markup the question states that the draft is\n   missing, and the renderings the references prove about its units: the whole unit when a\n   unit of the draft is only a piece of one or stops short of one, and the exact spelling\n   when a unit is a near miss. Everything the report does not list stands as it is, so fix\n   what it lists and submit. It does not re-open the candidates you weighed and set aside,\n   and a check that reports nothing is the end of the matter: call it once, and do not call\n   it again over the same draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_cdde104f45af4b43b459c920",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"red spots\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The patient presents with:\n- Red spots all over the body\n- Itchy\n- Fever\n- Headache\n- Exhausted\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms match:\n- \"red spots all over my body\" + \"itchy\" + \"fever\" + \"headache\" + \"exhausted\"\n\nLooking at the references:\n[1] Q: I have little red spots all over my body... lost appetite... exhausted and severe headache. A: chicken pox\n[12] Q: extreme body pain, headache and vomiting... red spots all over my body and very itchy. A: dengue\n[20] Q: small red bumps on arms and face. They are itchy... A: chicken pox\n\nWait, let's check reference [1]: \"I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\" -> chicken pox\nReference [12]: \"I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\" -> dengue\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches \"chicken pox\" or \"dengue\".\nWait, dengue usually has severe body pain, bleeding, etc. Chicken pox has red spots/bumps, itchy, fever, headache, exhaustion.\nLet's see if there's any other reference.\nReference [6] fungal infection: rash all over body, itchy and red, patches different color, lumps/pimples.\nReference [3] drug reaction: rashes flake off, prone to infection, fingers twitch.\n\nLet's search for \"red spots\" in the examples.\n"
+      },
+      {
+        "content": "[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[3]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue",
+        "role": "tool",
+        "tool_call_id": "call_cdde104f45af4b43b459c920"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_fcd91584ff364db0ae7e5cda",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"itchy\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "Let's look at the retrieved examples for \"red spots\":\n[1] chicken pox: little red spots all over body, lost appetite, exhausted, severe headache.\n[2] dengue: tired and weak, can't get enough sleep, small red spots on arms and legs.\n[3] dengue: extreme body pain, headache, vomiting, red spots all over body, very itchy.\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches both chicken pox and dengue somewhat. But let's check the exact wording of the patient vs references.\nPatient: \"red spots all over my body\", \"itchy\", \"fever\", \"headache\", \"exhausted\".\nReference [1] (chicken pox): \"little red spots all over my body\", \"lost appetite\", \"exhausted\", \"severe headache\".\nReference [3] (dengue): \"extreme body pain, headache and vomiting\", \"red spots all over my body\", \"very itchy\".\n\nWait, is there another reference? Let's check \"itchy\" or \"fever\"."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I have been having a lot of skin problems lately. I have red, scaly patches on my skin that are itchy and painful.\nA: psoriasis\n\n[2]\nQ: I have a lot of itchy spots on my skin. They're sometimes red or bumpy, and sometimes they're different colors than the rest of my skin. I also get these weird bumps that look like little balls.\nA: fungal infection\n\n[3]\nQ: I have developed rashes all over my body that are itchy and I have lost my appetite. I feel very tired all day and I feel like something is wrong with my body.\nA: dengue\n\n[4]\nQ: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite.\nA: chicken pox\n\n[5]\nQ: I've been feeling really sick lately. I've been itchy and throwing up, and I've lost a lot of weight. My skin has turned yellow, and I've been having a high fever. My stomach has also been hurting.\nA: jaundice\n\n[6]\nQ: I've been feeling really sick for the past few days. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles are sore.\nA: malaria\n\n[7]\nQ: I've been feeling really sick. I have a high fever, chills, and a headache. I've also been vomiting and sweating a lot. I'm also really itchy and my muscles hurt.\nA: malaria\n\n[8]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n[9]\nQ: My nose is always stuffy and congested, and my eyes are always red and itchy. I feel unwell and fatigued, and I keep coughing up this gunk. I have a scratchy, irritated throat, and my neck's lymph nodes are swollen.\nA: common cold\n\n[10]\nQ: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite.\nA: chicken pox",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_fcd91584ff364db0ae7e5cda"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "Let's look at the retrieved examples for \"itchy\":\n[4] Q: I have red, itchy bumps all over my body. They're especially bad on my arms and legs. I also have a headache and a fever. I don't feel like eating anything and have lost my appetite. A: chicken pox\n[8] Q: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable. A: chicken pox\n[10] Q: I have a rash all over my body and I feel really itchy. I'm also feeling really tired and I don't have an appetite. A: chicken pox\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis strongly matches [4] (chicken pox) and [10] (chicken pox).\nAlso reference [1] from earlier: \"little red spots all over my body... exhausted and severe headache\" -> chicken pox.\n\nLet's check if dengue is a better match. Dengue usually has severe body pain, bleeding gums, etc. The patient doesn't mention those. Chicken pox typically presents with itchy red spots/bumps all over the body, fever, headache, exhaustion.\n\nTherefore, the diagnosis is likely chicken pox.\n\nLet's verify with `retrieve_examples` using the exact symptoms.",
+        "tool_calls": [
+          {
+            "id": "call_aca7945a41234c7397886557",
+            "type": "function",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{\"query\": \"red spots all over my body itchy fever headache exhausted\", \"limit\": 10}"
+            }
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by grounding it in the frozen training references. The profile states the set this task's answers are built from. Name the units the facts establish and answer with the one they establish; a unit from outside that set is a different answer rather than an alternative to one inside it, because on this task the references list the answers they accept rather than sampling a larger vocabulary. Reuse whole reference units, never a fragment of one, with their exact spelling and answer shape, and never substitute a listed unit for a correct one that merely looks related. When the question states the shared header of a question type in the references, that type is what its answer is measured against: how many parts its answers carry and which units they carry say whether a draft is complete, and a part count that type never uses for its cases is not a count this question can have. Before submitting, call check_answer once on the draft: it reports the count this question's own type answers with, the markup the question states, and the renderings the references prove about the draft's units; a draft it reports nothing about is submitted unchanged.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.\n\nPossible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nPlease analyze the symptoms step by step, then provide your final diagnosis in the format:\n[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]\n\nFor example:\n[DIAGNOSIS]diabetes[/DIAGNOSIS]\n\n\n## Patient Symptoms\nI have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\n\nPlease provide your reasoning and final diagnosis.\n\nREFERENCE PROFILE (derived from 200 training references)\n- Answer shape: 1 part in 100%; each reference answer is a single part.\n- Reference units, with how many references use each. 100% of the reference answers are built only out of units that appear here more than once, so this is the set this task's answers are built from rather than a sample of a larger one: the answer is one of them; copy it character for character. A unit that is not here is not a unit this task's answers are built from, and a unit that is here but merely looks related to the one the facts establish - broader, narrower, or similarly spelled - is a different answer:\n  allergy (10), arthritis (10), chicken pox (10), dengue (10), diabetes (10), impetigo (10), bronchial asthma (9), cervical spondylosis (9), common cold (9), drug reaction (9), fungal infection (9), gastroesophageal reflux disease (9), hypertension (9), malaria (9), peptic ulcer disease (9), pneumonia (9), psoriasis (9), typhoid (9), urinary tract infection (9), varicose veins (9), jaundice (7), migraine (7)\n\nMOST SIMILAR TRAINING REFERENCES\n[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I'm so tired and weak, and my fever is really high. It's been hard to deal with all of these symptoms, and I've also been coughing up a lot of mucus. I'm getting really frustrated.\nA: bronchial asthma\n\n[3]\nQ: I have rashes on my skin that flake off and make me prone to infection. My fingers twitch and I sometimes shake.\nA: drug reaction\n\n[4]\nQ: I've been having frequent headaches, stomach acid, indigestion, hazy and distorted vision, increased appetite, stiff neck, depression, irritation, and visual distortion.\nA: migraine\n\n[5]\nQ: I have been experiencing pain and swelling in my legs. The pain is worse when I stand for long periods of time.\nA: varicose veins\n\n[6]\nQ: I have a rash all over my body that is itchy and red. Some of the patches are a different color than my skin and there are some lumps or pimples on my skin.\nA: fungal infection\n\n[7]\nQ: I've had a fever for the past four days, and my urine is bloody. My head hurts a lot, and my urine smells terrible. I don't feel like I can control when I need to pee.\nA: urinary tract infection\n\n[8]\nQ: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest.\nA: gastroesophageal reflux disease\n\n[9]\nQ: I've been having terrible itching and nausea. I've lost weight and am really exhausted. My skin is yellow and I have a fever. My urine is dark and I have stomach pain.\nA: jaundice\n\n[10]\nQ: I have a feeling of tremors and muscle twitching. I have decreased sense of smell or taste and I feel fatigued. Sometimes I have a feeling of rapid hearbeat or palipatations. I also have a feeling of thirst and I urinate frequently.\nA: diabetes\n\n[11]\nQ: I've been having migraines and headaches, and I can't sleep. My muscles are twitching and trembling, and I feel dizzy.\nA: drug reaction\n\n[12]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue\n\n[13]\nQ: I'm not interested in sex anymore, and it's hard for me to get aroused. I also have brain fog and feel confused a lot.\nA: drug reaction\n\n[14]\nQ: My skin is dry and flaky, and I get infections easily. My joints are in a lot of pain, and the skin on my knees and elbows is peeling off.\nA: psoriasis\n\n[15]\nQ: I have a runny nose and sneeze a lot. My eyes are sore and watery, and I have a hoarse voice. My head hurts all the time.\nA: allergy\n\n[16]\nQ: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.\nA: gastroesophageal reflux disease\n\n[17]\nQ: I've been feeling really grumpy and gloomy lately, and I've also noticed a change in my vision. I think it might be a migraine.\nA: migraine\n\n[18]\nQ: I have noticed that my legs are swollen and have dark purple veins. They are not painful but are concerning to me.\nA: varicose veins\n\n[19]\nQ: I have a rash on my face and near my nose. It's been there for a few days and it's starting to spread down my arms and legs.\nA: impetigo\n\n[20]\nQ: I have small red bumps on my arms and face. They are itchy and make my day very uncomfortable.\nA: chicken pox\n\n## How to answer\n\n1. The reference profile and the closest training references are given above. Treat their\n   answers as the authority on vocabulary, surface form and answer shape for this task.\n2. Answers are made of *units*. Split the references only at the separators the profile\n   names as list separators. Punctuation the profile says belongs to the unit itself is\n   part of one unit: never split a unit at it, never drop the text on either side of it,\n   and never answer with a fragment of a longer reference answer.\n3. Decide by naming candidates first. Write down every unit the question could support,\n   including the ones you are about to set aside, and for each one ask which fact\n   establishes it or rules it out. A unit may only be set aside for a factual reason - a\n   prior about what the task usually answers, or about what the reference list happens to\n   contain, is not one. How much weight the reference units carry is measured and stated in\n   the profile above: either they are the set this task's answers are built from - then the\n   answer is one of them - or they are evidence about a vocabulary the references only\n   sample, and a unit the facts call for is written the same way even when the list does\n   not have it. Follow the profile's statement, and never put a listed unit in the place of\n   the one the facts establish because the listed one merely looks related (broader,\n   narrower, or similarly spelled).\n4. A missing unit and an extra unit both count as wrong, so be complete and precise: give\n   one answer unit to each thing the facts establish, and to nothing they do not. The number\n   of units follows from the facts, so neither trimming to the commoner length nor padding to\n   a longer one is safer than answering what the facts establish. When the question states\n   the shared header of a question type in the references, that type is the sharpest evidence\n   about the count: a count its own cases never use is not a count this question can have, so\n   before submitting, hold the draft's count against that type's cases.\n5. Render the answer the way the references render theirs: use the exact spelling of a\n   reference unit when your answer is that unit, match the usual number of units and the\n   usual separators, and keep any markup the question asks for exactly as the question\n   spells it.\n6. If the question looks like it comes from a family of questions that recur, use\n   `retrieve_examples` with a query built from the decisive details of the question to pull\n   more references of that family, and `search_examples` to grep the reference set for a\n   term that must appear in the answer.\n7. Before submitting, call `check_answer` once with your draft answer. It reports the answer\n   count this question's own type uses - a count the references never use for this question\n   is a defect to fix, not a remark - the markup the question states that the draft is\n   missing, and the renderings the references prove about its units: the whole unit when a\n   unit of the draft is only a piece of one or stops short of one, and the exact spelling\n   when a unit is a near miss. Everything the report does not list stands as it is, so fix\n   what it lists and submit. It does not re-open the candidates you weighed and set aside,\n   and a check that reports nothing is the end of the matter: call it once, and do not call\n   it again over the same draft.\n8. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_cdde104f45af4b43b459c920",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"red spots\", \"limit\": 10}"
+            }
+          }
+        ],
+        "reasoning_content": "The patient presents with:\n- Red spots all over the body\n- Itchy\n- Fever\n- Headache\n- Exhausted\n\nLet's look at the possible diagnoses:\ndrug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.\n\nSymptoms match:\n- \"red spots all over my body\" + \"itchy\" + \"fever\" + \"headache\" + \"exhausted\"\n\nLooking at the references:\n[1] Q: I have little red spots all over my body... lost appetite... exhausted and severe headache. A: chicken pox\n[12] Q: extreme body pain, headache and vomiting... red spots all over my body and very itchy. A: dengue\n[20] Q: small red bumps on arms and face. They are itchy... A: chicken pox\n\nWait, let's check reference [1]: \"I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\" -> chicken pox\nReference [12]: \"I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\" -> dengue\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches \"chicken pox\" or \"dengue\".\nWait, dengue usually has severe body pain, bleeding, etc. Chicken pox has red spots/bumps, itchy, fever, headache, exhaustion.\nLet's see if there's any other reference.\nReference [6] fungal infection: rash all over body, itchy and red, patches different color, lumps/pimples.\nReference [3] drug reaction: rashes flake off, prone to infection, fingers twitch.\n\nLet's search for \"red spots\" in the examples.\n"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "[1]\nQ: I have little red spots all over my body. I don't know what they are and they are worrying me. I have also lost my appetite and every night I am exhausted and have a severe headache.\nA: chicken pox\n\n[2]\nQ: I've been feeling really tired and weak, and I can't seem to get enough sleep. I've also noticed some small red spots on my arms and legs.\nA: dengue\n\n[3]\nQ: I'm experiencing extreme body pain, headache and vomiting. I've developed red spots all over my body and I'm very itchy.\nA: dengue",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_cdde104f45af4b43b459c920"
+      },
+      {
+        "role": "assistant",
+        "content": null,
+        "reasoning_content": "Let's look at the retrieved examples for \"red spots\":\n[1] chicken pox: little red spots all over body, lost appetite, exhausted, severe headache.\n[2] dengue: tired and weak, can't get enough sleep, small red spots on arms and legs.\n[3] dengue: extreme body pain, headache, vomiting, red spots all over body, very itchy.\n\nThe patient says: \"I have a lot of red spots all over my body. They are itchy and I have a fever, headache, and feel exhausted.\"\nThis matches both chicken pox and dengue somewhat. But let's check the exact wording of the patient vs references.\nPatient: \"red spots all over my body\", \"itchy\", \"fever\", \"headache\", \"exhausted\".\nReference [1] (chicken pox): \"little red spots all over my body\", \"lost appetite\", \"exhausted\", \"severe headache\".\nReference [3] (dengue): \"extreme body pain, headache and vomiting\", \"red spots all over my body\", \"very itchy\".\n\nWait, is there another reference? Let's check \"itchy\" or \"fever\".",
+        "tool_calls": [
+          {
+            "id": "call_fcd91584ff364db0ae7e5cda",
+            "type": "function",
+            "function": {
+              "name": "search_examples",
+              "arguments": "{\"keyword\": \"itchy\", \"limit\": 10}"
+            }
+          }
+        ]
+      }
+    ]
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "session_id": "0e4600f1-4671-4172-82a0-bbce67835fe8",
+  "commits_before": [
+    "52669ee03d6d2d4d3f82bdca2e0563123451c879",
+    "28c00d830ac534ebe82ebbcb350faa1d094d6a97",
+    "d120469d58fef9d4749351908d4dccca93b045bc",
+    "02dcfc462da7f5e66c9e1a8a061194f6b7621d42",
+    "913ebd453415dde6004e24820c62cb0ac9eb642d",
+    "f0b6817a6c9c5920d4398ea87db7d5dcc9e5cef3"
+  ],
+  "completed": true,
+  "activity_seconds": 543.2215914726257,
+  "benchmark_seconds": 442.1998403072357,
+  "wall_seconds": 985.4214317798615,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 149303,
+    "num_turns": 27,
+    "stop_reason": "end_turn",
+    "session_id": "0e4600f1-4671-4172-82a0-bbce67835fe8",
+    "total_cost_usd": 3.3611260000000005,
+    "usage": {
+      "input_tokens": 150604,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3773312,
+      "output_tokens": 28858,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 150604,
+        "outputTokens": 28858,
+        "cacheReadInputTokens": 3773312,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 3.3611260000000005,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Round complete. Summary of the one candidate node created in this round:\n\n## N6 — `key-conformance-pass` (commit `72d9d01`, parent N5 `52669ee`)\n\n**Stage 1 — Lineage analysis.** Read every node's note/diff/traces. The decisive finding came from pricing N5's re-derivation pass against its own traces: its *rewriting* half paid (4 of its 5 LawBench gains are the draft's own answer re-written in the key's characters) while its *re-deciding* half cost (14 of 19 Symptom2Disease rewrites overrode a correct draft). Its pass text shows it never audited — it re-read the case, reached the same charge, and rationalised the draft it was shown (`对照答案键：…完全吻合`), changing none of the 12 LawBench samples whose gold carries an omitted charge.\n\n**Offline measurement (no model calls, parent's 260 samples):** 9 of the parent's 48 wrong LawBench drafts carry an entry the memory writes differently; Symptom2Disease's 96 readable drafts are *all* already listed strings and all 60 USPTO drafts are non-listed answers — so a spelling-licensed pass is a structural no-op on both. The competing \"add what's missing\" licence is a trap: of the 20 pure set-omission samples, 10 have no missing charge with even a character bigram in the abridged facts.\n\n**Stage 2 — Modification.** `solver/passes.py`: `rederive` → `conform`, a check licensed only to write the answer's *own* entries in the memory's spelling, never adding, dropping or swapping an entry, plus a guard that rejects any pass output lacking `\"final_answer\"`. `solver/agent.py`: `RederivedAgent` → `ConformedAgent` (same wrapper contract). Retrieval, key, memory and `prepare_memory.py` untouched.\n\n**Evaluation** (`runs/3d5eaf15…`, tree byte-identical to the commit; the interrupted first attempt was resumed in place):\n\n```json\n{\"USPTO\": 0.2167, \"Symptom2Disease\": 0.88, \"LawBench\": 0.57, \"average\": 0.5556, \"status\": \"partial\"}\n```\n\n259/260 scored, `rankable: true`. Against the parent: 0.5122 → 0.5556; LawBench 0.51 → 0.57 (highest in the lineage), S2D 0.76 → 0.88, USPTO unchanged at 0.2167. The check rewrote 5 of 99 LawBench answers (2 wrong→right, 3 wrong→wrong, **no correct answer harmed**), 0 of 92 S2D, 1 of 60 USPTO — exactly as predicted offline. Stated honestly in the commit and note: ~3 of the +6 LawBench samples over the parent are provider content-filter flakiness (parent lost 4, this run 1), and the mechanism's own contribution is the 2 in-run flips at no loss.\n\n**Stage 2.3 — Graph update.** Commit `72d9d01` (tree `3d5eaf15…` matches the evidence dir) with the Issue/Modification/Results message, and the note attached under `refs/notes/evolution`. Working tree clean; no source changed after evaluation.",
+    "ttft_ms": 2699,
+    "ttft_stream_ms": 518,
+    "time_to_request_ms": 44,
+    "type": "result",
+    "duration_ms": 363024,
+    "uuid": "171629bb-74bc-46fe-88b5-2c27e828f1e2"
+  },
+  "session_file": "projects/-workspace-harness/0e4600f1-4671-4172-82a0-bbce67835fe8.jsonl",
+  "usage": {
+    "input_tokens": 150604,
+    "output_tokens": 28858,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3773312
+  },
+  "cost_usd": 3.3611260000000005,
+  "num_turns": 27,
+  "duration_api_ms": 149303,
+  "error": null,
+  "commit": "72d9d0155ab0eb84022f58ee63ab82a42cb13ebd",
+  "tree": "3d5eaf15599685284e38ed827189784dd727d28c"
+}

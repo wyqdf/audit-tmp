@@ -1,0 +1,66 @@
+{
+  "error": null,
+  "elapsed_seconds": 794.9374728444964,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 699021,
+    "num_turns": 165,
+    "stop_reason": "end_turn",
+    "session_id": "30b39d40-c9a1-444e-97fc-b7b3ba344ee8",
+    "total_cost_usd": 13.643969000000006,
+    "usage": {
+      "input_tokens": 100582,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19683968,
+      "output_tokens": 131963,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 100582,
+        "outputTokens": 131963,
+        "cacheReadInputTokens": 19683968,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 13.643969000000006,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 3 is complete. Candidate `considered_unit_audit` is submitted.\n\n**What the analysis found (iteration 2 traces, 260 samples):**\n- The solver almost never revises: 51 of 53 checked LawBench samples submitted a byte-identical answer, and the single revision the check caused turned a *correct* answer (`销售假冒注册商标的商品`) into a wrong one because the tool recommended the nearest listed label.\n- The dominant error is a decision, not a surface: 29 of 48 failing LawBench samples name a missing gold unit in their own reasoning and then discard it, 15 explicitly citing \"not in the reference list\"; all 8 wrong Symptom2Disease samples name the correct diagnosis before submitting another one.\n- Retrieval cannot repair it — the 10 closest references' answer units cover the gold for 45% of single-unit answers but only 1 of 16 multi-unit ones — so the fix has to act on the solver's own candidate set.\n\n**What the candidate changes:** the memory now frames the reference units as evidence rather than a closed vocabulary; `check_answer(draft, considered)` re-opens every candidate the solver named but did not submit, showing the reference cases that answer each (ranked by head/tail relation to the draft, sentence-level excerpts); new `shared_edge`/`affix_extension` relations flag broader/narrower/fragment unit choices; the harmful \"use the closest listed label\" advice is gone; and a one-shot middleware nudge guarantees the check runs, since 47% of samples never called it.\n\n**Verified offline:** memory builds cleanly for all three task shapes, 900 fuzzed checks raise no exceptions, the middleware was tested end-to-end against a stub graph (fires exactly once, no loop), and no dataset names or facts leak into code or prompts.\n\nReports written: `reports/iteration_2_atomic_reference_units.md` (post-eval) and `reports/iteration_3_design_note.md`.\n\nCANDIDATES: considered_unit_audit",
+    "ttft_ms": 672,
+    "ttft_stream_ms": 217,
+    "time_to_request_ms": 42,
+    "type": "result",
+    "duration_ms": 794351,
+    "uuid": "66d8bd1e-f615-467b-9d5c-a7c2d057eec6"
+  },
+  "usage": {
+    "input_tokens": 100582,
+    "output_tokens": 131963,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 19683968
+  },
+  "cost_usd": 13.643969000000006,
+  "num_turns": 165,
+  "duration_api_ms": 699021
+}

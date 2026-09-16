@@ -1,0 +1,544 @@
+GOLD drug reaction PRED [DIAGNOSIS]gastroesophageal reflux disease[/DIAGNOSIS]
+=== QUESTION (first 1200) ===
+You are an expert medical diagnostician. Based on the patient's symptoms, provide a diagnosis.
+
+Possible diagnoses include: drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.
+
+Please analyze the symptoms step by step, then provide your final diagnosis in the format:
+[DIAGNOSIS]diagnosis_name[/DIAGNOSIS]
+
+For example:
+[DIAGNOSIS]diabetes[/DIAGNOSIS]
+
+
+## Patient Symptoms
+I have a lot of nausea and chest pain. My chest has been hurting for a while now. I shiver a lot and I'm really anxious.
+
+Please provide your reasoning and final diagnosis.
+
+REFERENCE PROFILE (derived from 200 training references)
+- Answer shape: 1 part in 100%; each reference answer is a single part.
+- Reference units in use, with how many references use each (this is evidence about vocabulary, not a closed list: a correct unit may be missing from it). When your answer is one of these units, copy it character for character. When the facts call for a unit
+>>TOOL retrieve_examples {"query": "nausea chest pain shiver anxious", "limit": 10}
+>>TOOL search_examples {"keyword": "chest pain", "limit": 10}
+>>TOOL search_examples {"keyword": "shiver", "limit": 10}
+>>ASSISTANT REASONING: The user wants a medical diagnosis based on the patient's symptoms.
+Symptoms:
+- Nausea
+- Chest pain (hurting for a while)
+- Shivering a lot
+- Anxious
+
+Let's look at the possible diagnoses:
+drug reaction, allergy, chicken pox, diabetes, psoriasis, hypertension, cervical spondylosis, bronchial asthma, varicose veins, malaria, dengue, arthritis, impetigo, fungal infection, common cold, gastroesophageal reflux disease, urinary tract infection, typhoid, pneumonia, peptic ulcer disease, jaundice, migraine.
+
+Reference units available:
+allergy, arthritis, chicken pox, dengue, diabetes, impetigo, bronchial asthma, cervical spondylosis, common cold, drug reaction, fungal infection, gastroesophageal reflux disease, hypertension, malaria, peptic ulcer disease, pneumonia, psoriasis, typhoid, urinary tract infection, varicose veins, jaundice, migraine.
+
+Let's check the references for similar symptoms.
+Ref 4: "I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest." -> gastroesophageal reflux disease
+Ref 7: "I've been having a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite." -> peptic ulcer disease
+Ref 8: "I've been feeling dizzy and anxious, and I've been having trouble concentrating." -> hypertension
+Ref 9: "I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night." -> allergy
+Ref 15: "I have been having intense itching all over my body. I have also been vomiting and feeling very tired... abdominal pain." -> jaundice
+
+Wait, let's look closely at the symptoms:
+"I have a lot of nausea and chest pain. My chest has been hurting for a while now. I shiver a lot and I'm really anxious."
+
+Could it be gastroesophageal reflux disease? GERD often causes chest pain and nausea. But shivering and anxiety?
+Could it be peptic ulcer disease? Stomach pain, anxious.
+Could it be allergy? Chest pain, nausea, but usually involves throat swelling, breathing issues.
+Could it be hypertension? Dizzy, anxious.
+Could it be malaria? Fever, shivering, nausea, chest pain? Malaria typically has fever and chills (shivering).
+Could it be dengue? Severe headache, pain behind eyes, joint/muscle pain, rash, mild fever.
+Could it be pneumonia? Cough, fever, difficulty breathing, chest pain.
+
+Let's search for "nausea and chest pain" or "shiver a lot" or "anxious" in the examples.
+Actually, let's use `retrieve_examples` with query "nausea chest pain shiver anxious".
+And `search_examples` for "chest pain", "shiver", "anxious", "nausea".
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I've been feeling dizzy and anxious, and I've been having trouble concentrating.
+A: hypertension
+
+[2]
+Q: I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite.
+A: peptic ulcer disease
+
+[3]
+Q: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.
+A: pneumonia
+
+[4]
+Q: I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night.
+A: allergy
+
+[5]
+Q: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.
+A: common cold
+
+[6]
+Q: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.
+A: gastroesophageal reflux disease
+
+[7]
+Q: I have a stuffy nose and a blocked nose. I also have stiffness and chest pain sometimes at night. I can't taste or smell anything.
+A: allergy
+
+[8]
+Q: I'm having trouble sleeping because of stomach pain. I'm also tired after using the bathroom and I don't have much of an appetite. I'm feeling pretty anxious all the time.
+A: peptic ulcer disease
+
+[9]
+Q: I have been having headaches, chest pains, and dizziness. I also feel like I'm losing my balance and I can't focus.
+A: hypertension
+
+[10]
+Q: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.
+A: gastroesophageal reflux disease
+<<TOOL RESULT: [1]
+Q: I've been having trouble concentrating and focusing, and I've been feeling dizzy. I've also had a headache and chest pain.
+A: hypertension
+
+[2]
+Q: I have been having headaches, chest pains, and dizziness. I also feel like I'm losing my balance and I can't focus.
+A: hypertension
+
+[3]
+Q: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.
+A: gastroesophageal reflux disease
+
+[4]
+Q: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.
+A: hypertension
+
+[5]
+Q: I've been having trouble concentrating and focusing. I've also been having headaches, chest pain, and dizziness. I feel like I'm off balance.
+A: hypertension
+
+[6]
+Q: I have a stuffy nose and a blocked nose. I also have stiffness and chest pain sometimes at night. I can't taste or smell anything.
+A: allergy
+
+[7]
+Q: I've been having headaches, chest pain, and dizziness. I've also been having trouble concentrating and focusing on my tasks.
+A: hypertension
+
+[8]
+Q: I've been having chest pain, dizziness, and a headache that feels like it's in a narrow zone around my head.
+A: hypertension
+
+[9]
+Q: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.
+A: gastroesophageal reflux disease
+
+[10]
+Q: I've been having a headache and chest pain. I've also been feeling dizzy and unstable. I'm also having problems focusing.
+A: hypertension
+<<TOOL RESULT: [1]
+Q: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.
+A: pneumonia
+
+[2]
+Q: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.
+A: common cold
+>>TOOL search_examples {"keyword": "anxious", "limit": 10}
+>>ASSISTANT REASONING: The symptoms are:
+- Nausea
+- Chest pain (hurting for a while)
+- Shiver a lot
+- Anxious
+
+Let's look at the retrieved examples.
+Ref 3 from retrieve_examples: "I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff." -> pneumonia. But patient doesn't have cough or breathing issues mentioned.
+Ref 4 from retrieve_examples: "I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night." -> allergy. Patient has nausea and chest pain, but no throat swelling or breathing issues.
+Ref 6 from retrieve_examples: "I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over." -> gastroesophageal reflux disease. Patient has nausea and chest pain.
+Ref 8 from retrieve_examples: "I'm having trouble sleeping because of stomach pain. I'm also tired after using the bathroom and I don't have much of an appetite. I'm feeling pretty anxious all the time." -> peptic ulcer disease. Patient has anxiety, but no stomach pain mentioned.
+
+Wait, let's search for "anxious" and "nausea".
+Could it be gastroesophageal reflux disease? GERD causes chest pain and nausea. Anxiety can be a symptom or exacerbating factor.
+What about "malaria"? Malaria causes chills/shivering, nausea, but usually fever.
+What about "dengue"? Dengue causes severe headache, joint pain, rash, fever.
+What about "peptic ulcer disease"? Stomach pain, anxiety.
+What about "hypertension"? Dizziness, anxiety, chest pain.
+
+Let's search for "shiver" or "anxious" in the references.
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite.
+A: peptic ulcer disease
+
+[2]
+Q: I've been feeling dizzy and anxious, and I've been having trouble concentrating.
+A: hypertension
+
+[3]
+Q: I'm having trouble sleeping because of stomach pain. I'm also tired after using the bathroom and I don't have much of an appetite. I'm feeling pretty anxious all the time.
+A: peptic ulcer disease
+>>TOOL search_examples {"keyword": "nausea", "limit": 10}
+>>ASSISTANT REASONING: Let's search for "nausea" in the references.
+
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I have been having headaches for a long time. They are usually on one side of my head and are very painful. I also get nausea, vomiting, and sensitivity to light and sound.
+A: migraine
+
+[2]
+Q: I have a high fever, chills, nausea, and severe itching. I also have a headache and am sweating a lot. I have muscle aches and nausea.
+A: malaria
+
+[3]
+Q: I've been feeling really sick lately. I've been having a lot of nausea and vomiting, and I've lost my appetite. I've also been feeling really weak.
+A: typhoid
+
+[4]
+Q: I've been feeling really unwell and have been scratching a lot. I have a high fever, chills, nausea, and muscle pain. I've also been sweating a lot.
+A: malaria
+
+[5]
+Q: I've been feeling really sick lately. I've been having a lot of nausea and I feel really uneasy. I've also noticed some rashes on my arms and legs. I've lost my appetite and I feel exhausted every day.
+A: chicken pox
+
+[6]
+Q: I have a hard time swallowing, and I feel full even after eating a small meal. I often have heartburn, nausea, and a tingling in my throat.
+A: gastroesophageal reflux disease
+
+[7]
+Q: I have a burning feeling in my stomach. It's worse when I eat or drink. I also get heartburn, indigestion, and nausea.
+A: peptic ulcer disease
+
+[8]
+Q: I've been having a really high fever, chills, and nausea. I've also been sweating a lot and my muscles hurt. I feel really queasy and have a headache.
+A: malaria
+
+[9]
+Q: I've been having terrible itching and nausea. I've lost weight and am really exhausted. My skin is yellow and I have a fever. My urine is dark and I have stomach pain.
+A: jaundice
+
+[10]
+Q: I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night.
+A: allergy
+>>TOOL search_examples {"keyword": "chest pain", "limit": 20}
+>>ASSISTANT REASONING: Let's look at the symptoms again:
+- Nausea
+- Chest pain (hurting for a while)
+- Shiver a lot
+- Anxious
+
+Could it be gastroesophageal reflux disease? "I have a hard time swallowing, and I feel full even after eating a small meal. I often have heartburn, nausea, and a tingling in my throat." -> GERD. Also Ref 6 from retrieve_examples: "I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over." -> GERD.
+But what about shivering and anxiety?
+
+What about peptic ulcer disease? "I have a burning feeling in my stomach. It's worse when I eat or drink. I also get heartburn, indigestion, and nausea." -> PUD. And "I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite." -> PUD. But patient has chest pain, not stomach pain. Wait, sometimes chest pain is referred or patients describe epigastric pain as chest pain. But the prompt says "chest pain".
+
+What about malaria? "I have a high fever, chills, nausea, and severe itching... muscle aches..." -> Malaria. Chills = shivering. Nausea. But no chest pain or anxiety mentioned typically.
+
+What about dengue? Not much on dengue in the search results.
+
+Let's check "gastroesophageal reflux disease" vs "peptic ulcer disease" vs "malaria" vs "allergy" vs "hypertension".
+Wait, let's look at reference [4] from the initial list:
+"I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest." -> gastroesophageal reflux disease.
+
+Is there any reference with "shiver" and "anxious"?
+Ref 3 from retrieve_examples: pneumonia (sweating and shivering, heart racing).
+Ref 5 from retrieve_examples: common cold (feel cold and shivery).
+
+Let's think about "gastroesophageal reflux disease". Symptoms: heartburn, indigestion, nausea, chest pain. Anxiety can be associated. Shivering? Maybe not typical.
+
+Let's search for "chest pain" and "nausea" together.
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I've been having trouble concentrating and focusing, and I've been feeling dizzy. I've also had a headache and chest pain.
+A: hypertension
+
+[2]
+Q: I have been having headaches, chest pains, and dizziness. I also feel like I'm losing my balance and I can't focus.
+A: hypertension
+
+[3]
+Q: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.
+A: gastroesophageal reflux disease
+
+[4]
+Q: I suddenly felt a headache, chest pain, and dizziness in the middle of a conference. I've been having trouble concentrating and focusing on the topic since then.
+A: hypertension
+
+[5]
+Q: I've been having trouble concentrating and focusing. I've also been having headaches, chest pain, and dizziness. I feel like I'm off balance.
+A: hypertension
+
+[6]
+Q: I have a stuffy nose and a blocked nose. I also have stiffness and chest pain sometimes at night. I can't taste or smell anything.
+A: allergy
+
+[7]
+Q: I've been having headaches, chest pain, and dizziness. I've also been having trouble concentrating and focusing on my tasks.
+A: hypertension
+
+[8]
+Q: I've been having chest pain, dizziness, and a headache that feels like it's in a narrow zone around my head.
+A: hypertension
+
+[9]
+Q: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.
+A: gastroesophageal reflux disease
+
+[10]
+Q: I've been having a headache and chest pain. I've also been feeling dizzy and unstable. I'm also having problems focusing.
+A: hypertension
+>>TOOL search_examples {"keyword": "gastroesophageal", "limit": 10}
+>>ASSISTANT REASONING: Wait, let's look at the symptoms again:
+"I have a lot of nausea and chest pain. My chest has been hurting for a while now. I shiver a lot and I'm really anxious."
+
+Could it be gastroesophageal reflux disease? GERD causes chest pain and nausea. Anxiety is common with GERD or can exacerbate it. Shivering? Maybe due to discomfort or anxiety.
+Could it be peptic ulcer disease? PUD causes stomach pain, nausea, anxiety. But patient says "chest pain". Sometimes epigastric pain is described as chest pain.
+Could it be malaria? Malaria causes chills (shivering), nausea. But chest pain and anxiety are not typical primary symptoms.
+Could it be dengue? Dengue causes severe headache, joint pain, rash, fever. Not matching well.
+Could it be allergy? Allergy can cause chest pain (asthma-like) and nausea, but usually involves throat swelling, breathing issues, itching.
+Could it be hypertension? Hypertension can cause chest pain, dizziness, anxiety. But nausea and shivering are less typical.
+
+Let's search for "gastroesophageal reflux disease" in the examples to see if there's any with anxiety or shivering.
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I have a sour taste in my mouth all the time, even when I haven't eaten anything acidic. I also get the hiccups a lot and have a knot in my throat.
+A: gastroesophageal reflux disease
+
+[2]
+Q: I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over.
+A: gastroesophageal reflux disease
+
+[3]
+Q: I have a lot of heartburn and indigestion, especially after I eat spicy or fatty foods. When I lie down or bend over, my chest discomfort gets worse. My chest hurts a lot.
+A: gastroesophageal reflux disease
+
+[4]
+Q: I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest.
+A: gastroesophageal reflux disease
+
+[5]
+Q: I have a sore throat or hoarseness, especially in the morning. I have a chronic nagging pain in my throat and bad breath. I also have frequent belching. I have a burning sensation in my chest when I lay down.
+A: gastroesophageal reflux disease
+
+[6]
+Q: I have a hard time swallowing, and I feel full even after eating a small meal. I often have heartburn, nausea, and a tingling in my throat.
+A: gastroesophageal reflux disease
+
+[7]
+Q: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest.
+A: gastroesophageal reflux disease
+
+[8]
+Q: I have a lot of heartburn and acid reflux. I also have a sore throat and bad breath. I throw up a lot.
+A: gastroesophageal reflux disease
+
+[9]
+Q: I have a burning feeling in my throat after I eat. I also sometimes get a bitter or sour taste in my mouth, which makes me feel sick.
+A: gastroesophageal reflux disease
+>>TOOL search_examples {"keyword": "peptic ulcer", "limit": 10}
+>>ASSISTANT REASONING: Let's search for "peptic ulcer disease" examples.
+
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite.
+A: peptic ulcer disease
+
+[2]
+Q: I have a stomach ache that keeps me up at night. After I use the bathroom, I feel tired and I don't want to eat. I'm always nervous.
+A: peptic ulcer disease
+
+[3]
+Q: I have a burning sensation in my upper abdomen, and I frequently get nauseous, heartburn, and indigestion.
+A: peptic ulcer disease
+
+[4]
+Q: I have a burning feeling in my stomach. It's worse when I eat or drink. I also get heartburn, indigestion, and nausea.
+A: peptic ulcer disease
+
+[5]
+Q: I have a constant hunger and appetite. Sometimes my stomach will cramp and spasm. After I eat, I feel bloated and gassy.
+A: peptic ulcer disease
+
+[6]
+Q: I have a burning feeling in my stomach that is worse when I lie down. I also have pain after eating certain foods, like spicy or acidic foods. Sometimes I have loose stools after eating these foods.
+A: peptic ulcer disease
+
+[7]
+Q: I have been having a lot of stomach pain and heartburn. I also have been feeling very tired and have no appetite.
+A: peptic ulcer disease
+
+[8]
+Q: I'm having trouble sleeping because of stomach pain. I'm also tired after using the bathroom and I don't have much of an appetite. I'm feeling pretty anxious all the time.
+A: peptic ulcer disease
+
+[9]
+Q: I have a stomach pain that keeps me up at night. I get tired after using the bathroom and I don't want to eat. I worry all the time.
+A: peptic ulcer disease
+>>TOOL search_examples {"keyword": "shiver", "limit": 20}
+>>ASSISTANT REASONING: The patient's symptoms:
+- Nausea
+- Chest pain (hurting for a while)
+- Shiver a lot
+- Anxious
+
+Let's look at "gastroesophageal reflux disease" vs "peptic ulcer disease".
+GERD: chest pain, nausea, heartburn, indigestion.
+PUD: stomach pain, nausea, anxiety, no appetite.
+
+Wait, is there any reference with "shiver"?
+Ref 3 from retrieve_examples: pneumonia (sweating and shivering).
+Ref 5 from retrieve_examples: common cold (feel cold and shivery).
+
+What about "malaria"? Malaria has chills/shivering, nausea. But chest pain? Not typically.
+What about "dengue"? Dengue has severe headache, joint pain, rash, fever.
+What about "typhoid"? Typhoid has diarrhea, constipation, stomachache, tired, no appetite.
+
+Could it be gastroesophageal reflux disease? The prompt says "I have a lot of nausea and chest pain. My chest has been hurting for a while now. I shiver a lot and I'm really anxious."
+Actually, let's think about "gastroesophageal reflux disease". It matches nausea and chest pain perfectly. Anxiety can be a symptom or comorbidity. Shivering might be due to discomfort or anxiety.
+
+Wait, look at this reference from the initial list:
+[4] Q: I have a lot of burping and belching. I get chest discomfort that goes up my neck and into my jaw and arm. I have pressure and tension in my chest. A: gastroesophageal reflux disease
+
+Is there any chance it's "peptic ulcer disease"? PUD usually emphasizes stomach pain, not chest pain. Although sometimes they overlap. But GERD explicitly mentions chest pain in multiple references.
+
+Let's check if there's any reference with "anxious" and "chest pain".
+Hypertension: headaches, chest pains, dizziness, trouble concentrating. No nausea or shivering.
+Allergy: throat swollen, can't breathe well, pain in chest, nausea at night. No shivering or anxiety mentioned as primary, but "I feel sick to my stomach...".
+
+What about "gastroesophageal reflux disease"? It fits nausea and chest pain best.
+
+Let's reconsider the exact wording: "I have a lot of nausea and chest pain. My chest has been hurting for a while now. I shiver a lot and I'm really anxious."
+Could it be related to a panic attack? Not in the list.
+Could it be "gastroesophageal reflux disease"? Yes.
+Could it be "peptic ulcer disease"? PUD references emphasize stomach pain, not chest pain.
+Could it be "malaria"? Malaria references emphasize fever, chills, muscle aches, sweating. No chest pain.
+Could it be "dengue"? Dengue references emphasize headache, joint pain, rash.
+Could it be "allergy"? Allergy references emphasize throat swelling, breathing issues, itching, rashes.
+
+Let's search for "shiver" in the whole reference set again.
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: [1]
+Q: I'm burning up, and I can't catch my breath. I'm sweating and shivering, and I'm so tired. My heart is racing, and I'm coughing up brown stuff.
+A: pneumonia
+
+[2]
+Q: I've been coughing a lot, and I feel cold and shivery. My nose is stuffy, and I feel pressure in my face. I have a lot of phlegm, and coughing hurts my chest. I can't smell anything, and my muscles hurt.
+A: common cold
+>>TOOL search_examples {"keyword": "anxious chest", "limit": 10}
+>>ASSISTANT REASONING: Wait, what about "gastroesophageal reflux disease"? The symptoms are nausea and chest pain. GERD is known for causing chest pain (often mimicking heart attack) and nausea. Anxiety can exacerbate GERD or be a result of the discomfort. Shivering might be a bit odd, but maybe it's just part of the patient's description of feeling unwell/anxious.
+
+Let's look at another possibility: "peptic ulcer disease". PUD causes stomach pain, nausea, anxiety. But the prompt says "chest pain", not stomach pain. However, sometimes patients confuse epigastric pain with chest pain. But GERD explicitly has "chest pain" in its references.
+
+Let's check "gastroesophageal reflux disease" references again.
+Ref 6 from retrieve_examples: "I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over." -> gastroesophageal reflux disease.
+Ref 9 from retrieve_examples: "I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest." -> gastroesophageal reflux disease.
+
+What about "malaria"? Malaria has chills/shivering, nausea. But no chest pain.
+What about "dengue"? No.
+What about "typhoid"? No.
+
+Could it be "gastroesophageal reflux disease"? Yes, it fits nausea and chest pain best among the options.
+
+Wait, let's think about "anxiety" and "shivering". Could it be a panic attack? Not in the list.
+Could it be "hypertension"? Hypertension has chest pain, dizziness, anxiety. But no nausea or shivering typically.
+Could it be "allergy"? Allergy has chest pain, nausea. But usually involves throat swelling, breathing issues.
+
+Let's consider "gastroesophageal reflux disease" as the most likely diagnosis because it directly matches "nausea" and "chest pain" which are hallmark symptoms of GERD (heartburn/acid reflux causing chest pain and nausea). The anxiety and shivering could be secondary to the chronic discomfort ("My chest has been hurting for a while now").
+
+Let's double check if there's any other condition.
+"peptic ulcer disease" - stomach pain, nausea, anxiety.
+"gastroesophageal reflux disease" - chest pain, nausea, heartburn.
+
+The prompt specifically says "chest pain" twice. "I have a lot of nausea and chest pain. My chest has been hurting for a while now." This strongly points to GERD, where chest pain is a primary symptom due to esophageal spasm or acid irritation.
+
+Let's verify with `check_answer`.
+Candidates: gastroesophageal reflux disease, peptic ulcer disease, hypertension, allergy, malaria.
+I will set aside peptic ulcer disease (stomach pain vs chest pain), hypertension (no nausea/shivering), allergy (no throat/breathing issues), malaria (no fever mentioned, though shivering implies chills, but chest pain is not typical).
+So gastroesophageal reflux disease is the best fit.
+
+Wait, is there any chance it's "peptic ulcer disease"? Some PUD patients report chest pain. But GERD is more classically associated with chest pain i
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: No reference case matches 'anxious chest'.
+>>TOOL search_examples {"keyword": "nausea chest", "limit": 10}
+>>ASSISTANT REASONING: Let's search for "nausea chest".
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: No reference case matches 'nausea chest'.
+>>TOOL check_answer {"draft_answer": "[DIAGNOSIS]gastroesophageal reflux disease[/DIAGNOSIS]", "considered": "gastroesophageal reflux disease, peptic ulcer disease, hypertension, allergy, malaria, dengue, typhoid, pneumonia, common cold"}
+>>ASSISTANT REASONING: Let's search for "chest pain" and "nausea" in the initial list.
+Ref 4: chest discomfort... gastroesophageal reflux disease.
+Ref 9: pain in my chest and nausea at night -> allergy.
+
+Wait, Ref 9 from initial list: "I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night." -> allergy.
+But the patient doesn't have throat swelling or breathing issues.
+
+What about Ref 6 from retrieve_examples: "I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over." -> gastroesophageal reflux disease.
+
+Is there any reference with "shiver" and "anxious"? No.
+
+Let's think about "gastroesophageal reflux disease". It matches nausea and chest pain perfectly. The anxiety and shivering might be due to the chronic nature of the pain ("hurting for a while now") causing stress and physical reactions like shivering.
+
+Could it be "peptic ulcer disease"? PUD typically presents with epigastric (stomach) pain, not chest pain. Although they can overlap, GERD is explicitly linked to chest pain in the references.
+
+I will go with gastroesophageal reflux disease.
+
+Let's construct the reasoning:
+1. The patient presents with nausea and persistent chest pain.
+2. Among the possible diagnoses, gastroesophageal reflux disease (GERD) is strongly associated with both nausea and chest pain (often described as heartburn or acid reflux causing discomfort in the chest).
+3. While peptic ulcer disease also causes nausea and anxiety, it is typically characterized by stomach/abdominal pain rather than chest pain.
+4. Hypertension can cause chest pain and anxiety but does not typically present with nausea or shivering.
+5. Allergy can cause chest pain and nausea but usually involves respiratory symptoms like throat swelling or difficulty breathing, which are absent here.
+6. Malaria causes shivering (chills) and nausea but is primarily characterized by fever and muscle aches, without typical chest pain.
+7. Therefore, the combination of persistent chest pain and nausea best aligns with gastroesophageal reflux disease. The anxiety and shivering may be secondary to the chronic discomfort and stress from the ongoing symptoms.
+
+Final diagnosis: gastroesophageal reflux disease.
+
+Let's verify with `check_answer`.
+Draft answer: [DIAGNOSIS]gastroesophageal reflux disease[/DIAGNOSIS]
+Considered: gastroesophageal reflux disease, peptic ulcer disease, hypertension, allergy, malaria, dengue, typhoid, pneumonia, common cold
+>>ASSISTANT CONTENT: None
+<<TOOL RESULT: No surface problem found. Surface checking cannot show that the answer is complete or correct - work through the points below before submitting.
+- Considered units: your notes name 'peptic ulcer disease', 'allergy', 'dengue', which the draft does not include.
+  Reference cases that answer 'peptic ulcer disease' (9 reference answer(s)):
+  Q: I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite.
+     A: peptic ulcer disease
+  Reference cases that answer 'allergy' (10 reference answer(s)):
+  Q: I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night.
+     A: allergy
+  Reference cases that answer 'dengue' (10 reference answer(s)):
+  Q: I've been having a lot of joint pain, and it's been really hard to walk. I've also lost my appetite, and I feel really weak and nauseous.
+     A: dengue
+  For each one: if the facts establish it, put it in the answer verbatim (units joined the way the references join them); if a fact rules it out, say which fact and keep your draft.
+- Shape: your answer has 1 part(s); every reference answer has 1 part(s).
+- Units: all 1 unit(s) are reference units, spelled verbatim. That only means the spelling is right, not that the set is complete.
+>>ASSISTANT REASONING: The check_answer tool says:
+- Considered units: 'peptic ulcer disease', 'allergy', 'dengue' are not in the draft.
+For peptic ulcer disease: "I have a lot of stomach pain, and it's hard for me to sleep. I also feel really anxious and have no appetite." -> The patient has anxiety, but explicitly says "chest pain", not stomach pain. So PUD is ruled out by the fact that the pain is in the chest, not the stomach.
+For allergy: "I feel sick to my stomach, lightheaded, and dizzy. My throat is swollen and I can't breathe well. I sometimes feel pain in my chest and nausea at night." -> The patient does not have throat swelling or breathing issues. So allergy is ruled out.
+For dengue: "I've been having a lot of joint pain... weak and nauseous." -> Patient doesn't have joint pain or weakness mentioned. Ruled out.
+
+Wait, what about "malaria"? Malaria has chills/shivering and nausea. But no chest pain.
+What about "hypertension"? Hypertension has chest pain and anxiety. But no nausea or shivering.
+
+Is there any other condition? Let's check "gastroesophageal reflux disease" references again.
+"I get heartburn and indigestion a lot. It's worse when I eat spicy or fatty foods. I also get chest pain that gets worse when I lie down or bend over." -> gastroesophageal reflux disease.
+"I belch and burp a lot. I get chest pain that goes to my arm, jaw, and back of my neck. I feel pressure and stress in my chest." -> gastroesophageal reflux disease.
+"I have a hard time swallowing, and I feel full even after eating a small meal. I often have heartburn, nausea, and a tingling in my throat." -> gastroesophageal reflux disease.
+
+The patient's symptoms: nausea, chest pain (persistent), shivering, anxious.
+Could it be gastroesophageal reflux disease? Yes, chest pain and nausea are classic. Anxiety is common with chronic pain/discomfort. Shivering could be due to anxiety or discomfort.
+
+Let's consider if "peptic ulcer disease" could be the answer because of "anxious" and "nausea". But the prompt explicitly says "chest pain" twice. In medical diagnostics, chest pain + nausea strongly points to GERD or cardiac issues. Since cardiac isn't an option, GERD is the best fit. PUD is stomach pain.
+
+I will stick with gastroesophageal reflux disease.
+
+Wait, let's look at the reference cases for "peptic ulcer disease" again.
+Ref 3: "I have a burning sensation in my upper abdomen, and I frequently get nauseous, heartburn, and indigestion." -> peptic ulcer disease.
+Ref 4: "I have a burning feeling in my stomach. It's worse when I eat or drink. I also get heartburn, indigestion, and nausea." -> peptic ulcer disease.
+So PUD can have heartburn and nausea. But the primary pain location is stomach/upper abdomen. The patient says "chest pain".
+
+I'm confident in gastroesophageal reflux disease.
+
+Let's format the output as JSON.
+Reasoning:
+1. The patient reports persistent chest pain and nausea. These are hallmark symptoms of gastroesophageal reflux disease (GERD), where acid reflux causes irritation
+>>ASSISTANT CONTENT: ```json
+{
+  "reasoning": "The patient presents with persistent chest pain and nausea, which are hallmark symptoms of gastroesophageal reflux disease (GERD). Acid reflux irritates the esophagus, commonly causing chest discomfort (often described as heartburn) that can radiate and mimic other conditions, along with nausea. While peptic ulcer disease also involves nausea and anxiety, it is primarily characterized by stomach or epigastric pain rather than chest pain. Allergy can cause chest pain and nausea but typically presents with respiratory symptoms like throat swelling or breathing difficult
