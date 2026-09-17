@@ -1,0 +1,169 @@
+{
+  "task": "LawBench",
+  "tree_hash": "ceeb3c6c371878d0818744024906d9acd941dc6a",
+  "split": "val",
+  "example_index": 4,
+  "sample_index": 1,
+  "status": "ok",
+  "error": null,
+  "was_correct": true,
+  "prediction": "[罪名]非法种植毒品原植物<eoa>",
+  "target": "非法种植毒品原植物",
+  "metric": {
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 1,
+    "fp": 0,
+    "fn": 0
+  },
+  "usage": {
+    "model_calls": 3,
+    "input_tokens": 10974,
+    "output_tokens": 2411,
+    "cached_tokens": 9171,
+    "cache_write_tokens": 1785
+  },
+  "elapsed_seconds": 35.70483238250017,
+  "memory_context_chars": 105316,
+  "tool_calls": [
+    "retrieve_examples"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "stop",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by retrieving examples.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:公诉机关指控：2012年农历10月份的一天，被告人叶某甲从青田县季宅乡黄放口村溪滩边摘取几个罂粟果，后将上述罂粟果种植在青田县季宅乡华坦村后山自家农田中。2013年5月14日，青田县公安局高湖派出所接到群众举报将其查获，并将已经结果的罂粟株予以铲除，经现场清点被铲除的已结果的罂粟植株共计782株。\r\n案发后，被告人叶某甲主动到青田县公安局高湖派出所投案，并如实供述了自己的犯罪事实。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. If the examples do not cover the question, search the memory under `/harness/memory` yourself.\n3. Match the wording, format and level of detail of the examples' answers, copying every\n   item exactly as the examples write it — nothing added, dropped or reworded.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_58125acfcf4547e185a56029",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants me to simulate a judge and determine the criminal charge based on the provided facts.\nI need to:\n1. Call `retrieve_examples` first.\n2. Analyze the facts.\n3. Provide reasoning.\n4. Output the final answer in the specified format: `[罪名]...<eoa>` inside a JSON object.\n\nFacts:\n- Defendant Ye Moujia picked poppy fruits from a stream bank in Oct 2012 (lunar calendar).\n- Planted them in his farmland.\n- On May 14, 2013, police found 782 mature poppy plants after a tip-off.\n- Ye surrendered voluntarily and confessed truthfully.\n\nLegal analysis (Chinese Criminal Law):\n- Planting poppy plants is illegal.\n- Article 351 of the PRC Criminal Law: Illegal cultivation of毒品原植物 (plants used for producing drugs), such as opium poppy or marijuana.\n- Cultivating opium poppy of 500 to 3,000 plants constitutes a crime. Here, there are 782 plants.\n- The charge is \"非法种植毒品原植物罪\" (Crime of illegally cultivating plants that are sources of narcotic drugs).\n- Let's check if there are any other possible charges. No, it's clearly this one.\n- Format required: `[罪名]非法种植毒品原植物罪<eoa>`\n\nLet's call `retrieve_examples` first as instructed.\nThen I will construct the JSON response.\nWait, the prompt says \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\" and gives examples like `[罪名]盗窃<eoa>`.\nSo the final_answer should be exactly `[罪名]非法种植毒品原植物罪<eoa>`.\n\nLet's retrieve examples first. \nActually, I can just do it directly. But the instruction says \"Call `retrieve_examples` before answering.\" So I will call it.\nThen I'll write the reasoning and final answer.\nLet's proceed. \nI will call `retrieve_examples`."
+    },
+    {
+      "content": "Tool result too large, the result of this tool call call_58125acfcf4547e185a56029 was saved in the filesystem at this path: /large_tool_results/call_58125acfcf4547e185a56029\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  Q: 事实:经审理查明，2016年12月份，被告人常爱花在丰县欢口镇司堂村村北其承包地非法种植罂粟，2017年4月19日被丰县公安局依法查获。经清点，被告人常爱花非法种植罂粟共计916株。丰县公安局已将该916株罂粟予以铲除。\n2  上述事实，被告人常爱花在开庭审理过程中亦无异议，江苏省·中国科学院植物研究所出具的植物材料鉴定报告，丰县公安局关于本案的发破案报告、到案经过、检查笔录、扣押清单、清点视频、罂粟图片及被告人常爱花的户籍证明等证据证实，足以认定。\n3  \n4  A: 非法种植毒品原植物\n5  \n... [1365 lines truncated] ...\n1371  A: 故意伤害;组织、强迫、引诱、容留、介绍卖淫;强迫卖淫\n1372  \n1373  Q: 事实:昌宁县人民检察院指控，2011年，卡某镇农业综合服务中心动物食品检疫员李某为徇私情，通过出具虚假的《中国动物卫生监督禁止生产、经营的动物及产品单据》27份，帮助他人骗取50头病害猪无害化处理国家财政补助资金人民币29000元。\n1374  \n1375  A: 动植物检疫徇私舞弊\n",
+      "role": "tool",
+      "tool_call_id": "call_58125acfcf4547e185a56029"
+    },
+    {
+      "content": "```json\n{\n  \"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。其中种植罂粟五百株以上不满三千株的，处五年以下有期徒刑、拘役或者管制，并处罚金。本案中，被告人叶某甲违反国家毒品管理法规，在自家农田内非法种植罂粟，经公安机关查获并清点数量为782株，已达到刑法规定的“五百株以上”的入罪标准，其行为已构成非法种植毒品原植物罪。案发后被告人主动投案并如实供述犯罪事实，依法认定为自首，可在量刑时予以从轻处罚，但该情节不影响对犯罪性质的认定。\",\n  \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"\n}\n```",
+      "role": "assistant",
+      "reasoning_content": "The examples show that the answer format for a single charge is just the name of the crime, e.g., `非法种植毒品原植物`.\nWait, the example says:\n`A: 非法种植毒品原植物`\nBut the prompt instruction says:\n`[罪名]盗窃<eoa>` or `[罪名]盗窃;诈骗<eoa>`\n\nLet's look at the exact wording in the prompt:\n\"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\"\n\nSo I should output `[罪名]非法种植毒品原植物罪<eoa>` or `[罪名]非法种植毒品原植物<eoa>`. The example in the prompt uses `盗窃`, which is short. In Chinese law, it's usually `非法种植毒品原植物罪`. I will use `非法种植毒品原植物罪`.\n\nLet's verify the legal standard:\nAccording to Article 351 of the PRC Criminal Law: \"非法种植罂粟、大麻等毒品原植物的，一律强制铲除。有下列情形之一的，处五年以下有期徒刑、拘役或者管制，并处罚金：(一)种植罂粟五百株以上不满三千株或者其他毒品原植物数量较大的；...\"\nSo planting 782 poppy plants constitutes the crime of illegally cultivating plants that are sources of narcotic drugs (非法种植毒品原植物罪).\n\nReasoning:\n被告人叶某甲非法种植罂粟782株，已达到刑法规定的“五百株以上不满三千株”的立案标准，其行为已构成非法种植毒品原植物罪。案发后主动投案并如实供述，系自首，可从轻处罚，但不影响定罪。\n\nFinal answer format: `[罪名]非法种植毒品原植物罪<eoa>`\n\nI will construct the JSON response now.\nCheck if any other details are needed. The prompt asks for reasoning and final_answer in JSON.\nI'll write the reasoning clearly and put the exact string in final_answer.\nAll good.\nProceed. \nOne minor point: The example in the retrieved text says `A: 非法种植毒品原植物` without `罪`. But the prompt's format example explicitly says `[罪名]盗窃<eoa>`. I will stick to `[罪名]非法种植毒品原植物罪<eoa>` as it's standard. Actually, many datasets drop the \"罪\" character, but the prompt says `[罪名]盗窃<eoa>`. I'll use `非法种植毒品原植物罪`. To be safe, I'll just use `非法种植毒品原植物罪`.\n\nLet's draft the JSON.\n```json\n{\n  \"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。其中种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。本案中，被告人叶某甲非法种植罂粟782株，已达到刑事立案追诉标准，其行为已构成非法种植毒品原植物罪。虽然其案发后主动投案并如实供述（具有自首情节），依法可以从轻或减轻处罚，但这不影响对其犯罪性质的认定。\",\n  \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"\n}\n```\nWait, let's double check the exact phrasing in similar cases. Sometimes it's just `非法种植毒品原植物`. I will include `罪` as it's standard in Chinese criminal judgments. The prompt example uses `盗窃`, which is often used without `罪` in some datasets, but `非法种植毒品原植物罪` is the full name. I'll stick with `非法种植毒品原植物罪`.\n\nEverything looks solid.\nOutput matches requirements.\nProceeding. \nSelf-Correction/Verification during thought:\nThe prompt says: \"格式示例：- 单个罪名: [罪名]盗窃<eoa>\"\nIt implies the text between `[罪名]` and `<eoa>` is the charge name.\nI will output exactly that.\nReady. \nGenerating response. \n```json\n{\"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条之规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。本案中，被告人叶某甲在自家农田中非法种植罂粟，经公安机关现场清点共计782株，已达到法定的刑事立案追诉标准（500株以上），其行为已触犯刑律，构成非法种植毒品原植物罪。案发后被告人主动投案并如实供述犯罪事实，依法构成自首，可在量刑时予以从轻处罚，但不影响本罪的成立。\", \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"}\n```\nMatches all constraints. Output matches exactly.✅\nDone. \nProceeds. \n(Self-Correction/Note during generation prep: I will make sure the JSON is strictly formatted as requested.)\nAll good. \nOutput matches. \n[Done] \n*Self-Correction/Verification during thought*: \nWait, the prompt says \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\"\nAnd the example is `[罪名]盗窃<eoa>`.\nI will follow this exactly.\nThe reasoning part will be in the `reasoning` field.\nThe final answer will be in the `final_answer` field.\nEverything is correct.\nProceeding. \nOutput Generation. \n*(Done)*\n"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "The answer you are about to finish with was checked against the training memory.\n- Your answer has \"非法种植毒品原植物罪\"; the memory writes it as \"非法种植毒品原植物\" (1 occurrence).\nRewrite final_answer using the memory's wording above: copy a complete answer as it is when it fits this case, and otherwise keep every item you identified and fix only its wording, including the way the memory ends an item. Then reply with the same JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "role": "assistant",
+      "content": "```json\n{\n  \"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条的规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。其中种植罂粟五百株以上不满三千株的，处五年以下有期徒刑、拘役或者管制，并处罚金。本案中，被告人叶某甲违反国家毒品管理法规，在自家农田内非法种植罂粟，经公安机关查获并清点数量为782株，已达到刑法规定的“五百株以上”的入罪标准，其行为已构成非法种植毒品原植物罪。案发后被告人主动投案并如实供述犯罪事实，依法认定为自首，可在量刑时予以从轻处罚，但该情节不影响对犯罪性质的认定。\",\n  \"final_answer\": \"[罪名]非法种植毒品原植物<eoa>\"\n}\n```",
+      "reasoning_content": "The user wants me to rewrite the final answer based on the memory's wording.\nThe memory says the answer should be \"非法种植毒品原植物\" (without \"罪\").\nThe format example in the prompt is: `[罪名]盗窃<eoa>` or `[罪名]盗窃;诈骗<eoa>`.\nSo I need to change \"非法种植毒品原植物罪\" to \"非法种植毒品原植物\".\n\nLet's check the reasoning part. It explains why it's that crime. The reasoning can stay mostly the same, but I should ensure the final answer matches exactly.\n\nReasoning:\n被告人叶某甲违反国家毒品管理法规，非法种植罂粟782株。根据《中华人民共和国刑法》第三百五十一条规定，非法种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。因此，其行为符合该罪的构成要件。虽然案发后有自首情节，但这属于量刑情节，不影响定罪。\n\nFinal Answer: [罪名]非法种植毒品原植物<eoa>\n\nWait, looking at the examples retrieved earlier:\nExample 1:\nQ: ...非法种植罂粟共计916株...\nA: 非法种植毒品原植物\n\nSo the label is indeed \"非法种植毒品原植物\".\n\nI will construct the JSON.\nReasoning: 被告人叶某甲违反国家规定，在自家农田中非法种植罂粟，经清点数量为782株。根据刑法规定，非法种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。本案中782株已达到立案追诉标准，故认定其犯非法种植毒品原植物罪。案发后主动投案并如实供述，系自首，可从轻处罚，但不影响定性。\nFinal Answer: [罪名]非法种植毒品原植物<eoa>\n\nDouble check formatting requirements:\n- Single JSON object with \"reasoning\" and \"final_answer\".\n- Final answer must match memory wording.\n\nReady.\n"
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by retrieving examples.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:公诉机关指控：2012年农历10月份的一天，被告人叶某甲从青田县季宅乡黄放口村溪滩边摘取几个罂粟果，后将上述罂粟果种植在青田县季宅乡华坦村后山自家农田中。2013年5月14日，青田县公安局高湖派出所接到群众举报将其查获，并将已经结果的罂粟株予以铲除，经现场清点被铲除的已结果的罂粟植株共计782株。\r\n案发后，被告人叶某甲主动到青田县公安局高湖派出所投案，并如实供述了自己的犯罪事实。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. If the examples do not cover the question, search the memory under `/harness/memory` yourself.\n3. Match the wording, format and level of detail of the examples' answers, copying every\n   item exactly as the examples write it — nothing added, dropped or reworded.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_58125acfcf4547e185a56029",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants me to simulate a judge and determine the criminal charge based on the provided facts.\nI need to:\n1. Call `retrieve_examples` first.\n2. Analyze the facts.\n3. Provide reasoning.\n4. Output the final answer in the specified format: `[罪名]...<eoa>` inside a JSON object.\n\nFacts:\n- Defendant Ye Moujia picked poppy fruits from a stream bank in Oct 2012 (lunar calendar).\n- Planted them in his farmland.\n- On May 14, 2013, police found 782 mature poppy plants after a tip-off.\n- Ye surrendered voluntarily and confessed truthfully.\n\nLegal analysis (Chinese Criminal Law):\n- Planting poppy plants is illegal.\n- Article 351 of the PRC Criminal Law: Illegal cultivation of毒品原植物 (plants used for producing drugs), such as opium poppy or marijuana.\n- Cultivating opium poppy of 500 to 3,000 plants constitutes a crime. Here, there are 782 plants.\n- The charge is \"非法种植毒品原植物罪\" (Crime of illegally cultivating plants that are sources of narcotic drugs).\n- Let's check if there are any other possible charges. No, it's clearly this one.\n- Format required: `[罪名]非法种植毒品原植物罪<eoa>`\n\nLet's call `retrieve_examples` first as instructed.\nThen I will construct the JSON response.\nWait, the prompt says \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\" and gives examples like `[罪名]盗窃<eoa>`.\nSo the final_answer should be exactly `[罪名]非法种植毒品原植物罪<eoa>`.\n\nLet's retrieve examples first. \nActually, I can just do it directly. But the instruction says \"Call `retrieve_examples` before answering.\" So I will call it.\nThen I'll write the reasoning and final answer.\nLet's proceed. \nI will call `retrieve_examples`."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Tool result too large, the result of this tool call call_58125acfcf4547e185a56029 was saved in the filesystem at this path: /large_tool_results/call_58125acfcf4547e185a56029\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  Q: 事实:经审理查明，2016年12月份，被告人常爱花在丰县欢口镇司堂村村北其承包地非法种植罂粟，2017年4月19日被丰县公安局依法查获。经清点，被告人常爱花非法种植罂粟共计916株。丰县公安局已将该916株罂粟予以铲除。\n2  上述事实，被告人常爱花在开庭审理过程中亦无异议，江苏省·中国科学院植物研究所出具的植物材料鉴定报告，丰县公安局关于本案的发破案报告、到案经过、检查笔录、扣押清单、清点视频、罂粟图片及被告人常爱花的户籍证明等证据证实，足以认定。\n3  \n4  A: 非法种植毒品原植物\n5  \n... [1365 lines truncated] ...\n1371  A: 故意伤害;组织、强迫、引诱、容留、介绍卖淫;强迫卖淫\n1372  \n1373  Q: 事实:昌宁县人民检察院指控，2011年，卡某镇农业综合服务中心动物食品检疫员李某为徇私情，通过出具虚假的《中国动物卫生监督禁止生产、经营的动物及产品单据》27份，帮助他人骗取50头病害猪无害化处理国家财政补助资金人民币29000元。\n1374  \n1375  A: 动植物检疫徇私舞弊\n",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_58125acfcf4547e185a56029"
+      },
+      {
+        "role": "assistant",
+        "content": "```json\n{\n  \"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。其中种植罂粟五百株以上不满三千株的，处五年以下有期徒刑、拘役或者管制，并处罚金。本案中，被告人叶某甲违反国家毒品管理法规，在自家农田内非法种植罂粟，经公安机关查获并清点数量为782株，已达到刑法规定的“五百株以上”的入罪标准，其行为已构成非法种植毒品原植物罪。案发后被告人主动投案并如实供述犯罪事实，依法认定为自首，可在量刑时予以从轻处罚，但该情节不影响对犯罪性质的认定。\",\n  \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"\n}\n```",
+        "reasoning_content": "The examples show that the answer format for a single charge is just the name of the crime, e.g., `非法种植毒品原植物`.\nWait, the example says:\n`A: 非法种植毒品原植物`\nBut the prompt instruction says:\n`[罪名]盗窃<eoa>` or `[罪名]盗窃;诈骗<eoa>`\n\nLet's look at the exact wording in the prompt:\n\"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\"\n\nSo I should output `[罪名]非法种植毒品原植物罪<eoa>` or `[罪名]非法种植毒品原植物<eoa>`. The example in the prompt uses `盗窃`, which is short. In Chinese law, it's usually `非法种植毒品原植物罪`. I will use `非法种植毒品原植物罪`.\n\nLet's verify the legal standard:\nAccording to Article 351 of the PRC Criminal Law: \"非法种植罂粟、大麻等毒品原植物的，一律强制铲除。有下列情形之一的，处五年以下有期徒刑、拘役或者管制，并处罚金：(一)种植罂粟五百株以上不满三千株或者其他毒品原植物数量较大的；...\"\nSo planting 782 poppy plants constitutes the crime of illegally cultivating plants that are sources of narcotic drugs (非法种植毒品原植物罪).\n\nReasoning:\n被告人叶某甲非法种植罂粟782株，已达到刑法规定的“五百株以上不满三千株”的立案标准，其行为已构成非法种植毒品原植物罪。案发后主动投案并如实供述，系自首，可从轻处罚，但不影响定罪。\n\nFinal answer format: `[罪名]非法种植毒品原植物罪<eoa>`\n\nI will construct the JSON response now.\nCheck if any other details are needed. The prompt asks for reasoning and final_answer in JSON.\nI'll write the reasoning clearly and put the exact string in final_answer.\nAll good.\nProceed. \nOne minor point: The example in the retrieved text says `A: 非法种植毒品原植物` without `罪`. But the prompt's format example explicitly says `[罪名]盗窃<eoa>`. I will stick to `[罪名]非法种植毒品原植物罪<eoa>` as it's standard. Actually, many datasets drop the \"罪\" character, but the prompt says `[罪名]盗窃<eoa>`. I'll use `非法种植毒品原植物罪`. To be safe, I'll just use `非法种植毒品原植物罪`.\n\nLet's draft the JSON.\n```json\n{\n  \"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。其中种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。本案中，被告人叶某甲非法种植罂粟782株，已达到刑事立案追诉标准，其行为已构成非法种植毒品原植物罪。虽然其案发后主动投案并如实供述（具有自首情节），依法可以从轻或减轻处罚，但这不影响对其犯罪性质的认定。\",\n  \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"\n}\n```\nWait, let's double check the exact phrasing in similar cases. Sometimes it's just `非法种植毒品原植物`. I will include `罪` as it's standard in Chinese criminal judgments. The prompt example uses `盗窃`, which is often used without `罪` in some datasets, but `非法种植毒品原植物罪` is the full name. I'll stick with `非法种植毒品原植物罪`.\n\nEverything looks solid.\nOutput matches requirements.\nProceeding. \nSelf-Correction/Verification during thought:\nThe prompt says: \"格式示例：- 单个罪名: [罪名]盗窃<eoa>\"\nIt implies the text between `[罪名]` and `<eoa>` is the charge name.\nI will output exactly that.\nReady. \nGenerating response. \n```json\n{\"reasoning\": \"根据《中华人民共和国刑法》第三百五十一条之规定，非法种植罂粟、大麻等毒品原植物的，一律强制铲除。种植罂粟五百株以上不满三千株的，构成非法种植毒品原植物罪。本案中，被告人叶某甲在自家农田中非法种植罂粟，经公安机关现场清点共计782株，已达到法定的刑事立案追诉标准（500株以上），其行为已触犯刑律，构成非法种植毒品原植物罪。案发后被告人主动投案并如实供述犯罪事实，依法构成自首，可在量刑时予以从轻处罚，但不影响本罪的成立。\", \"final_answer\": \"[罪名]非法种植毒品原植物罪<eoa>\"}\n```\nMatches all constraints. Output matches exactly.✅\nDone. \nProceeds. \n(Self-Correction/Note during generation prep: I will make sure the JSON is strictly formatted as requested.)\nAll good. \nOutput matches. \n[Done] \n*Self-Correction/Verification during thought*: \nWait, the prompt says \"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\"\nAnd the example is `[罪名]盗窃<eoa>`.\nI will follow this exactly.\nThe reasoning part will be in the `reasoning` field.\nThe final answer will be in the `final_answer` field.\nEverything is correct.\nProceeding. \nOutput Generation. \n*(Done)*\n"
+      }
+    ]
+  ]
+}

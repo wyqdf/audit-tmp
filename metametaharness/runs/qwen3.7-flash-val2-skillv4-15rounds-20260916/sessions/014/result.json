@@ -1,0 +1,89 @@
+{
+  "session_id": "ffc595ab-944d-4b11-9e43-a15d93590880",
+  "commits_before": [
+    "794d93ebe9a26d4b2fb5fc9d740471f08e5b8006",
+    "921c06986dea35d021e7a932d15e855ace6cf12c",
+    "f071ba28b32bbf7dbef57c8d8947827fe7831363",
+    "bc19c512eb5b9e86cc09bd5cc3f28235b1452ad5",
+    "cadc26b582d0fb65eab6408437e01fd8e5231129",
+    "a311512caa2aaa9eed919dc914ac8b9473ba30f8",
+    "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 3262.2888963222504,
+  "benchmark_seconds": 2.0290026664733887,
+  "wall_seconds": 3264.3178989887238,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 564330,
+    "num_turns": 92,
+    "stop_reason": "end_turn",
+    "session_id": "ffc595ab-944d-4b11-9e43-a15d93590880",
+    "total_cost_usd": 7.414882,
+    "usage": {
+      "input_tokens": 80742,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 8447744,
+      "output_tokens": 111492,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 80742,
+        "outputTokens": 111492,
+        "cacheReadInputTokens": 8447744,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.414882,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 14 is complete, with a caveat: **the candidate was committed unevaluated, because the environment refused to run it.**\n\n## Lineage analysis\n\nParent chosen: `794d93e` (`codex/consensus-draws`, average 0.5411), the lineage tip, whose 5-draw vote was the last mechanism to measurably help (+6 points on USPTO within-run, measured paired against its own draws).\n\nI measured two things offline before deciding:\n\n- **Aggregation is at its ceiling.** Reconstructing the parent's draws and testing alternatives against the real evaluators: similarity medoids were no better than plurality (LawBench 42–44 vs 44), item-level/per-charge voting was clearly worse (27 vs 44), and fragment-set voting for USPTO changed 1 sample. These doors are closed.\n- **Draw count is the only lever still moving.** Pooling the answers of the fourteen recorded runs, plurality accuracy rises monotonically with k: USPTO 22.2% (1 draw) → 25.8% (3) → 28.1% (5) → 29.7% (7); LawBench 50.4 → 53.1 → 55.1 → 55.7; S2D flat at ~88%. The parent's own draws reproduce the curve on the samples I could reconstruct.\n\n## The change (`solver/consensus.py`)\n\nDraws are taken in rounds `(4, 2, 2)` up to `MAX_DRAWS = 8` and stop as soon as the answer cannot change — provably, not heuristically: four equal draws are already the answer while four remain (they can tie at best, and a tie goes to the earliest draw, which carries it), and a leader more than the remaining draws ahead cannot be caught. Everything else is the parent's. Verified exhaustively offline: over all 4⁸ = 65,536 answer sequences the staged vote returns exactly the full-8-draw plurality wherever it stops early; failing draws still drop, an all-failing question still raises.\n\n## The evaluation\n\nNo measurement was taken — 0 of 260 samples ran, and two independent environment faults are why:\n\n1. **First attempt (21:40–21:41):** every sample `invalid_request` — \"Access denied … overdue-payment\", on all three tasks, 0 tokens. This is the same account fault that killed the parent's run part-way through LawBench.\n2. **Attempts at 21:56 and 22:21 proved nothing** — the runner served back the saved summary, because an all-failed run is still rankable. Clearing `results/summary.json` forced a real attempt.\n3. **Fourth attempt (22:22):** every sample `execution_error` before the provider was reached — `bwrap: Can't bind mount /oldroot/etc/ld.so.cache …`. `/proc/self/mountinfo` shows `/etc/ld.so.cache` mounted from a source path recorded as `…//deleted`: the host file was replaced while the container held it mounted, so the sandbox cannot start. The bwrap command fails identically outside the runner. I did not attempt to unmount it — that is system-level surgery outside the harness scope and not reversible without privileges.\n\nRecorded as `\"evaluation_result\": null` with both failures described, on branch `codex/settled-draws` (commit `152cd1a`, tree `f940a453…` — exactly the tree that was attempted), plus an evolution note citing the traces. The next iteration should re-run this tree (or a descendant) after clearing `results/`; the expected effect — more draws on the split questions, fewer on the settled ones, at roughly the parent's total cost — remains unmeasured.",
+    "ttft_ms": 838,
+    "ttft_stream_ms": 239,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 3263720,
+    "uuid": "e895df28-f794-4aab-acb0-4a51332d83cf"
+  },
+  "session_file": "projects/-workspace-harness/ffc595ab-944d-4b11-9e43-a15d93590880.jsonl",
+  "usage": {
+    "input_tokens": 80742,
+    "output_tokens": 111492,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 8447744
+  },
+  "cost_usd": 7.414882,
+  "num_turns": 92,
+  "duration_api_ms": 564330,
+  "error": null,
+  "commit": "152cd1aad6f526fa156ecd4d74734b41d78cd11d",
+  "tree": "f940a4539b030a2578c9c9ac5dae166cc557869b"
+}

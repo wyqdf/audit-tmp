@@ -1,0 +1,77 @@
+{
+  "session_id": "ebf7f66d-1db2-431f-a674-27ece12af091",
+  "commits_before": [
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 570.3137876987457,
+  "benchmark_seconds": 580.1558036804199,
+  "wall_seconds": 1150.4695913791656,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 532434,
+    "num_turns": 99,
+    "stop_reason": "end_turn",
+    "session_id": "ebf7f66d-1db2-431f-a674-27ece12af091",
+    "total_cost_usd": 6.947262,
+    "usage": {
+      "input_tokens": 73987,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7547904,
+      "output_tokens": 112135,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 73987,
+        "outputTokens": 112135,
+        "cacheReadInputTokens": 7547904,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 6.947262,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 2 is complete. Summary:\n\n**Lineage analysis → parent:** `d7b155f` (answer-convention repair, average 0.4933) — the strongest node.\n\n**Problem selected (evidence-based):** the parent's repair turn quotes answer *items torn out of the answers they belong to*. On the parent that quoted 「领导传销活动」 out of 「组织、领导传销活动」(its only documented correct→wrong flip) and degraded 「运输毒品罪」 to the fragment 「运输」; the response was also parsed as word runs, so 「盗窃罪;盗窃枪支、弹药、爆炸物罪」 was matched piecewise and a charge was dropped. Offline I also found 15 of the 59 wrong LawBench answers had their exact target answer sitting in the memory unused.\n\n**Modification** (one file, `solver/answer_conventions.py`): the profile now stores the memory's complete answers with counts; the notice quotes a complete answer when the memory writes the departing charge only inside one or two of them; responses are parsed the way the memory's answers are parsed (markup dropped, split on the answer's own separator); the footer asks for the complete answer where it fits and otherwise for keeping identified items and fixing only wording.\n\n**Result:** `{\"USPTO\": 0.2167, \"Symptom2Disease\": 0.83, \"LawBench\": 0.45, \"average\": 0.4989, \"status\": \"partial\"}` — LawBench 0.41 → 0.45, average 0.4933 → 0.4989.\n\n**Honest attribution** (recorded in the note): inside the 24 samples where the check fired, the complete-answer quote fixed 3 and broke 3 — it fixed 「窝藏罪」→「窝藏、包庇」 and 「拐卖妇女罪」→「拐卖妇女、儿童」, but the model also adopted other cases' charges (「聚众扰乱社会秩序」 → 「故意伤害;聚众扰乱社会秩序」). The remaining gain, and USPTO's drop, are run-to-run variance. The note points the next iteration at the fix: only quote a complete answer that plausibly belongs to the current case.\n\nGraph is now `ea3b299 → d7b155f → 3340e63 (codex/answer-composition-repair)`, committed with the template and annotated under `refs/notes/evolution`; the tree hash matches `/workspace/runs/e2c96b80…`, and the harness was left untouched after evaluation started.",
+    "ttft_ms": 710,
+    "ttft_stream_ms": 245,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 1149916,
+    "uuid": "5acadb90-83b0-42b0-851f-e10b39e3c34d"
+  },
+  "session_file": "projects/-workspace-harness/ebf7f66d-1db2-431f-a674-27ece12af091.jsonl",
+  "usage": {
+    "input_tokens": 73987,
+    "output_tokens": 112135,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 7547904
+  },
+  "cost_usd": 6.947262,
+  "num_turns": 99,
+  "duration_api_ms": 532434,
+  "error": null,
+  "commit": "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+  "tree": "e2c96b80fe6f6045ce76e249acfdb3eaab900dfd"
+}

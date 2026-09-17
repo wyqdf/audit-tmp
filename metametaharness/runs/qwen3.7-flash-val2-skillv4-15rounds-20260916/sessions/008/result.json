@@ -1,0 +1,83 @@
+{
+  "session_id": "f90f37c7-7a67-4fa7-be25-0f17378bfae4",
+  "commits_before": [
+    "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 673.5931940078735,
+  "benchmark_seconds": 684.2239830493927,
+  "wall_seconds": 1357.8171770572662,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 598628,
+    "num_turns": 115,
+    "stop_reason": "end_turn",
+    "session_id": "f90f37c7-7a67-4fa7-be25-0f17378bfae4",
+    "total_cost_usd": 9.082448999999997,
+    "usage": {
+      "input_tokens": 92554,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 11022208,
+      "output_tokens": 124343,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 92554,
+        "outputTokens": 124343,
+        "cacheReadInputTokens": 11022208,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 9.082448999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 8 is complete. The working tree is clean and the harness source is unchanged since the evaluation started.\n\n## What was decided\n\n**Lineage analysis.** The chain is linear from `main`; the best node was `d8f5ef0` (0.5644), with the two most recent nodes flat at 0.5333. I replayed the wording check offline against **all 1,988 recorded first passes** of the eight runs — the replay reproduces the delivered notices exactly (0 disagreements) — which let me measure every candidate rule against known outcomes instead of guessing.\n\nThe measurements showed the check is a pure gain (0 right→wrong flips in the last three runs; it converts ~68% of the wording errors it fires on), and that the remaining addressable error is a family it stays silent on: an answer item that ends the way no memory item ends, where the memory writes no spelling of the charge at all. The ending rule required the memory to write the rest of the item; 45 of the 688 recorded first passes had no notice and would land exactly on the target once the trailing character was dropped.\n\n**Change** (`solver/answer_conventions.py`, parent `5402cb1`): a new `_unwritten_ending_notice` branch that reports an item on the memory's ending statistic alone — guarded so it only fires on a charge the answer wrote as a charge of its own, whose last character is carried by ≥2 memory items but never ends one, whose remainder is long enough to be a memory item, and which no longer memory spelling contains.\n\n## Result\n\n| | parent 5402cb1 | candidate a311512 |\n|---|---|---|\n| USPTO | 0.25 | 0.2167 |\n| Symptom2Disease | 0.87 | 0.88 |\n| LawBench | **0.48** | **0.54** |\n| average | 0.5333 | **0.5456** |\n\nLawBench reached its highest value of the nine runs (54/100). The run drew the same 30 notices as the parent, 8 carrying the new branch — 3 converted, 0 fell on an already-correct answer. Cleanest attribution is ex0003, where both runs had the identical first pass `破坏电力设备罪`: the parent drew no notice and stayed wrong on both samples, the candidate corrected both to `破坏电力设备`. The USPTO movement cannot be this change (its memory isn't vocabulary-like, and 0 of 417 recorded USPTO first passes differ under the new code) — it's the 0.20–0.2833 spread those runs have always shown.",
+    "ttft_ms": 669,
+    "ttft_stream_ms": 257,
+    "time_to_request_ms": 59,
+    "type": "result",
+    "duration_ms": 1357298,
+    "uuid": "cfe007fb-0421-46dc-98f0-6ab51d860a25"
+  },
+  "session_file": "projects/-workspace-harness/f90f37c7-7a67-4fa7-be25-0f17378bfae4.jsonl",
+  "usage": {
+    "input_tokens": 92554,
+    "output_tokens": 124343,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 11022208
+  },
+  "cost_usd": 9.082448999999997,
+  "num_turns": 115,
+  "duration_api_ms": 598628,
+  "error": null,
+  "commit": "a311512caa2aaa9eed919dc914ac8b9473ba30f8",
+  "tree": "4383c6264deaf3410877e957b8f891f1f3da2936"
+}

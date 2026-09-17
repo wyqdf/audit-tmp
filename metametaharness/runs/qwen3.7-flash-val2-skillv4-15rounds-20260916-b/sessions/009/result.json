@@ -1,0 +1,84 @@
+{
+  "session_id": "7be8aed1-c26d-44da-80d1-497f94a699f7",
+  "commits_before": [
+    "b823e6058ff8b78f9f6f48bc32e46d3e105c6889",
+    "ece446637fc7870c97283996e946158324d694b2",
+    "7baad6478a7c372346a4357843ec01b069f5637d",
+    "99acee1b28c005f3fcb3254e8b1208566921a69d",
+    "e05c6f0df98589c418940cfde2e9aac3082ccba5",
+    "49c9c67dc05930e1d958ed4821916d56b54e8983",
+    "419618e1c16bbd6387ad3ec523d75d10b193771e",
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 546.6462790966034,
+  "benchmark_seconds": 542.8213820457458,
+  "wall_seconds": 1089.4676611423492,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 474285,
+    "num_turns": 92,
+    "stop_reason": "end_turn",
+    "session_id": "7be8aed1-c26d-44da-80d1-497f94a699f7",
+    "total_cost_usd": 7.200381,
+    "usage": {
+      "input_tokens": 98696,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 8279552,
+      "output_tokens": 102685,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 98696,
+        "outputTokens": 102685,
+        "cacheReadInputTokens": 8279552,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.200381,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 9 is complete. Summary:\n\n**Lineage analysis → parent.** Selected `b823e60` (`refusal-second-attempt`, average 0.5656, highest recorded) — its own note ends by naming the defect to act on: the respell is applied to the whole reply when the model answers in prose, so the rules fire on words inside sentences and replace them globally.\n\n**Problem, sized offline.** Replaying the parent's rule over the nine recorded runs' 1776 replies (the tasks whose memory repeats an answer): **78 answers rewritten into the memory's spelling, 18 already-correct answers written over — all 18 on the prose path, which gained nothing.** Two shapes cause it, both confirmed by reproduction: `过失致` (a run cut by a `一` outside the memory's alphabet) expanded inside the already-correct tag → `过失致人死亡人死亡`; `common` from \"(anosmia), common with nasal congestion\" expanded inside `[DIAGNOSIS]common cold[/DIAGNOSIS]` → `common cold cold`. A second miss: the rules could not read a name written short by dropping a word (`非法采伐国家重点保护植物` for the memory's `非法采伐、毁坏国家重点保护植物`, 21 occurrences over the runs).\n\n**Modification** (`solver/tools/memory.py`): `unit_spans` reads a draft exactly as `draft_units` did but pairs each unit with the stretch it was read from, and `respell` replaces that stretch alone — the rules now write only where they read. `shortened` reads the one more difference off the memory's own answers, requiring the omitted stretch to hold the punctuation the memory writes inside a name (`、`), without which `以危险方法安然`-type expansions break right answers (measured: 2 broken without, 0 with). The check's report inherits both.\n\n**Evaluation** (`/workspace/runs/0f46c28c…`, status ok, 260/260):\n\n```json\n{\"USPTO\": 0.2167, \"Symptom2Disease\": 0.88, \"LawBench\": 0.55, \"average\": 0.5489, \"status\": \"ok\"}\n```\n\n- LawBench's **0.55 is its highest recorded** (54 in the parent). In-run: 8 rewrites, 6 turned a draft into the scored right answer (`非法采伐国家重点保护植物`→full name twice via the new rule, `窝藏`→`窝藏、包庇`, `拐卖妇女罪`→`拐卖妇女、儿童`, `失火罪`→`失火`, `生产、销售伪劣产品罪`→`生产、销售伪劣产品`), 0 losses.\n- The 5 prose rewrites in this run all kept their answers; the parent's rule over the same replies would have scored `bronchial asthmanchial asthmanchial asthma`, `urinary tract infection infection`, `typhoidyphoid`, etc. No prediction in the run carries a corrupted answer.\n- **The average is below the parent's on variance, not on the change**: USPTO builds no rule at all (its answers never repeat) and its prompt is the parent's byte for byte on all 60 samples, yet it landed 13/60 against 16/60 with predictions differing on 50 of 60 — the spread already recorded for it (0.1167–0.2667).\n\nCommitted as `7f99fff` on `respelling-at-span` with the evolution note attached (`refs/notes/evolution`); the commit's tree matches the run directory.",
+    "ttft_ms": 412,
+    "ttft_stream_ms": 222,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 1088895,
+    "uuid": "0822d6f9-a179-4d79-8586-a40be9fbff88"
+  },
+  "session_file": "projects/-workspace-harness/7be8aed1-c26d-44da-80d1-497f94a699f7.jsonl",
+  "usage": {
+    "input_tokens": 98696,
+    "output_tokens": 102685,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 8279552
+  },
+  "cost_usd": 7.200381,
+  "num_turns": 92,
+  "duration_api_ms": 474285,
+  "error": null,
+  "commit": "7f99ffff8ef19bdf722115250e143b4b99fec990",
+  "tree": "0f46c28c34bef0e302ce8c193fd0b735531c4c4e"
+}

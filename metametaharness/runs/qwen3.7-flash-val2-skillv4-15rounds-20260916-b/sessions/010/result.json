@@ -1,0 +1,85 @@
+{
+  "session_id": "5006b079-e653-4e51-892e-f1606ac7bc65",
+  "commits_before": [
+    "7f99ffff8ef19bdf722115250e143b4b99fec990",
+    "b823e6058ff8b78f9f6f48bc32e46d3e105c6889",
+    "ece446637fc7870c97283996e946158324d694b2",
+    "7baad6478a7c372346a4357843ec01b069f5637d",
+    "99acee1b28c005f3fcb3254e8b1208566921a69d",
+    "e05c6f0df98589c418940cfde2e9aac3082ccba5",
+    "49c9c67dc05930e1d958ed4821916d56b54e8983",
+    "419618e1c16bbd6387ad3ec523d75d10b193771e",
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 835.4329016208649,
+  "benchmark_seconds": 644.0939767360687,
+  "wall_seconds": 1479.5268783569336,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 713277,
+    "num_turns": 163,
+    "stop_reason": "end_turn",
+    "session_id": "5006b079-e653-4e51-892e-f1606ac7bc65",
+    "total_cost_usd": 14.537721000000005,
+    "usage": {
+      "input_tokens": 113853,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 20656512,
+      "output_tokens": 145608,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 113853,
+        "outputTokens": 145608,
+        "cacheReadInputTokens": 20656512,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 14.537721000000005,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 10 is complete. Here's what I did and what came of it.\n\n## Lineage analysis\n\nThe graph is a linear chain of 10 evaluated commits (the skill's DAG diagram is stale). Scores along it: N0 0.4367 → N8 0.5656 (best) → N9 0.5489 (HEAD). I branched from **N9 (`7f99fff`, `respelling-at-span`)** — highest LawBench (0.55), strongest respelling mechanism, whose average deficit vs N8 is pure USPTO variance.\n\nI sized the remaining headroom offline over the ten recorded runs' raw replies and found the rule's gap: LawBench answers reachable by the memory's *spelling* were nearly exhausted except for one shape — a solver that knows the answer but not how the memory writes it. Two concrete sub-shapes, both invisible to the parent: a name the memory doesn't hold written with the ending it never writes (`销售假冒注册商标的商品罪`), and a name the memory holds written short *and* with that ending (`非法采伐国家重点保护植物罪`). The model states the convention itself in the traces: 参照提供的示例格式（罪名通常省略\"罪\"字）.\n\n## Change\n\n`solver/tools/memory.py` + `solver/middleware.py`:\n- `variant` now reads the word ending first and the name it was read from after it — the two existing readings composed.\n- A new reading: a unit whose last character no memory answer ends with. It is gated on `as_answer` (the `final_answer` field and `check_answer` drafts, never prose) and on `as_answers` (the draft holds no more units than the memory's longest answer string holds), and `word_ending` refuses fragments that start or stop at the punctuation the memory writes inside a name.\n\nBoth gates were needed, not decorative: without them the rule tore words out of prose (`patient's` → `patien's`) and shortened two val answers that were written correctly.\n\n## Result\n\n`{\"USPTO\": 0.15, \"Symptom2Disease\": 0.88, \"LawBench\": 0.58, \"average\": 0.5367, \"status\": \"ok\"}` — 260/260.\n\n- **LawBench 0.55 → 0.58**, the task's best recorded. Offline over the ten runs' 1000 replies: 521 → 562, +41 with none broken. In this run 14 rewrites, 11 of them wrong drafts made correct.\n- **Attribution is honest**: applying the parent's rule to this run's own replies scores 56, the new rule 58 — so **+2 is the rule, +1 is the model's own draft**.\n- **USPTO 0.15 vs 0.2167 is not the change**: its memory uses each answer once, so no check is registered and no middleware is built; prompt, listing and tool set are byte-identical to the parent's per sample, yet predictions differ on 50/60 — the lineage's recorded spread for one design is 0.1167–0.2667. The average fell below the parent's on that alone.\n- **Symptom2Disease 0.88 = 0.88** with zero replies' scored text changed.\n\nCommitted as `9b04306` on `convention-readings` with the evolution note attached; the tree hash matches `/workspace/runs/32c01b543701f2806bf4de4e3844d772ec27d55d/`.",
+    "ttft_ms": 976,
+    "ttft_stream_ms": 243,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 1478980,
+    "uuid": "4b5fbbb8-187f-4283-9343-bb2595e056d0"
+  },
+  "session_file": "projects/-workspace-harness/5006b079-e653-4e51-892e-f1606ac7bc65.jsonl",
+  "usage": {
+    "input_tokens": 113853,
+    "output_tokens": 145608,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 20656512
+  },
+  "cost_usd": 14.537721000000005,
+  "num_turns": 163,
+  "duration_api_ms": 713277,
+  "error": null,
+  "commit": "9b04306a774263abfbe289568c621385f913cb29",
+  "tree": "32c01b543701f2806bf4de4e3844d772ec27d55d"
+}

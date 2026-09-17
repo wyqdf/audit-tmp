@@ -1,0 +1,84 @@
+{
+  "session_id": "7a9c73b5-23d7-4df7-b38e-7ea3d2a4f74e",
+  "commits_before": [
+    "a311512caa2aaa9eed919dc914ac8b9473ba30f8",
+    "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 838.8500034809113,
+  "benchmark_seconds": 619.912276506424,
+  "wall_seconds": 1458.7622799873352,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 760757,
+    "num_turns": 135,
+    "stop_reason": "end_turn",
+    "session_id": "7a9c73b5-23d7-4df7-b38e-7ea3d2a4f74e",
+    "total_cost_usd": 13.916259999999994,
+    "usage": {
+      "input_tokens": 129226,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 18876160,
+      "output_tokens": 153282,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 129226,
+        "outputTokens": 153282,
+        "cacheReadInputTokens": 18876160,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 13.916259999999994,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 9 is complete. Here's what happened:\n\n## Stage 1 — Lineage analysis\n\nI picked **a311512** (`codex/answer-unwritten-ending`) as parent — the strongest node (average 0.5456, LawBench 0.54). Before choosing a change I ran the recorded corpus through the current code to see what was left:\n\n- **The wording check has no reach left.** Of the 800 recorded first passes (8 runs × 100 samples), every unexploited evidence shape I tried — prefix, suffix, contiguous sub-run of a punctuated name, \"contains a memory name-piece\", looser `MAX_ITEM_DRIFT` — either lands on the target **0 times** or fires on correct first passes at least as often as on wrong ones.\n- **The remaining LawBench errors are mostly label artifacts.** 18 examples are wrong in all 8 runs; reading their case texts, most targets list charges the question text never mentions (ex48's facts describe only a knife assault, the target adds 妨害公务; ex35's facts only an assault, the target adds prostitution charges) — the val questions are truncated fragments of the original judgments.\n- **What remained was context**: the memory is 105,318 chars but only 30,000 were served; 14 samples had their exact target answer in the memory and not in context (coverage 67% → 82% for the whole memory) — the direction 3bb9672's note pointed at. Plus one documented defect from 5402cb1's note: the composition quote names a *joined* answer, which is how ex0045, ex0044, ex0012, ex0010 were told to write charges they never identified.\n\n## Stage 2 — Evolution\n\nModification (branch `codex/whole-memory-quotes`, commit `cadc26b`): `retrieval.MAX_CHARS` 30000 → 200000, and `_compositions` now declines answers that join several charges. Offline, the quote change altered only 3 of 283 notices and left 0 notices on any correct first pass.\n\n**The expected effect did not occur.** The 105k-char tool result exceeded the framework's own inlining ceiling (`tool_token_limit_before_evict` = 20,000 tokens ≈ 80,000 chars), so 97 of 100 LawBench samples got a head-and-tail preview stub instead of the examples — the run measured a two-example context, not the change:\n\n| | parent a311512 | candidate cadc26b |\n|---|---|---|\n| LawBench | 0.54 (54/100) | 0.51 (51/100) |\n| USPTO / S2D | 0.2167 / 0.88 | 0.20 / 0.87 |\n| **average** | **0.5456** | **0.5267** |\n| first passes right | 37/100 | 21/100 |\n| notices / converted | 30 / 15 | 58 / 28 |\n\nThe losses trace cleanly to the truncation: ex14.0/1 drew *\"the memory writes it as 「窝藏」(1 occurrence)\"* and answered the fragment 「窝藏」, where the parent — reading the identical first pass — quoted 「窝藏、包庇」 and scored both. USPTO/S2D memories are 8,665 and 34,178 chars, never offloaded, 0 first passes differ — their movement is the spread those runs always show.\n\nCommitted the evaluated source unchanged with an honest commit message and an evolution note citing the traces, including the actionable finding for the next iteration: **the retrieval output cannot exceed 80,000 chars** — 75,000 is the safe budget (80% target-charge coverage vs 67% now, 28/50 exact targets vs 23), and going beyond needs either chunked retrieval calls or raising `tool_token_limit_before_evict` at agent construction.",
+    "ttft_ms": 487,
+    "ttft_stream_ms": 228,
+    "time_to_request_ms": 59,
+    "type": "result",
+    "duration_ms": 1458217,
+    "uuid": "869bae99-9040-41df-ab7d-5374ea0d5323"
+  },
+  "session_file": "projects/-workspace-harness/7a9c73b5-23d7-4df7-b38e-7ea3d2a4f74e.jsonl",
+  "usage": {
+    "input_tokens": 129226,
+    "output_tokens": 153282,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 18876160
+  },
+  "cost_usd": 13.916259999999994,
+  "num_turns": 135,
+  "duration_api_ms": 760757,
+  "error": null,
+  "commit": "cadc26b582d0fb65eab6408437e01fd8e5231129",
+  "tree": "ceeb3c6c371878d0818744024906d9acd941dc6a"
+}

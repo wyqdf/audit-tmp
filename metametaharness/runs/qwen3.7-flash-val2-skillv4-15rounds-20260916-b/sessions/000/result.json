@@ -1,0 +1,76 @@
+{
+  "session_id": "7bbe183a-2f71-41a0-a13c-64da0aca545d",
+  "commits_before": [
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 74.34706783294678,
+  "benchmark_seconds": 585.8721435070038,
+  "wall_seconds": 660.2192113399506,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 70855,
+    "num_turns": 34,
+    "stop_reason": "end_turn",
+    "session_id": "7bbe183a-2f71-41a0-a13c-64da0aca545d",
+    "total_cost_usd": 0.697553,
+    "usage": {
+      "input_tokens": 24021,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 423296,
+      "output_tokens": 14632,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 24021,
+        "outputTokens": 14632,
+        "cacheReadInputTokens": 423296,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.697553,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 0 (Stage 0) is complete.\n\n## What was done\n\n**Baseline evaluation** — ran the evaluation runner on `/workspace/harness` at `main` (tree `9f49dd72`, matching `baseline.tree` in the config):\n\n```json\n{\"USPTO\": 0.15, \"Symptom2Disease\": 0.88, \"LawBench\": 0.28, \"average\": 0.4367, \"status\": \"ok\"}\n```\n\nAll 260 samples scored, no failed/truncated samples.\n\n**Notes attached** to the existing commit `3d84679` under `refs/notes/evolution` — no new commit was created, the tree is unchanged (`9f49dd72…`), and the working tree is clean. The parent edge is preserved for future lineage.\n\n## Baseline characterization recorded in the notes\n\n- **Relevance-blind retrieval**: `retrieve_examples` draws examples via a question-hash-seeded shuffle, so a USPTO \"functional group addition\" question was answered from \"Heterocycle formation\"/\"Protections\"/\"C-C bond formation\" examples (`USPTO/conversations/0000/sample-0.json`).\n- **Coverage inversely tied to memory size**: with `MAX_CHARS=30000`, USPTO delivers all 50 examples (8.7k chars), Symptom2Disease 173–177/200, but LawBench only 28–74/200.\n- **Sampling noise dominates weak tasks**: across the 2 val samples per question, predictions differ on 24/30 USPTO questions (5 flip correctness) and 25/50 LawBench questions (12 flip), vs. 4/50 for Symptom2Disease.\n- **Retry caveat**: one USPTO first attempt timed out; `sample_attempts=2` reran it, so the score rests on the retried pass (`\"attempt\": 2`).\n\nOne caveat on my own measurements: an initial count of the LawBench tool payload (159k chars) was inflated by JSON unicode escaping — the actual payload is 29,828 chars, within the cap. The notes reflect the corrected figures.\n\nSince the baseline is now complete, the next invocation begins at Stage 1 (Lineage Analysis) with `3d84679` as the evaluated parent.",
+    "ttft_ms": 669,
+    "ttft_stream_ms": 244,
+    "time_to_request_ms": 57,
+    "type": "result",
+    "duration_ms": 659661,
+    "uuid": "98b774a3-1a93-46df-8708-0f454a5044b0"
+  },
+  "session_file": "projects/-workspace-harness/7bbe183a-2f71-41a0-a13c-64da0aca545d.jsonl",
+  "usage": {
+    "input_tokens": 24021,
+    "output_tokens": 14632,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 423296
+  },
+  "cost_usd": 0.697553,
+  "num_turns": 34,
+  "duration_api_ms": 70855,
+  "error": null,
+  "commit": "3d84679da6be2eeecac0cf38ba1526ddad400016",
+  "tree": "9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7"
+}

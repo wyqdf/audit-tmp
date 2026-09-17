@@ -1,0 +1,169 @@
+{
+  "task": "LawBench",
+  "tree_hash": "ceeb3c6c371878d0818744024906d9acd941dc6a",
+  "split": "val",
+  "example_index": 15,
+  "sample_index": 1,
+  "status": "ok",
+  "error": null,
+  "was_correct": false,
+  "prediction": "[罪名]危险驾驶<eoa>",
+  "target": "重大劳动安全事故;危险驾驶",
+  "metric": {
+    "f1": 0.6666666666666666,
+    "precision": 1.0,
+    "recall": 0.5,
+    "tp": 1,
+    "fp": 0,
+    "fn": 1
+  },
+  "usage": {
+    "model_calls": 3,
+    "input_tokens": 11530,
+    "output_tokens": 2289,
+    "cached_tokens": 9016,
+    "cache_write_tokens": 2496
+  },
+  "elapsed_seconds": 32.41556344460696,
+  "memory_context_chars": 105316,
+  "tool_calls": [
+    "retrieve_examples"
+  ],
+  "finish_reasons": [
+    "tool_calls",
+    "stop",
+    "stop"
+  ],
+  "truncated": false,
+  "repair_turns": 0,
+  "retries": 0,
+  "messages": [
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an agent that answers a question by retrieving examples.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "system"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:乌兰察布市集宁区人民检察院指控，2016年4月13日21时50分许，被告人张某某饮酒后驾驶黑色比亚迪牌小型轿车上道路行驶，当行驶至乌兰察布市集宁区泉山北街“变电站”附近路段处，被乌兰察布市集宁区公安局交管大队民警当场抓获。随后由乌兰察布市第三医院医务人员抽取张某某血样并送检。2016年4月15日，乌兰察布市公安司法鉴定中心对其血样做出检验鉴定结论为：被鉴定人张某某血样中酒精含量为97.477mg/100ml,达到醉酒程度。\r\n检察机关认为，被告人张某某醉酒后驾驶机动车辆上道路行驶，其行为触犯了《中华人民共和国刑法》××××的规定，构成××，应当以××追究其刑事责任，同时被告人张某某于2013年9月22日因××被判处××，××，××考验期内犯新罪，应当适用《中华人民共和国刑法》××、××的规定。根据《中华人民共和国刑事诉讼法》××的规定，现提起公诉，请依法判处。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. If the examples do not cover the question, search the memory under `/harness/memory` yourself.\n3. Match the wording, format and level of detail of the examples' answers, copying every\n   item exactly as the examples write it — nothing added, dropped or reworded.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "id": "call_7503449e9ce3488193096ac7",
+          "function": {
+            "name": "retrieve_examples",
+            "arguments": "{}"
+          }
+        }
+      ],
+      "reasoning_content": "The user wants me to simulate a judge's reasoning based on the provided facts and determine the criminal charge(s).\nI need to:\n1. Call `retrieve_examples` first.\n2. Analyze the facts.\n3. Provide the reasoning and final answer in the specified JSON format.\n\nFacts analysis:\n- Defendant: 张某某 (Zhang Moumou)\n- Date/Time: April 13, 2016, around 21:50\n- Action: Drove a black BYD car after drinking alcohol.\n- Caught by traffic police.\n- Blood test result: Alcohol content 97.477 mg/100ml, which reaches the level of drunk driving (醉酒程度, usually >= 80mg/100ml in China).\n- Additional fact: Zhang was previously convicted on Sept 22, 2013, and committed a new crime during the probation/test period (考验期内犯新罪). This implies recidivism or revocation of probation/suspended sentence, but the core charge for the current act is Drunk Driving (危险驾驶罪 - Crime of Dangerous Driving).\n- In Chinese Criminal Law, driving a motor vehicle on a road while intoxicated constitutes the Crime of Dangerous Driving (危险驾驶罪), Article 133-1.\n- The prompt asks for the charge name. It should be \"危险驾驶罪\".\n\nLet's check the examples first to match the format.\nFormat example:\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\nSo the final answer should be `[罪名]危险驾驶罪<eoa>` or similar. Wait, the example says `[罪名]盗窃<eoa>`. I will follow exactly: `[罪名]危险驾驶罪<eoa>`.\n\nLet's call `retrieve_examples` first."
+    },
+    {
+      "content": "Tool result too large, the result of this tool call call_7503449e9ce3488193096ac7 was saved in the filesystem at this path: /large_tool_results/call_7503449e9ce3488193096ac7\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  Q: 事实:经审理查明：\n2  2013年11月8日22时48分许，被告人黄某酒后驾驶浙F×××××小型轿车上道路行驶，途经嘉善县魏塘街道解放东路56号路段时，被值勤的交警查获，后将其带至医院提取血样。经苏州大学司法鉴定中心检验，证实被告人黄某当时血液中乙醇含量为141毫克／100毫升，属于醉酒驾驶。\n3  另查明，被告人黄某归案后如实供述了自己的罪行。在私分国有资产一案中，被告人黄某于2012年6月7日被平湖市公安局刑事拘留，2012年6月15日被依法逮捕，2012年11月9日经平湖市人民法院决定予以释放。\n4  上述事实，被告人黄某在开庭审理过程中亦无异议，并有证人邱某的证言，提取血样登记表，强制措施凭证，机动车、驾驶证信息查询结果单，检验报告书，到案经过，刑事判决书，户籍信息等证据予以证实，足以认定。\n5  \n... [1365 lines truncated] ...\n1371  \n1372  Q: 事实:仙居县人民检察院指控：\n1373  2012年四、五月间，被告人吴某在本县南峰街道世纪新村二区二幢西灿头一楼开设的“龙腾性保健店”内，销售“海狗鞭”、“美国79胶囊”、“艾某可”、“金刚钻”等。同年5月30日，公安机关将其查获，扣押“海狗鞭”12盒、“美国79胶囊”2盒、“艾某可”2盒、“金刚钻”10盒，共计26盒（260粒）。经台州市食品药品检验所检验及仙居县食品药品监督管理局认定，查扣的海狗鞭”、“美国79胶囊”、“艾某可”、“金刚钻”均系假药。\n1374  \n1375  A: 生产、销售假药\n",
+      "role": "tool",
+      "tool_call_id": "call_7503449e9ce3488193096ac7"
+    },
+    {
+      "content": "```json\n{\n  \"reasoning\": \"被告人张某某饮酒后驾驶机动车在道路上行驶，被交警查获后经司法鉴定，其血液酒精含量为97.477mg/100ml，已达到我国法律规定的醉酒驾驶标准（≥80mg/100ml）。根据《中华人民共和国刑法》第一百三十三条之一第一款第（二）项的规定，在道路上醉酒驾驶机动车的，构成危险驾驶罪。案情中提及的“考验期内犯新罪”属于量刑情节（通常涉及撤销缓刑、假释或管制并实行数罪并罚），不改变本案基础犯罪的定性。因此，依据案件事实，被告人张某某的行为依法应认定为危险驾驶罪。\",\n  \"final_answer\": \"[罪名]危险驾驶罪<eoa>\"\n}\n```",
+      "role": "assistant",
+      "reasoning_content": "The examples show a format where the answer is just the charge name. The prompt says:\n\"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\"\n\nSo I need to output reasoning and then the final answer in JSON format as requested: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`.\n\nLet's analyze the facts:\n- Defendant drove after drinking.\n- Blood alcohol content: 97.477mg/100ml, which is >= 80mg/100ml, constituting drunk driving (醉酒驾驶).\n- According to Chinese Criminal Law Article 133-1, driving a motor vehicle on a road while intoxicated constitutes the Crime of Dangerous Driving (危险驾驶罪).\n- The fact mentions he committed a new crime during a probation/test period (考验期内犯新罪), which relates to sentencing (revocation of probation/suspended sentence), but the charge itself for this act is 危险驾驶罪.\n\nTherefore, the charge is 危险驾驶罪.\n\nI will structure the reasoning clearly and put the final answer exactly as `[罪名]危险驾驶罪<eoa>` inside the `final_answer` field.\n\nWait, the prompt says: \"将最终答案写在[罪名]和<eoa>之间。格式示例：- 单个罪名: [罪名]盗窃<eoa>\". This implies the string should be `[罪名]危险驾驶罪<eoa>`.\n\nLet's double check the exact wording from similar tasks. Usually, it's just `[罪名]危险驾驶罪<eoa>`.\n\nReasoning steps:\n1. 被告人张某某饮酒后驾驶机动车上道路行驶。\n2. 经鉴定，其血液酒精含量为97.477mg/100ml，已达到醉酒标准（≥80mg/100ml）。\n3. 根据《中华人民共和国刑法》第一百三十三条之一规定，在道路上醉酒驾驶机动车的，构成危险驾驶罪。\n4. 虽然案情提到其在考验期内犯新罪，涉及缓刑撤销或数罪并罚的量刑情节，但就本次指控的犯罪行为而言，其罪名明确为危险驾驶罪。\n5. 因此，应认定为危险驾驶罪。\n\nFinal answer matches the format.\nI will generate the JSON response now.\nCheck format requirement: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`.\nEverything looks solid.\nProceed. \nOne minor point: The prompt example shows `[罪名]盗窃<eoa>`. I will use exactly that format.\nJSON structure:\n{\n  \"reasoning\": \"被告人张某某饮酒后驾驶机动车在道路上行驶，经司法鉴定其血液酒精含量为97.477mg/100ml，已达到国家规定的醉酒驾驶标准（≥80mg/100ml）。根据《中华人民共和国刑法》第一百三十三条之一的规定，在道路上醉酒驾驶机动车的行为构成危险驾驶罪。案情中提及的“考验期内犯新罪”属于量刑情节（可能涉及撤销缓刑或数罪并罚），不影响本案核心罪名的认定。因此，被告人张某某的行为构成危险驾驶罪。\",\n  \"final_answer\": \"[罪名]危险驾驶罪<eoa>\"\n}\nMatches requirements. Output matches. \nSelf-Correction/Verification during thought:\nIs there any other charge? The text says \"应当以××追究其刑事责任\". It's clearly asking for the charge name. Drunk driving is 危险驾驶罪.\nThe format example has `[罪名]盗窃<eoa>`. I will stick to that.\nAll good. \nOutput matches request. \nProceeds. \nGenerating response. \n(Note: I'll make sure the JSON is strictly valid and contains only the two fields.) \nDone. \n[Output Generation] -> *Proceeds*"
+    },
+    {
+      "content": [
+        {
+          "type": "text",
+          "text": "The answer you are about to finish with was checked against the training memory.\n- Your answer has \"危险驾驶罪\"; the memory writes it as \"危险驾驶\" (4 occurrences).\nRewrite final_answer using the memory's wording above: copy a complete answer as it is when it fits this case, and otherwise keep every item you identified and fix only its wording, including the way the memory ends an item. Then reply with the same JSON object.",
+          "cache_control": {
+            "type": "ephemeral"
+          }
+        }
+      ],
+      "role": "user"
+    },
+    {
+      "role": "assistant",
+      "content": "```json\n{\n  \"reasoning\": \"被告人张某某违反交通运输管理法规，在道路上醉酒驾驶机动车（血液酒精含量为97.477mg/100ml，达到醉酒标准），其行为已触犯刑律。根据《中华人民共和国刑法》第一百三十三条之一的规定，在道路上醉酒驾驶机动车的，构成危险驾驶罪。结合案件事实及检察机关指控，被告人仅涉及这一项犯罪行为（前科或缓刑考验期情节属于量刑考量，不改变本案定罪）。根据题目要求匹配记忆中的术语，该罪名表述为“危险驾驶”。\",\n  \"final_answer\": \"[罪名]危险驾驶<eoa>\"\n}\n```",
+      "reasoning_content": "The user wants me to rewrite the final answer based on a specific memory check.\nThe memory says the correct wording is \"危险驾驶\" instead of \"危险驾驶罪\".\nI need to update the `final_answer` field in the JSON object to match this wording exactly, while keeping the format `[罪名]...<eoa>`.\n\nLet's look at the example format provided in the prompt:\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\nSo the format is `[罪名]CrimeName<eoa>`.\nThe memory suggests the crime name is just \"危险驾驶\", not \"危险驾驶罪\".\n\nMy previous reasoning was sound (it is drunk driving), but the label needs to be adjusted to match the training data style.\n\nReasoning remains the same: The defendant drove a motor vehicle on the road after drinking, with a BAC of 97.477mg/100ml, which constitutes drunk driving. According to criminal law, this is the crime of dangerous driving. However, following the instruction to match the memory's wording (\"危险驾驶\"), I will use that term.\n\nFinal Answer construction:\n[罪名]危险驾驶<eoa>\n\nJSON structure:\n{\n  \"reasoning\": \"...\",\n  \"final_answer\": \"[罪名]危险驾驶<eoa>\"\n}\n\nI will ensure the reasoning explains the legal basis but acknowledges the terminology used in the output.\n\nWait, looking at the retrieved examples in the first turn (which were truncated but visible):\nExample 1: \"生产、销售假药\"\nExample 2 (implied from the error message): \"危险驾驶\" vs \"危险驾驶罪\".\n\nThe prompt explicitly says: \"Your answer has '危险驾驶罪'; the memory writes it as '危险驾驶' (4 occurrences).\"\n\nSo I must change \"危险驾驶罪\" to \"危险驾驶\".\n\nLet's double check if there are other crimes mentioned. The text mentions \"考验期内犯新罪\" (committing a new crime during probation). This implies he might have had a previous conviction, but the current charge described in the facts is solely about the drunk driving incident. The prosecution asks to pursue criminal responsibility for *this* act. So only one crime is charged here.\n\nTherefore, the single crime is \"危险驾驶\".\n\nFinal check of the format:\n[罪名]危险驾驶<eoa>\n\nThis matches the requested format.\n\nOne detail: The prompt asks to \"copy a complete answer as it is when it fits this case\". Since I don't see the exact full answer string in the memory snippet provided in the prompt (only the correction), I am inferring the string is just `[罪名]危险驾驶<eoa>`.\n\nLet's refine the reasoning text to be consistent.\n\nReasoning:\n被告人张某某在道路上醉酒驾驶机动车，血液酒精含量为97.477mg/100ml，超过80mg/100ml的醉驾标准。根据《刑法》规定，其行为构成危险驾驶罪。但在罪名表述上，依据训练数据的习惯用法，简称为“危险驾驶”。\n\nActually, the instruction says \"Match the wording... copying every item exactly as the examples write it\".\nIf the memory says \"危险驾驶\", I use \"危险驾驶\".\n\nLet's construct the JSON.\n"
+    }
+  ],
+  "side_calls": [
+    [
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "You are an agent that answers a question by retrieving examples.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "system"
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "请你模拟法官依据下面事实给出罪名。请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\n\n## 案件事实\n事实:乌兰察布市集宁区人民检察院指控，2016年4月13日21时50分许，被告人张某某饮酒后驾驶黑色比亚迪牌小型轿车上道路行驶，当行驶至乌兰察布市集宁区泉山北街“变电站”附近路段处，被乌兰察布市集宁区公安局交管大队民警当场抓获。随后由乌兰察布市第三医院医务人员抽取张某某血样并送检。2016年4月15日，乌兰察布市公安司法鉴定中心对其血样做出检验鉴定结论为：被鉴定人张某某血样中酒精含量为97.477mg/100ml,达到醉酒程度。\r\n检察机关认为，被告人张某某醉酒后驾驶机动车辆上道路行驶，其行为触犯了《中华人民共和国刑法》××××的规定，构成××，应当以××追究其刑事责任，同时被告人张某某于2013年9月22日因××被判处××，××，××考验期内犯新罪，应当适用《中华人民共和国刑法》××、××的规定。根据《中华人民共和国刑事诉讼法》××的规定，现提起公诉，请依法判处。\r\n\n\n1. Call `retrieve_examples` before answering.\n2. If the examples do not cover the question, search the memory under `/harness/memory` yourself.\n3. Match the wording, format and level of detail of the examples' answers, copying every\n   item exactly as the examples write it — nothing added, dropped or reworded.\n4. Reply as JSON: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`\n\n\nFINAL OUTPUT REQUIREMENT (mandatory, overrides anything else): Your final message MUST be a single JSON object with exactly two string fields, \"reasoning\" and \"final_answer\". Put the answer itself (keeping any required markup such as [DIAGNOSIS]...[/DIAGNOSIS]) inside \"final_answer\". Output nothing outside the JSON object.",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "user"
+      },
+      {
+        "content": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "id": "call_7503449e9ce3488193096ac7",
+            "function": {
+              "name": "retrieve_examples",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "reasoning_content": "The user wants me to simulate a judge's reasoning based on the provided facts and determine the criminal charge(s).\nI need to:\n1. Call `retrieve_examples` first.\n2. Analyze the facts.\n3. Provide the reasoning and final answer in the specified JSON format.\n\nFacts analysis:\n- Defendant: 张某某 (Zhang Moumou)\n- Date/Time: April 13, 2016, around 21:50\n- Action: Drove a black BYD car after drinking alcohol.\n- Caught by traffic police.\n- Blood test result: Alcohol content 97.477 mg/100ml, which reaches the level of drunk driving (醉酒程度, usually >= 80mg/100ml in China).\n- Additional fact: Zhang was previously convicted on Sept 22, 2013, and committed a new crime during the probation/test period (考验期内犯新罪). This implies recidivism or revocation of probation/suspended sentence, but the core charge for the current act is Drunk Driving (危险驾驶罪 - Crime of Dangerous Driving).\n- In Chinese Criminal Law, driving a motor vehicle on a road while intoxicated constitutes the Crime of Dangerous Driving (危险驾驶罪), Article 133-1.\n- The prompt asks for the charge name. It should be \"危险驾驶罪\".\n\nLet's check the examples first to match the format.\nFormat example:\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\n\nSo the final answer should be `[罪名]危险驾驶罪<eoa>` or similar. Wait, the example says `[罪名]盗窃<eoa>`. I will follow exactly: `[罪名]危险驾驶罪<eoa>`.\n\nLet's call `retrieve_examples` first."
+      },
+      {
+        "content": [
+          {
+            "type": "text",
+            "text": "Tool result too large, the result of this tool call call_7503449e9ce3488193096ac7 was saved in the filesystem at this path: /large_tool_results/call_7503449e9ce3488193096ac7\n\nYou can read the result from the filesystem by using the read_file tool, but make sure to only read part of the result at a time.\n\nYou can do this by specifying an offset and limit in the read_file tool call. For example, to read the first 100 lines, you can use the read_file tool with offset=0 and limit=100.\n\nHere is a preview showing the head and tail of the result (lines of the form `... [N lines truncated] ...` indicate omitted lines in the middle of the content):\n\n1  Q: 事实:经审理查明：\n2  2013年11月8日22时48分许，被告人黄某酒后驾驶浙F×××××小型轿车上道路行驶，途经嘉善县魏塘街道解放东路56号路段时，被值勤的交警查获，后将其带至医院提取血样。经苏州大学司法鉴定中心检验，证实被告人黄某当时血液中乙醇含量为141毫克／100毫升，属于醉酒驾驶。\n3  另查明，被告人黄某归案后如实供述了自己的罪行。在私分国有资产一案中，被告人黄某于2012年6月7日被平湖市公安局刑事拘留，2012年6月15日被依法逮捕，2012年11月9日经平湖市人民法院决定予以释放。\n4  上述事实，被告人黄某在开庭审理过程中亦无异议，并有证人邱某的证言，提取血样登记表，强制措施凭证，机动车、驾驶证信息查询结果单，检验报告书，到案经过，刑事判决书，户籍信息等证据予以证实，足以认定。\n5  \n... [1365 lines truncated] ...\n1371  \n1372  Q: 事实:仙居县人民检察院指控：\n1373  2012年四、五月间，被告人吴某在本县南峰街道世纪新村二区二幢西灿头一楼开设的“龙腾性保健店”内，销售“海狗鞭”、“美国79胶囊”、“艾某可”、“金刚钻”等。同年5月30日，公安机关将其查获，扣押“海狗鞭”12盒、“美国79胶囊”2盒、“艾某可”2盒、“金刚钻”10盒，共计26盒（260粒）。经台州市食品药品检验所检验及仙居县食品药品监督管理局认定，查扣的海狗鞭”、“美国79胶囊”、“艾某可”、“金刚钻”均系假药。\n1374  \n1375  A: 生产、销售假药\n",
+            "cache_control": {
+              "type": "ephemeral"
+            }
+          }
+        ],
+        "role": "tool",
+        "tool_call_id": "call_7503449e9ce3488193096ac7"
+      },
+      {
+        "role": "assistant",
+        "content": "```json\n{\n  \"reasoning\": \"被告人张某某饮酒后驾驶机动车在道路上行驶，被交警查获后经司法鉴定，其血液酒精含量为97.477mg/100ml，已达到我国法律规定的醉酒驾驶标准（≥80mg/100ml）。根据《中华人民共和国刑法》第一百三十三条之一第一款第（二）项的规定，在道路上醉酒驾驶机动车的，构成危险驾驶罪。案情中提及的“考验期内犯新罪”属于量刑情节（通常涉及撤销缓刑、假释或管制并实行数罪并罚），不改变本案基础犯罪的定性。因此，依据案件事实，被告人张某某的行为依法应认定为危险驾驶罪。\",\n  \"final_answer\": \"[罪名]危险驾驶罪<eoa>\"\n}\n```",
+        "reasoning_content": "The examples show a format where the answer is just the charge name. The prompt says:\n\"请先进行推理分析，然后将最终答案写在[罪名]和<eoa>之间。\n格式示例：\n- 单个罪名: [罪名]盗窃<eoa>\n- 多个罪名: [罪名]盗窃;诈骗<eoa>\"\n\nSo I need to output reasoning and then the final answer in JSON format as requested: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`.\n\nLet's analyze the facts:\n- Defendant drove after drinking.\n- Blood alcohol content: 97.477mg/100ml, which is >= 80mg/100ml, constituting drunk driving (醉酒驾驶).\n- According to Chinese Criminal Law Article 133-1, driving a motor vehicle on a road while intoxicated constitutes the Crime of Dangerous Driving (危险驾驶罪).\n- The fact mentions he committed a new crime during a probation/test period (考验期内犯新罪), which relates to sentencing (revocation of probation/suspended sentence), but the charge itself for this act is 危险驾驶罪.\n\nTherefore, the charge is 危险驾驶罪.\n\nI will structure the reasoning clearly and put the final answer exactly as `[罪名]危险驾驶罪<eoa>` inside the `final_answer` field.\n\nWait, the prompt says: \"将最终答案写在[罪名]和<eoa>之间。格式示例：- 单个罪名: [罪名]盗窃<eoa>\". This implies the string should be `[罪名]危险驾驶罪<eoa>`.\n\nLet's double check the exact wording from similar tasks. Usually, it's just `[罪名]危险驾驶罪<eoa>`.\n\nReasoning steps:\n1. 被告人张某某饮酒后驾驶机动车上道路行驶。\n2. 经鉴定，其血液酒精含量为97.477mg/100ml，已达到醉酒标准（≥80mg/100ml）。\n3. 根据《中华人民共和国刑法》第一百三十三条之一规定，在道路上醉酒驾驶机动车的，构成危险驾驶罪。\n4. 虽然案情提到其在考验期内犯新罪，涉及缓刑撤销或数罪并罚的量刑情节，但就本次指控的犯罪行为而言，其罪名明确为危险驾驶罪。\n5. 因此，应认定为危险驾驶罪。\n\nFinal answer matches the format.\nI will generate the JSON response now.\nCheck format requirement: `{\"reasoning\": \"[your reasoning]\", \"final_answer\": \"[your answer]\"}`.\nEverything looks solid.\nProceed. \nOne minor point: The prompt example shows `[罪名]盗窃<eoa>`. I will use exactly that format.\nJSON structure:\n{\n  \"reasoning\": \"被告人张某某饮酒后驾驶机动车在道路上行驶，经司法鉴定其血液酒精含量为97.477mg/100ml，已达到国家规定的醉酒驾驶标准（≥80mg/100ml）。根据《中华人民共和国刑法》第一百三十三条之一的规定，在道路上醉酒驾驶机动车的行为构成危险驾驶罪。案情中提及的“考验期内犯新罪”属于量刑情节（可能涉及撤销缓刑或数罪并罚），不影响本案核心罪名的认定。因此，被告人张某某的行为构成危险驾驶罪。\",\n  \"final_answer\": \"[罪名]危险驾驶罪<eoa>\"\n}\nMatches requirements. Output matches. \nSelf-Correction/Verification during thought:\nIs there any other charge? The text says \"应当以××追究其刑事责任\". It's clearly asking for the charge name. Drunk driving is 危险驾驶罪.\nThe format example has `[罪名]盗窃<eoa>`. I will stick to that.\nAll good. \nOutput matches request. \nProceeds. \nGenerating response. \n(Note: I'll make sure the JSON is strictly valid and contains only the two fields.) \nDone. \n[Output Generation] -> *Proceeds*"
+      }
+    ]
+  ]
+}

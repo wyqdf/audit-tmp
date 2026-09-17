@@ -1,0 +1,76 @@
+{
+  "session_id": "0ca6242e-0474-4014-8a88-c0bb003b8c1f",
+  "commits_before": [
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 523.370777130127,
+  "benchmark_seconds": 882.2114524841309,
+  "wall_seconds": 1405.5822296142578,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 487720,
+    "num_turns": 102,
+    "stop_reason": "end_turn",
+    "session_id": "0ca6242e-0474-4014-8a88-c0bb003b8c1f",
+    "total_cost_usd": 6.506176999999999,
+    "usage": {
+      "input_tokens": 72597,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 7401984,
+      "output_tokens": 97688,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 72597,
+        "outputTokens": 97688,
+        "cacheReadInputTokens": 7401984,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 6.506176999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Evolution iteration 1 is complete.\n\n## What happened\n\n**Stage 1 — Lineage analysis.** The graph had only the evaluated baseline (`ea3b299` / tree `9f49dd72…`, average **0.4367**: USPTO 0.20, Symptom2Disease 0.80, LawBench 0.31). Reading the traces, the sharpest evidence was that LawBench's loss was concentrated in answer *wording*: 20 of 69 wrong answers differed from the target only by a trailing 「罪」 (43 of 100 predictions carried that suffix while **0 of 200** training answers did), and 13 collapsed a multi-label target. One trace showed the exact wording `单位行贿` sitting in the retrieved context while the answer still came back `单位行贿罪` — the harness never checked its answer against what the memory actually writes.\n\nI also tested two competing hypotheses offline before committing to one: relevance-ranked retrieval would not have helped — all 50 USPTO examples and ~175/200 Symptom examples already fit in the context budget, and ranked selection only doubled LawBench answer coverage. So the memory was not the bottleneck; answer fidelity was.\n\n**Stage 2 — Evolution.** `prepare_memory.py` now derives an answer profile from the training answers (literal items, separators, repetition/length statistics); a vocabulary-like memory is detected from those statistics alone (Symptom 22 items/200, LawBench 175/327, USPTO 50 distinct in 50 → out of scope). A new `AnswerVerificationMiddleware` gives the model exactly one repair turn when its final answer contains an item that is a near-variant of one the memory writes, quoting the memory's own wording. Verified offline with a scripted stub model and on baseline traces (28 wrong flagged, 0 correct flagged) before the single evaluation run.\n\n**Result:** `{\"USPTO\": 0.25, \"Symptom2Disease\": 0.82, \"LawBench\": 0.41, \"average\": 0.4933, \"status\": \"partial\"}` — **0.4367 → 0.4933**. The repair fired in exactly the 28 predicted LawBench samples (nowhere else); 「罪」-suffixed predictions fell 43 → 20; the remaining 20 are precisely the cases whose target wording is absent from the memory, where the check stays silent by design. I recorded honestly in the note that only ~6 of the 14 LawBench wrong→correct flips are attributable to the mechanism (the rest, plus all of USPTO/Symptom's movement, is run-to-run variance), and flagged the one regression plus the multi-label-collapse bucket as iteration-2 material.\n\nThe evaluated commit `d7b155f` on `codex/answer-convention-repair` matches the run's tree hash exactly, with its evolution note attached.",
+    "ttft_ms": 734,
+    "ttft_stream_ms": 245,
+    "time_to_request_ms": 62,
+    "type": "result",
+    "duration_ms": 1405023,
+    "uuid": "d1b692a3-e645-4ff3-b9ba-3132ec6bc649"
+  },
+  "session_file": "projects/-workspace-harness/0ca6242e-0474-4014-8a88-c0bb003b8c1f.jsonl",
+  "usage": {
+    "input_tokens": 72597,
+    "output_tokens": 97688,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 7401984
+  },
+  "cost_usd": 6.506176999999999,
+  "num_turns": 102,
+  "duration_api_ms": 487720,
+  "error": null,
+  "commit": "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+  "tree": "bca9cc83e78c40aec26b992045b54b53d51b049b"
+}

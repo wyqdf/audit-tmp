@@ -1,0 +1,370 @@
+===== NOTE ea3b299 =====
+# Evolution Notes
+
+- **Root baseline** (no parent). The imported harness is a one-shot few-shot pipeline: `prepare_memory.py` copies every train example (`input`/`target`, plus `raw_question` when present) once into `memory.json`, and the solver exposes a single `retrieve_examples` tool that shuffles all examples with an input-derived seed and truncates the result at 30 000 characters, under a one-line system prompt plus a 4-line skill file. This is the reference point every later candidate is measured against.
+
+- **Baseline evaluation (val, 2 samples/question; 260 expected samples, 257 successful, completion 0.9885; `rankable: true`):** `{"USPTO": 0.2, "Symptom2Disease": 0.8, "LawBench": 0.31, "average": 0.4367, "status": "partial"}`. Failed samples stay in the denominator and count as wrong. The equal-weight mean is held down by USPTO and LawBench, so those two tasks carry essentially all of the headroom; the spread across tasks (0.20-0.80) is far larger than any single-task noise. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/results/summary.json]]
+
+- USPTO (0.20) fails on chemistry rather than format: 35 of the 47 wrong answers share no product component with the target (median Jaccard 0.0), i.e. the retrosynthetic disconnection itself is wrong; only 3 wrong answers are a proper subset of the target (a dropped small co-product such as `.OO` or `.N`). The retrieved few-shot context is large (mean 45 896 chars/sample) yet does not transfer to the specific transformation. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/USPTO/conversations/0029/sample-0.json]]
+
+- LawBench (0.31; 67 of 98 successful samples wrong) fails mostly on answer-surface fidelity, not legal reasoning: 18 of the 67 wrong predictions match the target exactly once a trailing 「罪」 is removed from each label ("破坏电力设备罪" vs "破坏电力设备"), and 18 collapse a multi-label target ("赌博;开设赌场") to a single label. Both are addressable through general answer-verification and label-fidelity discipline rather than domain knowledge. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/LawBench/conversations/0009/sample-0.json]]
+
+- The "call `retrieve_examples` before answering" instruction is not reliably obeyed: one LawBench sample returned its own plan as the answer — `{"reasoning": "调用 retrieve_examples 获取参考案例。", "final_answer": "调用 retrieve_examples 获取参考案例。"}` with zero tool calls — and 18 samples across tasks answered after a single model call with no retrieval at all. Retrieval-skipping samples score lower on LawBench (0.14 vs 0.33) and Symptom2Disease (0.00, 1 sample), but higher on USPTO (0.30 vs 0.18, n=10), where the retrieved context may be more distracting than helpful. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/LawBench/conversations/0013/sample-0.json]]
+
+- Symptom2Disease (0.80) is the strongest task because the input itself enumerates the closed label set, so few-shot retrieval transfers directly; its 20 wrong samples are 19 isolated misclassifications plus one empty prediction (`"None"`). A change that helps elsewhere should not regress this task. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/Symptom2Disease/conversations/0037/sample-0.json]]
+
+- **Execution failures (3/260, 1.2%):** USPTO ex0 sample 1 hit a provider `ReadTimeout` at 423 s against a 420 s client timeout — a retryable error that did not recover on the second attempt; LawBench ex21/ex33 inputs were rejected non-retryably by the provider's `content_filter` (`DataInspectionFailed`). All three count as wrong answers in the score, so 1.2% of the mean is lost to infrastructure effects. [[/workspace/runs/9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7/USPTO/conversations/0000/sample-1.json]]
+
+===== NOTE d7b155f =====
+# Evolution Notes
+
+- Chosen from the baseline evidence rather than from a guess about the model: the baseline's
+  LawBench loss was concentrated in answer *wording* (20 of 69 wrong answers differed from the
+  target only by a trailing 「罪」, 13 collapsed a multi-label target), while the retrieved context
+  already contained the exact wording the model failed to copy — 43 of 100 predictions carried
+  the 「罪」 suffix while 0 of 200 training answers did. So the mechanism was to make the memory
+  authoritative for the answer's surface form instead of hoping the model would infer the
+  convention. `prepare_memory.py` now derives an answer profile from the training answers, and
+  `AnswerVerificationMiddleware` gives the model one repair turn when its final answer contains
+  an item that is a near-variant (<=3 characters added or dropped) of one the memory writes.
+
+- The check is scoped by a statistic of the memory, not by task identity: a memory whose answers
+  repeat a bounded set of short items is vocabulary-like (Symptom2Disease 22 items / 200 answers,
+  LawBench 175 / 327, USPTO 50 distinct in 50), so the free-form task is never checked and the
+  check cannot fire there. Verified offline before evaluation on the baseline traces: 28 of 69
+  wrong LawBench answers were flagged and 0 of 31 correct ones were, and in the run the same
+  gate held — the repair fired in exactly 28 LawBench samples and in no other task.
+
+- Observed effect matches the intended one: LawBench 0.31 -> 0.41, average 0.4367 -> 0.4933, with
+  28 repair turns (one each) and predictions carrying a 「罪」 suffix down from 43 to 20. A repaired
+  sample kept reasoning unchanged and only the wording fixed, e.g. 「非法种植毒品原植物罪」 ->
+  「非法种植毒品原植物」, turning a wrong answer into a right one
+  [[/workspace/runs/bca9cc83e78c40aec26b992045b54b53d51b049b/LawBench/conversations/0004/sample-0.json]].
+
+- The 20 remaining 「罪」 predictions are the limit of this mechanism: they are the cases where the
+  target's wording is absent from the training memory, so no near-variant exists to quote and the
+  check stays silent by design (firing there would have flagged correct answers too — 8 of the 31
+  correct samples have that property).
+
+- Two limits worth keeping. (1) Quoting a split item can cut off part of a composite label: in
+  [[/workspace/runs/bca9cc83e78c40aec26b992045b54b53d51b049b/LawBench/conversations/0038/sample-0.json]]
+  the check saw "领导传销活动罪" (from "组织、领导传销活动罪") and quoted "领导传销活动" alone, and the
+  model dropped the "组织、" prefix — the only correct -> wrong flip among the 28 fired samples.
+  Quoting the whole memory answer, not the split item, is the obvious follow-up. (2) Half of the
+  reported gain is run-to-run variance, not the mechanism: USPTO (0.20 -> 0.25) and Symptom2Disease
+  (0.80 -> 0.82) moved with no repair firing, and 8 of the 14 LawBench wrong -> correct flips came
+  from unfired samples; only 6 of the 14 are attributable to the repair, next to that 1 regression.
+
+- Unchanged by this iteration and still the largest remaining buckets: LawBench multi-label
+  collapse (13 wrong in the baseline, 19 here — noisiest bucket, and this mechanism does not touch
+  it), and USPTO, where the whole 50-example memory already fits in the retrieved context yet the
+  answers are 0% covered and only 13% of target components appear, so its 0.20-0.25 is a reasoning
+  and knowledge limit rather than a memory or format one. One sample also burned all 32 model calls
+  on file exploration ([[/workspace/runs/bca9cc83e78c40aec26b992045b54b53d51b049b/Symptom2Disease/conversations/0007/sample-1.json]]),
+  a pre-existing failure mode of the file tools, not of the check.
+
+- Full result and per-sample evidence: [[/workspace/runs/bca9cc83e78c40aec26b992045b54b53d51b049b/results/summary.json]].
+
+===== NOTE 3340e63 =====
+# Evolution Notes
+
+- Chosen from the parent's own evidence rather than from a new guess: the repair turn quoted
+  answer items without the answers they are written in, which is the same defect behind the
+  parent's documented correct->wrong flip (「领导传销活动」 quoted out of 「组织、领导传销活动」)
+  and behind a degraded answer (「运输」 quoted out of 「走私、贩卖、运输、制造毒品」, then written
+  as the answer). The profile now carries the memory's complete answers with counts, and the
+  notice quotes a complete answer whenever the memory writes the departing charge only inside
+  one or two of them; the response is parsed the way the memory's answers are parsed, so an
+  item is a whole charge rather than a word run. The intent was to let the model copy the
+  memory's composition (「窝藏、包庇」, not 「窝藏」) while never losing a charge it had identified.
+
+- Observed effect on the intended task: LawBench 0.41 -> 0.45, average 0.4933 -> 0.4989. The
+  check fired in 24 LawBench samples (26 notices; 0 in Symptom2Disease and USPTO, which the
+  memory-shape gate keeps out) and the complete-answer quote is what produced the fixes:
+  [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/LawBench/conversations/0014/sample-0.json]]
+  (「窝藏罪」 -> 「窝藏、包庇」, target 窝藏、包庇) and
+  [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/LawBench/conversations/0036/sample-0.json]]
+  (「拐卖妇女罪」 -> 「拐卖妇女、儿童」, both samples of that example fixed).
+
+- The failure mode that the same quote invites also occurred, exactly where the offline risk
+  check said it would: a complete answer can belong to another case, and the model adopts its
+  extra charges. [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/LawBench/conversations/0010/sample-1.json]]
+  was correct in the parent (「聚众扰乱社会秩序」) and came back as 「故意伤害;聚众扰乱社会秩序」
+  after the notice quoted that complete answer;
+  [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/LawBench/conversations/0045/sample-1.json]]
+  likewise wrote 「过失致人死亡;破坏生产经营」 for a target of 过失致人死亡. So within the fired
+  samples the composition quote fixed 3 and broke 3 — net zero — and the reported LawBench gain
+  is mostly variance: of the 8 wrong->correct and 4 correct->wrong flips, 4 and 1 respectively
+  happened where the check never fired (e.g. ex38, the parent's regression case, was answered
+  「组织、领导传销活动」 on the first pass with no repair this time).
+
+- Parsing the response as its judged units removed the degradation without a new notice: for
+  the same sample where the parent's notice tore 「运输毒品罪」 down to 「运输」, the new notice
+  quoted the complete answer 「非法制造、买卖、运输、邮寄、储存枪支、弹药、爆炸物」 (an unrelated
+  firearms charge, since the drug answer writes 「运输」 inside a longer item and is not one of its
+  compositions) and the model kept its own wording
+  [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/LawBench/conversations/0026/sample-0.json]].
+  The footer's "keep every item you identified" is what made that safe; the composition hint
+  itself was misleading there.
+
+- Unchanged and still the largest bucket: LawBench collapse (a wrong answer whose charges are a
+  strict subset of the target) went 20 -> 16, and the check only touches it when the missing
+  charge happens to sit in the same memory answer (ex36). USPTO 0.25 -> 0.2167 is noise on a
+  task the check cannot run on (its memory is not vocabulary-like) and where 13 of 60 answers are
+  right against 40 wrong answers sharing no component with the target.
+
+- Next step this evidence points to: quote a complete answer only when it plausibly belongs to
+  the case at hand — the model's other items should attest to it, or the question's own retrieved
+  neighbours should contain it — instead of whenever the memory writes the charge in only one
+  or two compositions. Full result and per-sample evidence:
+  [[/workspace/runs/e2c96b80fe6f6045ce76e249acfdb3eaab900dfd/results/summary.json]].
+
+===== NOTE 7628d2a =====
+# Evolution Notes
+
+- Chosen from a measurement of the parent's own retrieval rather than from a new guess about
+  the model: on the parent (e2c96b8) the retrieved context held 54.8 of the 200 LawBench
+  examples, a different random slice per question, so 26 of 100 samples had their exact target
+  answer in the memory and not in front of the model. Ranking the pool by tf-idf cosine over
+  character 2-grams of the question covers the target answer for 36% of val questions against
+  16% for the random slice, at the same 30000-character budget (offline, leave-one-out over the
+  training questions: 42% vs 27.5%; bigrams beat unigrams, trigrams and 4-grams, and adding the
+  answers to the document side changes coverage by less than a point). The intent was to spend
+  the context the harness already pays for on the examples closest to the question instead of
+  on an arbitrary slice of the memory.
+
+- The intended effect happened and was measured directly, and it did not produce accuracy. In
+  the run, 32 LawBench samples have the exact target answer in the retrieved context (16 on the
+  parent) and 27 of those are correct (84%, against the parent's 81% conditional rate), but the
+  42 samples whose target is in the memory at all went 32 -> 30 correct. The samples that gained
+  visibility are the ones that were already right, and the 10 that lost it are the ones with no
+  near-analog in the memory at all (3 of 10 correct), so visibility marks which questions have a
+  similar training case rather than causing the answer. This matches the parent's bucket
+  accounting — only 10 of its 55 wrong LawBench answers had their target anywhere in the memory
+  — and says the remaining LawBench loss is wording and composition, not coverage.
+
+- The average rose on the two tasks this change was not aimed at, and only ordering can explain
+  it there: USPTO 0.2167 -> 0.2667 and Symptom2Disease 0.83 -> 0.88, with essentially the same
+  example sets (USPTO shows all 50 both before and after; Symptom 175 -> 171 of 200). Nine
+  USPTO samples and seven Symptom2Disease samples flipped, which is the same order as the 15 and
+  10 flips seen across the three parent runs, so the effect is plausible but not separable from
+  run-to-run spread. The clearest instance of the defect being fixed is
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/Symptom2Disease/conversations/0021/sample-0.json]]:
+  the two nearest same-label training cases for a persistent dengue/allergy confusion were
+  exactly the ones the parent's random slice had dropped, and with them ranked first the model
+  answered "allergy" for the first time in the lineage. The model also cites the ranked examples
+  in its reasoning — "align closely with the clinical presentation of bronchial asthma as seen
+  in" [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/Symptom2Disease/conversations/0004/sample-0.json]]
+  and "Following the pattern from protection reaction examples"
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/USPTO/conversations/0005/sample-0.json]]
+  (an exact-target answer for a case the parent got wrong) — and for one USPTO case the ranked
+  context is enough for the model to carry the product's stereochemistry into the answer
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/USPTO/conversations/0002/sample-1.json]].
+
+- Where the ranking does help on LawBench is salience rather than coverage: the two LawBench
+  wins whose target answer was already visible in both runs are cases where the model had
+  written a shorter or wrong charge and now copies the memory's full one —
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/LawBench/conversations/0011/sample-1.json]]
+  (「买卖国家机关证件罪」 -> 「伪造、变造、买卖国家机关公文、证件、印章」) and
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/LawBench/conversations/0043/sample-1.json]]
+  (「受贿」 -> 「非国家工作人员受贿」, the memory's wording for a case whose charge the model had
+  under-specified). Both were wrong on the parent with the same context available.
+
+- The residual failure mode is unchanged and is now the largest single cause of LawBench churn:
+  four of the six correct -> wrong flips re-added 「罪」 to a charge whose wording the memory does
+  not contain (「非法采伐、毁坏国家重点保护植物」 and 「以危险方法危害公共安全」), which the repair
+  turn cannot reach by construction, e.g.
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/LawBench/conversations/0008/sample-0.json]].
+  Three LawBench samples were lost to content_filter rejections of the question text before any
+  retrieval happened (one such error occurs in every run, including the parent's), so the
+  reported 0.43 understates the task by about three samples.
+
+- Full result and per-sample evidence:
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/results/summary.json]]. Next step this
+  evidence points to: coverage is not the binding constraint on LawBench, so the remaining
+  mechanism work belongs on composition — a repair that can tell "the memory writes this item
+  inside a longer charge name" from "the memory writes this item inside another charge" would
+  keep the parent's fix (「窝藏」 -> 「窝藏、包庇」) without its regression (「聚众扰乱社会秩序」 ->
+  「故意伤害;聚众扰乱社会秩序」), and the four 「罪」 flips above need the same kind of evidence
+  when the memory has no wording to quote at all.
+
+===== NOTE e5d4cc5 =====
+# Evolution Notes
+
+- Chosen from the parent's own evidence rather than from a new guess. The parent's repair turn
+  quoted complete memory answers without asking whether the model had ever read them, and both
+  samples where that changed an answer for the worse quoted an answer that was not in the
+  retrieved context: on the parent, ex12.1 was the correct "生产、销售伪劣产品" on its first pass
+  and came back as "生产、销售伪劣产品;非法经营" after the notice quoted that answer, and ex44.1
+  wrote "强奸;侮辱" for a target of 侮辱 after the notice quoted "强奸;侮辱"
+  ([[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/LawBench/conversations/0012/sample-1.json]],
+  [[/workspace/runs/8b90b9c533d81d047bcfa360458b9b5b1f664fb9/LawBench/conversations/0044/sample-1.json]]).
+  The second half of the evidence is the memory's answer shape: none of the 175 memory items ends
+  with 「罪」 although 5 of them carry the character inside ("包庇毒品犯罪分子", "传授犯罪方法"), while
+  35 of 100 first-pass answers end an item with it. The near-variant check reached only 8 of the 14
+  samples whose only departure from the target was that trailing character, because the memory
+  writes no near-variant for the other 6 to quote (「破坏电力设备罪」, 「非法采伐、毁坏国家重点保护植物罪」,
+  「以危险方法危害公共安全罪」, 「销售伪劣产品罪」). The intent was to make the check's evidence local to
+  what the model read and to let the memory's own item endings be evidence at all.
+
+- The intended effect happened on the task it was aimed at and is attributable this time: LawBench
+  0.43 -> 0.49, average 0.5256 -> 0.5344, first-pass 35 -> 49 against the parent's 35 -> 43, with
+  27 notices instead of 21 and 15 wrong -> correct flips instead of 9. The locality restriction is
+  what recovered the parent's two documented casualties: ex12.1 now keeps "生产、销售伪劣产品"
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0012/sample-1.json]])
+  and ex44.1 is answered "侮辱" instead of "强奸;侮辱"
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0044/sample-1.json]]).
+  Among the samples where a complete answer was quoted, the two that became correct are ones whose
+  quote really was in the retrieved context: ex14.1 「窝藏罪」 -> 「窝藏、包庇」
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0014/sample-1.json]])
+  and ex36.1 「拐卖妇女罪」 -> 「拐卖妇女、儿童」
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0036/sample-1.json]]).
+
+- The new ending evidence is safe but so far unproductive. It fired in 3 samples and changed the
+  answer in all 3 without touching any first-pass-correct answer (checked offline on all three
+  earlier runs: of the 35 answers that end an item the way no memory item does, none was correct on
+  its first pass). None of the three turned correct: ex12.0 dropped the 「罪」 but dropped the correct
+  「生产」 with it ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0012/sample-0.json]]),
+  and ex33.0/ex33.1 were wrong about the charge itself (target 拐骗儿童). Sentence the notice gives is
+  narrower than the class it was measured on — the 35 violations are counted by ending alone, the
+  notice additionally requires the memory to write the rest of the item — which is what keeps it at
+  3 samples and 0 regressions.
+
+- The one correct -> wrong flip this run is the near-variant rule read in the wrong direction, and it
+  is the concrete next step. "以危险方法危害公共安全" was matched to the memory item
+  "过失以危险方法危害公共安全" because the memory item merely *contains* the answer item, and the notice
+  told the model the memory writes it as the negligent charge, which the model then did
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0031/sample-0.json]]).
+  The good matches all differ at an end (「单位行贿」+「罪」, 「拐卖妇女」 inside 「拐卖妇女、儿童」); this one
+  differs at the front. Requiring the two strings to agree from one end would keep every fix this
+  lineage has made and drop this flip.
+
+- Unchanged and explained elsewhere: USPTO (0.2667 -> 0.2333) and Symptom2Disease (0.88 -> 0.88) got
+  0 notices — the vocabulary-shape gate keeps the check off both memories — and USPTO's 8 flipped
+  samples (+3/-5) are the same run-to-run spread the parent's own note measured, not a regression of
+  this change. LawBench also lost ex14.0 and ex27.1, which were correct in the parent, to the same
+  spread (ex14.0's sibling ex14.1 was fixed here by the mechanism). Two of the six net LawBench
+  samples are infrastructure: ex5.0, ex5.1 and ex47.0 failed with provider content_filter rejections
+  in the parent and completed here. Full result and per-sample evidence:
+  [[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/results/summary.json]].
+
+===== NOTE d8f5ef0 =====
+# Evolution Notes
+
+- Chosen from the parent's own evidence rather than from a new guess. The parent's note ended
+  on the one correct->wrong flip it had left: 「以危险方法危害公共安全」 was matched to the memory
+  item 「过失以危险方法危害公共安全」 because that item merely *ends with* the answer item, and the
+  notice told the model the memory writes it as the negligent charge
+  ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0031/sample-0.json]]).
+  The same blind containment also flagged a *correct* answer in that run — the separator rule
+  splits 「生产、销售伪劣产品」 in two, and the piece 「销售伪劣产品」 is contained in the memory item
+  「生产、销售伪劣产品」 ([[/workspace/runs/3c5c61e1a2505a79fcd73b63596601425207a4bb/LawBench/conversations/0012/sample-1.json]]).
+  Read the other way, containment needs the answer item to be a substring of the memory's item,
+  which put the charges the model writes by dropping a piece of the memory's charge out of reach:
+  「非法采伐国家重点保护植物」 against the memory's 「非法采伐、毁坏国家重点保护植物」 got no notice at all,
+  in either sample of that example or in conversations/0046 and conversations/0008 of the same run.
+  The intent was to make the match itself carry the evidence — read the two strings together from
+  the front instead of looking for one inside the other — so that the notice speaks about the
+  charges the memory writes with a piece dropped or a 「罪」 appended, and stays silent about a
+  longer charge that merely shares the answer item's ending.
+
+- Measured offline before evaluating, on the 400 recorded first passes of the four earlier runs:
+  the new matcher flags 114 of 268 wrong answers and 0 of 132 correct ones, against 107 and 3 for
+  the parent, i.e. it strictly dominates on this corpus — it gains the dropped-piece family and
+  loses both correct-answer flags while losing no flag that ever helped.
+
+- The intended effect happened on the task it was aimed at and is attributable: LawBench
+  0.49 -> 0.52, average 0.5344 -> 0.5644. The cleanest attribution is ex13.0, whose first pass was
+  identical in both runs: 「非法采伐国家重点保护植物」 drew no notice on the parent (wrong) and now draws
+  the memory's complete answer 「非法采伐、毁坏国家重点保护植物;非法占用农用地」 (right), and the model copied
+  only the charge that shares its beginning
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0013/sample-0.json]]).
+  The parent's documented casualty is gone with the same rule: ex31.0 is no longer matched to the
+  negligent charge, and the notice that changed its answer for the worse cannot fire
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0031/sample-0.json]]).
+  Of the 22 notices this run fired, 0 landed on an answer that was already correct, 15 converted a
+  wrong first pass and 7 did not; the parent's 27 notices contained 2 such flags and one of them
+  was the flip above.
+
+- Other notices that fired and converted, where only the first pass differs between the runs so the
+  gain is shared with run-to-run spread: 「窝藏罪」 -> 「窝藏、包庇」 ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0014/sample-0.json]])
+  and 「非法采伐、毁坏国家重点保护植物罪」 -> the memory's wording without the trailing 「罪」
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0008/sample-0.json]]).
+
+- Unchanged and explained elsewhere: USPTO 0.2333 -> 0.2833 and Symptom2Disease 0.88 -> 0.89 both
+  got 0 notices — the vocabulary-shape gate keeps the check off both memories, which the new
+  matcher does not touch — so their movement is the run-to-run spread this lineage has measured
+  before, not an effect of this change
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/results/summary.json]]). LawBench
+  lost one sample to a provider content_filter rejection of the question text, which counts as a
+  wrong answer, so the reported 0.52 is one sample under what the harness answered.
+
+- The visible limit of the new rule, and the next step this evidence points to: an item that
+  departs in two ways at once still gets nothing. 「非法采伐国家重点保护植物罪」 drops a piece of the
+  memory's charge *and* carries the 「罪」 the memory never writes, and the two mechanisms each see
+  only one of the two departures — the variant rule in `_closest_known` needs the shared ending,
+  the ending rule in `_ending_notice` needs the rest of the item to be a part the memory's answers
+  are made of. Three samples of this run are exactly that shape and all three stayed wrong
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0013/sample-1.json]],
+  [[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0046/sample-0.json]],
+  [[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0008/sample-1.json]]).
+  Letting the ending rule ask the variant test of the item it has stripped would reach them without
+  loosening either rule's standard.
+
+===== NOTE 3bb9672 =====
+# Evolution Notes
+
+- Chosen from the parent's own evidence rather than from a new guess: the parent's note ended on
+  the one shape its two rules could not see, an item that drops a piece of the memory's charge
+  *and* carries an ending the memory never uses, and named the step that reaches it — let the
+  ending rule ask the variant test of the item it has stripped. That is the whole of the change;
+  the same two readings of the same strings, applied to the string the ending rule has made, so
+  nothing is quoted that the memory does not write and the requirement that the memory write the
+  charge is kept in both branches.
+
+- Measured offline before evaluating, on the 592 recorded first passes of the six earlier runs
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/memory.json]] for the
+  profile they were scored against): the check flags 180 of 392 wrong answers against the parent's
+  165, and 0 of 200 correct ones in both — the 15 new flags are all the two-way-departure family,
+  and each of them, followed literally, lands on the target wording. The rule adds no flag on any
+  of the 66 items the 100 val targets are made of, nor on the memory's own 175 items and 143
+  answers, so a correct answer that reproduces the memory's wording cannot trip it; the parent's
+  false-positive shape (the splitter's own pieces) is untouched because the ending rule still needs
+  the memory to write the rest of the item either way.
+
+- The intended effect happened and is attributable, but the family is too narrow to move LawBench:
+  the run fired 25 notices against the parent's 22 and converted 18 of them against 15, LawBench
+  stayed at 52/100 and the average fell 0.5644 -> 0.5333. The one first pass of this shape the run
+  produced drew the new message and was corrected to the memory's wording
+  ([[/workspace/runs/cd1bd0d40a39e7f9807fa0f12a58902c73abec2d/LawBench/conversations/0046/sample-1.json]]:
+  「非法采伐国家重点保护植物罪」 -> 「非法采伐、毁坏国家重点保护植物」); the parent's identical first pass one
+  sample over got no notice at all and stayed wrong
+  ([[/workspace/runs/37a3ebb74a30bacfa2ab2379c86fa408af47a2fd/LawBench/conversations/0046/sample-0.json]]).
+  The rest of that family was already recovered this run by the two older rules — 「非法采伐、毁坏国家重点保护植物罪」
+  through the ending rule's part test and 「非法采伐国家重点保护植物」 through the composition quote
+  ([[/workspace/runs/cd1bd0d40a39e7f9807fa0f12a58902c73abec2d/LawBench/conversations/0013/sample-0.json]]) — so
+  the change's own contribution is one sample, which is the honest size of a family that is 15 of
+  592 first passes concentrated in 3 val questions.
+
+- The fall in `average` is not this change: USPTO 0.2833 -> 0.20 and Symptom2Disease 0.89 -> 0.88
+  are the two tasks whose memories the vocabulary gate keeps the check off, and neither run fired a
+  single notice there; 41 of 60 USPTO predictions differ between the two runs on identical inputs,
+  which is the provider's non-determinism, and this lineage has measured USPTO between 0.20 and
+  0.2833 across runs that never touched it
+  ([[/workspace/runs/cd1bd0d40a39e7f9807fa0f12a58902c73abec2d/results/summary.json]]). LawBench's 52/100
+  is three content-filter rejections under what the harness answered (52 of the 97 scored samples,
+  53.6%), the parent lost one the same way.
+
+- The limit this evidence leaves, and where the remaining LawBench wording errors actually are: the
+  run's 16 unreached wrong answers whose items are spelled differently from the memory are almost
+  all charges the memory never writes at all — 「销售假冒注册商标的商品」, 「破坏电力设备」,
+  「以危险方法危害公共安全」, 「帮助毁灭、伪造证据」, 「窃取、收买、非法提供信用卡信息」, 「伪造、变造金融票证」 — so no
+  wording can be quoted back, and the only rule that would reach them is "the memory never ends an
+  item with this character, drop it", which is unsound here: 「帮助毁灭、伪造证据」 (ends 「据」) and 「窃取」
+  (ends 「取」) are both val target items the same rule would tell the model to shorten
+  ([[/workspace/runs/cd1bd0d40a39e7f9807fa0f12a58902c73abec2d/LawBench/conversations/0030/sample-0.json]]).
+  The larger population is the 23 wrong answers whose items are all memory wording and which are
+  simply missing charges; their targets are absent from the training memory in all but one case, so
+  there is no evidence a wording check could report — which points the next iteration at the
+  retrieval and context side rather than at the check.
+

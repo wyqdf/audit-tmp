@@ -1,0 +1,87 @@
+{
+  "session_id": "4951b75c-9012-4a3f-aecd-2fdb7e3e5156",
+  "commits_before": [
+    "0df22b3a9a24e67e590afc82eb0cf21437edc57d",
+    "9b04306a774263abfbe289568c621385f913cb29",
+    "7f99ffff8ef19bdf722115250e143b4b99fec990",
+    "b823e6058ff8b78f9f6f48bc32e46d3e105c6889",
+    "ece446637fc7870c97283996e946158324d694b2",
+    "7baad6478a7c372346a4357843ec01b069f5637d",
+    "99acee1b28c005f3fcb3254e8b1208566921a69d",
+    "e05c6f0df98589c418940cfde2e9aac3082ccba5",
+    "49c9c67dc05930e1d958ed4821916d56b54e8983",
+    "419618e1c16bbd6387ad3ec523d75d10b193771e",
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 1290.0937707424164,
+  "benchmark_seconds": 573.6481466293335,
+  "wall_seconds": 1863.7419173717499,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 1172877,
+    "num_turns": 151,
+    "stop_reason": "end_turn",
+    "session_id": "4951b75c-9012-4a3f-aecd-2fdb7e3e5156",
+    "total_cost_usd": 20.605314000000003,
+    "usage": {
+      "input_tokens": 134430,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 27622528,
+      "output_tokens": 244876,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 134430,
+        "outputTokens": 244876,
+        "cacheReadInputTokens": 27622528,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 20.605314000000003,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 12 is complete. Summary:\n\n**Lineage analysis.** The 12 recorded runs run from baseline 0.4367 to a best `average` of 0.5656 (N8), with the parent/HEAD (`answer-vocabulary`, 0.5533) holding the LawBench record at 0.59. I audited the residual error classes across all recorded samples (1200 LawBench, 1200 Symptom2Disease, 720 USPTO) and found the answer-vocabulary thread — the one the last six iterations worked — is exhausted: the middleware never rewrites a val target, the memory's held answers already reach the solver for 20 of 21 val questions, co-occurrence reporting measured a 3:57 gain-to-risk ratio, USPTO shows zero answer copying, and Symptom2Disease's 88% is above what any k-NN vote over the same memory scores.\n\n**What I changed.** The defect the lineage's own N1 note named and never fixed: the ranking compares questions and examples *through* the task's prompt template. `Ranker` now learns the stretch of text every example shares (longest common opening and closing of the memory's `input`s, `shared_edges`) and removes it from both sides before vectorizing, so problems are compared with problems; nothing task-specific is written into the harness.\n\n**Result.** `{\"USPTO\": 0.1833, \"Symptom2Disease\": 0.88, \"LawBench\": 0.59, \"average\": 0.5511, \"status\": \"ok\"}`, 260/260 samples ok. Offline the mechanism moved as intended (USPTO rank-1 same-reaction-type 27/30 → 29/30, Symptom2Disease rank-1 label 37/50 → 38/50, LawBench unchanged), and the traces show the reordering (first delivered answer changed in 16/100 S2D samples), but the score movement — S2D +1, USPTO −1, average −0.0022 — is inside the spread this lineage records for one design. The note records the caveats honestly, including a Symptom2Disease top-5 regression and that no outcome flip is attributable to the change.\n\nCommitted as `b6060a9` on branch `stripped-template-ranking` (tree `8f5a484…`, matching the runner's candidate id), with the evolution note attached under `refs/notes/evolution`.",
+    "ttft_ms": 642,
+    "ttft_stream_ms": 226,
+    "time_to_request_ms": 57,
+    "type": "result",
+    "duration_ms": 1863135,
+    "uuid": "2a2e66f0-2e2e-4ebb-a094-501253231ec1"
+  },
+  "session_file": "projects/-workspace-harness/4951b75c-9012-4a3f-aecd-2fdb7e3e5156.jsonl",
+  "usage": {
+    "input_tokens": 134430,
+    "output_tokens": 244876,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 27622528
+  },
+  "cost_usd": 20.605314000000003,
+  "num_turns": 151,
+  "duration_api_ms": 1172877,
+  "error": null,
+  "commit": "b6060a910203479b2ba7731dc3288a67d5947a36",
+  "tree": "8f5a48449d5e8ed3a69ad655b179b39e58e48645"
+}

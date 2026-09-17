@@ -1,0 +1,1952 @@
+diff --git a/.claude/skills/meta-meta-harness/SKILL.md b/.claude/skills/meta-meta-harness/SKILL.md
+index 84eb380..7537729 100644
+--- a/.claude/skills/meta-meta-harness/SKILL.md
++++ b/.claude/skills/meta-meta-harness/SKILL.md
+@@ -1,105 +1,233 @@
+ ---
+ name: meta-meta-harness
+-description: Auto-evolve a codebase against fixed validation.
++description: Evolve a harness using evolution history and benchmark feedback.
+ ---
+ 
+-# Self-evolution
++# Meta-Meta-Harness
+ 
+-Analyze evolution history, make one mechanism-level modification, run the benchmark once, audit the result, commit once with notes, then stop without further edits or reruns.
++## Overview
+ 
+-- Run binding comes from the task prompt.
+-- First action every round: read the full evaluation contract and follow it.
++The harness is the code and resources in `/workspace/harness` used by the solver.
+ 
+-### Meta-Meta-Harness worldview
++Each invocation completes one evolution iteration. **Lineage Analysis** selects a parent and plans an improvement from the evolution history. **Evolution** modifies the parent, evaluates the candidate once, and records the outcome for future iterations.
+ 
+-Self-evolution unfolds an evolution tree:
++## Evolution Graph
++
++The evolution graph is a directed acyclic graph (DAG) recording harness versions, evaluation evidence, and derivation history.
+ 
+ ```text
+-H0 (root, baseline)
+-├── H1 ──┬── H3 ──┬── H5
+-│       │        └── H6
+-│       └── H4 ───── H7
+-└── H2
++N0 (root, baseline)
++├── N1 ──┬── N3 ──┬── N5
++│        │        └── N6
++│        └── N4 ───── N7
++└── N2
++```
++
++**Node:** An evaluated harness version recorded in a Git commit, with its associated results, notes, and traces.
++
++- **Commit message:** An overview of the problem, the change, and the evaluation result.
++- **Notes:** An explanation of the change and its observed effects, citing supporting traces. Attached to the evaluated commit under `refs/notes/evolution`.
++- **Traces:** One file per evaluated sample, containing its conversation, prediction, reference answer, and execution outcome.
++
++**Edge:** The parent–child commit link stored by Git. The source diff and change in `average` describe the evolution step.
++
++## Baseline Initialization
++
++The baseline is the root commit on `main`. If it has not been evaluated, switch to `main`, run the [Evaluation Runner](#evaluation-runner), and attach evolution notes to that commit.
++
++```bash
++git -C /workspace/harness switch main
++```
++
++Then proceed to Stage 1.
++
++## Workflow
++
++### Stage 1: Lineage Analysis
++
++#### 1.1 Evolution History Analysis
++
++Review the graph, commit messages, and scores to identify performance trends and relevant evolution steps. Inspect their diffs and notes; read traces when needed to investigate a problem or verify a finding.
++
++```bash
++# Evolution history
++git -C /workspace/harness log --branches --graph --decorate --oneline
++
++# Commit message and metadata, including tree and parent
++git -C /workspace/harness show -s --format=raw <commit>
++
++# Evolution notes
++git -C /workspace/harness notes --ref=refs/notes/evolution show <commit>
++
++# Changes from a non-root commit's parent
++git -C /workspace/harness diff <commit>^ <commit>
+ ```
+ 
+-- Each node is one commit carrying `(code,  r_vec, evolution-story memory，notes)`.
+-- Each parent-child edge is one causal observation `(diff, Δr_vec)`.
+-- Multiple evolution steps create multiple branches that coexist as references.
+-- The whole tree is the accumulated cross-evolution memory and proposer state.
++The commit's `tree` field identifies `/workspace/runs/<tree-hash>/`, which contains `results/summary.json` and the traces shown in [Directory Structure](#directory-structure).
+ 
+-Analyze the tree and its diffs to decide what to evolve next; round numbers and
+-runner IDs are only labels.
++#### 1.2 Parent Harness Selection and Improvement Plan
+ 
+-## State
++Based on the history analysis, select a strong or promising evaluated commit as the parent. Choose one concrete problem, a mechanism to address it, and the expected observable effect.
+ 
+-Harness git repois  the evolution graph:
+-- node = commit; lineage = commit parent
+-- commit message = issue/modification/results
+-- notes = the notes ref specified by the run binding, attached to the evaluated commit (bridge between the commit message and raw traces/files)
+-- traces = lowest-level evidence of actual run behavior
++### Stage 2: Evolution
+ 
+-## Loop
++#### 2.1 Modification
+ 
+-do not skip any step, even if you are confident in your changes.
++Create a branch from the selected parent and implement the planned change.
+ 
+-Follow this loop exactly; never deviation.
++```bash
++git -C /workspace/harness switch -c <candidate-name> <parent-commit>
++```
+ 
+-### Stage 0 — Cold start
++#### 2.2 Evaluation
+ 
+-No notes yet:
+-- run the existing harness
+-- attach notes to its commit
+-- back to Stage 1
++Evaluate the candidate once with the [Evaluation Runner](#evaluation-runner), in one foreground Bash call that waits for completion.
+ 
+-**Output**: node with initial notes and traces.
++Inspect the result and relevant traces to determine whether the expected effect occurred. Record any execution failure alongside the available scores.
+ 
+-### Stage 1 — Lineage analysis
++#### 2.3 Evolution Graph Update
+ 
+-- Read and analys the graph (codes diffs,commit messages, notes, scores，traces).
+-   First review the code diff and commit message for a quick understanding, then conduct a detailed analysis using the notes and traces.
+-  Use these commands to inspect the history and the parent-child change:
+-  `git -C <repo> log --branches --graph --decorate --oneline`
+-  `git -C <repo> show -s --format=fuller <commit>`
+-  `git -C <repo> notes --ref=<Notes ref> show <commit>`
+-  `git -C <repo> diff <parent-commit> <child-commit>`
++Commit the evaluated source using the [Commit Message](#commit-message) template.
+ 
+-- Select a strong or promising parent and one clear, solvable problem; do not default to the latest node or current `HEAD`.
+-- Choose one mechanism to address that problem. Do not repeatedly create similar children or keep focusing on the same problem after nearby directions have failed, unless new evidence supports a distinct hypothesis. Record the parent, mechanism, and expected effect as the sole direction for the round.
++```bash
++git -C /workspace/harness add -A && \
++git -C /workspace/harness commit -F - <<'COMMIT_MESSAGE'
++<commit message using the template below>
++COMMIT_MESSAGE
++```
+ 
+-**Output**: three fixed items —
+-- parent node (and why)
+-- fixed direction of mechanism
+-- expected effect (what traces and scores should show)
++Attach a note using the [Note](#note) template.
+ 
+-### Stage 2 — Evolution
++```bash
++git -C /workspace/harness notes --ref=refs/notes/evolution add -F - HEAD <<'EVOLUTION_NOTE'
++<note using the template below>
++EVOLUTION_NOTE
++```
++
++End this invocation.
++
++## Templates
+ 
+-Create and switch to a branch from the selected parent, then implement the direction there:
+-`git -C <prompt-bound repository> switch -c <Branch-prefix><candidate-name> <parent-commit>`
+-Never commit on `main`.
++### Commit Message
+ 
+-**Output**:  changes to implement  the specific direction.
++```text
++Issue: <The concrete problem or motivation, supported by historical evidence when available>
+ 
+-### Stage 3 — Validation
++Modification: <The mechanism or behavior actually changed>
+ 
+-You can proceed to the next step only after completing the current step.
++Results: {"evaluation_result": <complete result JSON printed by the runner>, "message": "<Whether the expected effect occurred and briefly why>"}
++```
+ 
+-- **3.1 Run** the exact runner command yourself **exactly once per round** in one foreground Bash call and block until it fully completes. Never run it in the background or exit while it is running. **Regardless of the result — success, failure, regression, or infrastructure error — do NOT repeat, retry, or re-invoke Stage 3.1; one invocation per round is final.**
+-- **3.2 Audit** Audit traces and scores, determine whether the mechanism activated and worked, and fill the notes with cited findings.
+-- **3.3 Record** Create one template-compliant commit, then attach the note to that evaluated commit in Git:
+-  `git -C <prompt-bound repository> notes --ref=<Notes ref> add -m "<notes>" <evaluated-commit>`
+-  `<Notes ref>` is bound in the evaluation contract.
++If the runner produced no result, use `null` for `evaluation_result` and describe the failure in `message`.
+ 
+-Stage only files you changed; never `add -A`.
++### Note
+ 
+-**Output** (per run): a commit containing the benchmark result and its note.
++```markdown
++# Evolution Notes
+ 
+-## Templates (exact format required)
++- <Why the change was chosen and how it was intended to work>
++- <Observed behavior and its relation to the result> [[<trace-or-file-path>]]
++- <Additional finding or limitation> [[<trace-or-file-path>]]
++```
+ 
+-- Commit message: `references/commit-message-template.md`
+-- Notes: `references/notes-template.md`
++Cite the supporting trace or file for each evidence-based finding.
+ 
+ ## Constraints
+ 
+-- Each candidate must introduce a substantive mechanism change that addresses one clearly identified, evidence-supported problem.
+-- Run Git only with `git -C <prompt-bound repository> ...`.
+-- Inspect Git state only in the target repository.
++- Call models only through the evaluation runner.
++- Manually edit only files inside `/workspace/harness`. Once candidate evaluation starts, keep the harness source unchanged for the rest of this invocation.
++- Do not hardcode dataset names, label names, or domain-specific keyword lists, or branch on dataset identity.
++
++## Task
++
++### Evolution Target
++
++**Objective:** Maximize `average`, the equal-weight mean of Val accuracies across all benchmark tasks, using one general-purpose harness.
++
++**Editable scope:** Everything in `/workspace/harness`, including system and user prompts, skills, tools, memory preparation and structure, and retrieval logic.
++
++Train provides examples for preparing memory; the resulting memory is frozen for Val. Val scores and traces guide evolution; Test is evaluated separately afterward.
++
++### Harness Interface
++
++```text
++prepare_memory.py    # the runner executes this script
++solver/agent.py      # the runner calls build_agent(model, input_text, config)
++```
++
++### Evaluation Runner
++
++Use this command for both the baseline and the candidate:
++
++```bash
++/opt/venv/bin/python -u /workspace/benchmark/run.py evaluate \
++  --run-dir /workspace/runs \
++  --candidate /workspace/harness
++```
++
++**Output example:**
++
++```jsonc
++{
++  "USPTO": 0.2333,
++  "Symptom2Disease": 0.83,
++  "LawBench": 0.53,
++  "average": 0.5311,        // Equal-weight mean of task accuracies
++  "status": "partial"      // Whether evaluation completed normally, partially, or failed
++}
++```
++
++### Directory Structure
++
++```text
++/workspace/
++├── harness/                         # source to evolve
++│   ├── prepare_memory.py            # memory preparation
++│   └── solver/
++│       └── agent.py                 # solver entry point
++├── benchmark/
++│   ├── run.py                       # evaluation runner
++│   └── data/                        # task data
++└── runs/
++    └── <tree-hash>/                  # evaluated source tree hash
++        ├── manifest.json            # evaluation metadata
++        ├── <task>/
++        │   ├── memory.json          # frozen training memory
++        │   └── conversations/
++        │       ├── prepare/         # memory preparation traces
++        │       └── <index>/
++        │           ├── sample-<k>.json  # conversation and outcome
++        │           └── sample-<k>.tmp/  # files left in the sample workspace
++        └── results/
++            ├── samples.jsonl        # per-sample outcomes
++            └── summary.json         # detailed evaluation statistics
++```
++
++**`results/summary.json` — selected fields:**
++
++```jsonc
++{
++  "scores": {
++    "<task>": {"accuracy": 0.7}
++  },
++  "average": 0.7,              // Equal-weight mean of task accuracies
++  "status": "ok"               // Whether evaluation completed normally, partially, or failed
++}
++```
++
++**One sample's trace** (`<task>/conversations/<index>/sample-<k>.json`):
++
++```jsonc
++{
++  "prediction": "label A",     // Solver answer
++  "target": "label B",         // Reference answer
++  "was_correct": false,        // Whether the answer was marked correct
++  "status": "ok",              // Sample execution status: ok, error, or timeout
++  "error": null,               // Execution failure details, if any
++  "messages": [                // Conversation, including tool interactions
++    {"role": "user", "content": "input text"},
++    {"role": "assistant", "content": "{\"final_answer\": \"label A\"}"}
++  ],
++  "side_calls": []             // Independent conversations started by the solver
++}
++```
+diff --git a/.claude/skills/meta-meta-harness/references/commit-message-template.md b/.claude/skills/meta-meta-harness/references/commit-message-template.md
+deleted file mode 100644
+index cff4f6f..0000000
+--- a/.claude/skills/meta-meta-harness/references/commit-message-template.md
++++ /dev/null
+@@ -1,9 +0,0 @@
+-# Commit message template
+-
+-```text
+-Issue: <State the concrete problem or motivation, grounded in historical evidence when available>
+-
+-Modification: <State what mechanism or behavior was actually changed>
+-
+-Results: {"scores": <runner stdout scores object>, "message": "<whether the expected effect was achieved and briefly why>"}
+-```
+diff --git a/.claude/skills/meta-meta-harness/references/notes-template.md b/.claude/skills/meta-meta-harness/references/notes-template.md
+deleted file mode 100644
+index c32a917..0000000
+--- a/.claude/skills/meta-meta-harness/references/notes-template.md
++++ /dev/null
+@@ -1,18 +0,0 @@
+-# Notes template
+-
+-```markdown
+-# Notes for <evaluated commit SHA>
+-
+-Example note entries:
+-- <concise evolution reasoning and mechanism summary>
+-- <trace-derived summary of the run's behavior and important patterns> [[<trace/file ref>]]
+-- <additional important finding or analysis> [[<trace/file ref>]]
+-- ...
+-```
+-
+-Rules:
+-- Notes bridge the commit message and raw traces/files.
+-- Capture key reasoning, actions, and mechanism details behind the evolution step.
+-- Summarize trace evidence into overall behavior, recurring patterns, and common problems.
+-- State whether the mechanism activated and worked.
+-- Cite the original trace/file/note wherever evidence exists; all trace-derived claims must be referenced.
+diff --git a/DESIGN.md b/DESIGN.md
+index 3caca1e..4e06794 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -12,12 +12,12 @@
+ 
+ 核心是：**一个 commit 对应一个完整 harness，真实 Git parent 表达继承关系，评测产物按源码 tree hash 保存，并关联最终 commit。** proposer 根据整棵树选择父节点，修改一个机制，执行评测、分析结果，然后提交代码并附加 notes。
+ 
+-每类信息只维护一处：源码和演化关系由 Git 保存，分析由 commit message 和 notes 保存，客观分数由 benchmark 结果保存。`runs/` 只保留配置、评测产物和原始会话；需要比较历史成绩时，直接读取已有结果。
++每类信息只维护一处：源码和演化关系由 Git 保存，分析由 commit message 和 notes 保存，客观分数由 benchmark 结果保存。`runs/` 只保留配置、评测产物和 proposer 的交互记录；需要比较历史成绩时，直接读取已有结果。
+ 
+ 主要依据：
+ 
+ - 当前工程的 [README](/home/yepeijie/workspace/mmharness/exp/TextClassification/metaharness/README.md)、[外循环设计](/home/yepeijie/workspace/mmharness/exp/TextClassification/metaharness/desigen.md) 及核心实现。当前 `DESIGN.md` 是较早的 Deep Agents 迁移方案，不作为最新外循环流程。
+-- 直接移植仓库现有 [MetaMetaHarness 工作流](/home/yepeijie/workspace/mmharness/.claude/skill/skill.md)及引用模板，保持原文和提交顺序：分析历史、修改一个机制、前台评测一次、分析结果、commit 一次、附加 notes。必要的任务接口及路径写入领域合同和任务参数。唯一改动是 runner 打印的 scores 对象（`benchmark/run.py` 的 `scores_output`）：只留三个任务分数、平均分和评测状态，逐题明细不再出现在 stdout，只写进 `runs/<tree_hash>/results/`；commit message 模板本身保持原文。
++- 直接移植仓库现有 [MetaMetaHarness 工作流](/home/yepeijie/workspace/mmharness/.claude/skill/skill.md)及引用模板，保持原文和提交顺序：分析历史、修改一个机制、前台评测一次、分析结果、commit 一次、附加 notes。必要的任务接口及路径写入 Skill 和任务参数。唯一改动是 runner 打印的 scores 对象（`benchmark/run.py` 的 `scores_output`）：只留三个任务分数、平均分和评测状态，逐题明细不再出现在 stdout，只写进 `runs/<tree_hash>/results/`；commit message 模板本身保持原文。
+ - Meta-Harness 的公开[参考代码](https://github.com/stanford-iris-lab/meta-harness/blob/main/reference_examples/text_classification/meta_harness.py)作为评测及显式 Test 冻结流程的参考；本项目的 proposer 按 MetaMetaHarness 工作流直接运行 benchmark。
+ 
+ ## 2. 目录与复用范围
+@@ -40,7 +40,6 @@ metametaharness/
+ │   ├── sandbox.py                     Git 工作区与证据挂载
+ │   └── prompt.md                      本轮参数、路径、分支及 runner 命令
+ ├── benchmark/
+-│   ├── domainspecific.md              固定任务合同
+ │   ├── run.py / evaluate.py / answers.py
+ │   ├── runtime/                       固定模型接入、预算、隔离及轨迹
+ │   └── data/                          统一保存固定数据，沿用 MetaHarness 数据来源
+@@ -56,12 +55,16 @@ metametaharness/
+     │   ├── manifest.json             本版本的 tree hash、真实 parent、评测配置、评测后补入的最终 commit
+     │   ├── <任务>/
+     │   │   ├── memory.json           prepare_memory.py 用 Train 生成的固定 memory，Val/Test 只读
+-    │   │   └── conversations/<题号>/sample-<k>.json
+-    │   │                             一个执行一份完整记录：表头统计 + messages 主线对话 + side_calls
++    │   │   └── conversations/<题号>/
++    │   │       ├── sample-<k>.json   一个执行一份完整记录：表头统计 + messages 主线对话 + side_calls
++    │   │       └── sample-<k>.tmp/   有 tmp 文件时保留
+     │   └── results/
+     │       ├── samples.jsonl         一行一题，由各对话文件的表头拼成，proposer 的判断入口
+     │       └── summary.json          本版本的各任务分数与汇总（average、rankable、status）
+-    ├── sessions/<轮次>/              proposer 本轮会话：prompt、逐次请求与响应、结构化事件、结果
++    ├── sessions/<轮次>/
++    │   ├── conversation.jsonl        本轮 proposer 的完整交互记录（原生会话）
++    │   ├── tool-results/             过大的工具输出落盘的全文，会话里只留预览与指针
++    │   └── result.json               本轮结果、token 用量与耗时
+     ├── finalized.json                显式 Test 时写入的冻结记录
+     └── test/                         显式 Test 的候选、memory、结果与对话
+ ```
+@@ -93,8 +96,8 @@ proposer 按原工作流修改代码后直接运行 benchmark。runner 根据当
+ 
+ ```json
+ {
+-  "task": "USPTO", "example_index": 23, "sample_index": 1,
+-  "candidate": "baseline", "tree_hash": "…",
++  "task": "USPTO", "example_index": 23, "sample_index": 1, "split": "val",
++  "tree_hash": "…", "error": null,
+ 
+   "status": "ok", "was_correct": true,
+   "prediction": "CCOC(=O)c1cc(OC(F)(F)C(F)Cl)ccc1C.O=C1CCC(=O)N1Br",
+@@ -158,15 +161,17 @@ proposer 按原工作流修改代码后直接运行 benchmark。runner 根据当
+ 
+ 拼接规则：**主线取消息数最多的那次请求**（它已包含此前每一轮的思考、工具调用及返回），再补上该次请求的响应；响应之后由机制额外发起的独立调用（例如把同一题独立作答多次的机制，其余几次各自是一条完整对话）放入 `side_calls`，不混入主线。表头字段用于判断是否值得读这个文件，正文用于判断机制是否生效。
+ 
++`/workspace` 是本次执行的临时工作目录，写完对话即删除；结束时目录非空的话，整份目录原样保存在对话文件旁边（`sample-<k>.tmp/`），目录为空时不建任何目录。solver 落在对话之外的中间文件，只有这一处保留。
++
+ **results/samples.jsonl：候选级索引**
+ 
+ 一行一题，由各对话文件的表头拼成，不含 `messages`。proposer 先读这张表定位异常样本，再打开对应候选的完整对话。proposer 挂载 `conversations/` 与 `results/`。
+ 
+ **sessions：proposer 轨迹**
+ 
+-每轮独立保存完整提示输入、模型实际收到的逐次请求、原始响应、工具调用及返回、最终输出和标准错误。
++每轮只留这一份交互记录和它的结果：`conversation.jsonl` 是 CLI 的原生会话记录，第一行就是发下去的 prompt，其后是每一轮 assistant 输出、工具调用及返回，续跑读的正是它；`result.json` 是本轮的结果事件、耗时、错误，以及 token 用量、成本、轮次与 API 耗时（续跑的话按各次调用累计，metametaharness 还含续跑状态）。
+ 
+-会话原始记录只保留结构化事件：`init`、`assistant`、`user`、`tool_progress`、`result`、`api_retry`、`vcs_state_changed`、`task_started`、`task_notification`。CLI 的 `thinking_tokens` 心跳逐 token 输出，实测 68 个会话共 348 万条、158 字节一条、占会话日志行数 99.4%，不保存；思考内容本身已在 `assistant` 事件和逐次请求中完整保留。`api_retry` 必须保留，重试次数是审计信号。
++会话之外的中间态一律不留：逐次请求与上游原始响应和会话里的 `assistant`、`user` 条目重复；CLI 的 `thinking_tokens` 心跳逐 token 输出，实测占原始事件行数 99.6%（单轮 17 MB 级），而思考内容本身已经在 assistant 输出里；过大的工具输出 CLI 会落盘、会话里只留一段预览和指针，这些全文随 `tool-results/` 一起保留；shell 快照、配置备份和标准错误在轮次结束后删除。实测一轮 `conversation.jsonl` 约 1.3 MB、`result.json` 几 KB，改前是 120–136 MB。
+ 
+ **不进轨迹的内容**：轨迹只保留完整对话（`messages`），逐 token 与逐包中间态一律丢弃：上游流式分包、CLI 的 `thinking_tokens` 心跳都不保存，只留解析后的完整文本与汇总用量。每次模型调用的耗时、状态码、重试次数也不单独保存，每题合计写在表头的 `usage`、`elapsed_seconds`、`retries`、`finish_reasons` 里，异常由 `status` 与 `error` 表达。非正常结束的执行同样生成对话文件，`messages` 为空，`error` 记 stderr 或错误分类。完整输入输出不截断。
+ 
+@@ -181,8 +186,8 @@ proposer 按原工作流修改代码后直接运行 benchmark。runner 根据当
+ 
+ ### 每个进化轮次
+ 
+-1. **分析历史**：proposer 读取领域合同、Git 图、commit message、notes 和评测结果；先用各 tree 目录下的 `results/samples.jsonl` 定位异常样本（错题、截断、调用异常），再打开对应候选的完整对话，从本实验已有评测及 notes 的 commit 中选择父版本，确定一个机制改动及预期效果。
+-2. **修改候选**：从选定 parent 建立 `codex/<机制名>` 分支，按原工作流修改完整 harness，此时不创建 commit。
++1. **分析历史**：proposer 读取 Skill、Git 图、commit message、notes 和评测结果；先用各 tree 目录下的 `results/samples.jsonl` 定位异常样本（错题、截断、调用异常），再打开对应候选的完整对话，从本实验已有评测及 notes 的 commit 中选择父版本，确定一个机制改动及预期效果。不累积没有效果的改动。
++2. **修改候选**：从选定 parent 建立 `<机制名>` 分支，按原工作流修改完整 harness，此时不创建 commit。
+ 3. **评测**：proposer 在一个前台 Bash 调用中直接运行 `benchmark/run.py`。runner 记录当前候选源码的 tree hash 及实际 parent，生成训练 memory 并执行一次正式 Val，产物直接写入 tree hash 目录。评测期间 proposer 前台等待，保持源码不变。
+ 4. **分析结果**：proposer 读取分数和轨迹，分析改动是否生效、失败类别及副作用，整理结论和证据引用。
+ 5. **提交并附 notes**：按原工作流只暂存本轮改动，使用原模板创建一个 commit：`Issue` 写问题，`Modification` 写实际改动，`Results` 的 `<runner stdout scores object>` 直接取 runner 在 stdout 打印的对象——**只有三个任务的准确率、平均分和本次评测状态，四位小数**，形如 `{"USPTO": 0.2333, "Symptom2Disease": 0.83, "LawBench": 0.53, "average": 0.5311, "status": "partial"}`（实测该对象 100 字节，完整 summary 2,610 字节）；其余信息全是文件侧，留在 `runs/<tree_hash>/results/summary.json` 与逐题结果里。随后将分析 notes 附到这个 commit。评测后不再修改源码。
+@@ -208,7 +213,7 @@ system prompt 是固定三句，经 `--append-system-prompt` 追加到 Claude Co
+ 
+ ```text
+ You are an autonomous harness-evolution proposer. Complete exactly one candidate per
+-invocation by following the loaded Skill and evaluation contract. Modify only the bound
++invocation by following the loaded Skill. Modify only the bound
+ repository, finish the required result handoff, and do not start another candidate.
+ ```
+ 
+@@ -216,12 +221,12 @@ user prompt 是 `outerloop/prompt.md` 渲染 `{iteration}`、`{stage}`、`{conti
+ 
+ ```text
+ Create one evaluated candidate node. Analyze evolution history, make one mechanism-level
+-modification, run benchmark once, audit and commit based on skill and domainspecific.
++modification, run benchmark once, audit and commit by the Skill.
+ 
+ Round: {iteration}.
+ 
+-First action: Read Contract in full before any other tool call; it binds the Skill, the paths,
+-the branch prefix, the notes ref and the benchmark command.
++First action: Read /workspace/.claude/skills/meta-meta-harness/SKILL.md in full before any
++other tool call; it binds the paths, the notes ref and the benchmark command.
+ Mandatory: follow the skill workflow exactly in order; never skip, merge, replace, or reorder any step.
+ Scope: repository source only.
+ 
+@@ -231,9 +236,9 @@ Scope: repository source only.
+ 
+ `{stage}` 第 0 轮是"评测既有 baseline 并在其原 commit 上补 notes、不新建 commit"，其余轮是"跑一轮进化"；`{continuation}` 只在续跑时非空。
+ 
+-**skill 不进系统提示词**：`--setting-sources ""` 关闭设置源，`SKILL.md` 以只读方式挂载在 `/workspace/.claude/skills/meta-meta-harness/`，由 proposer 按 user prompt 的指示自己读取；实测首轮第 5、6 次工具调用依次是 `Read SKILL.md` 与 `Read benchmark/domainspecific.md`。系统提示词只约束"一次一个候选、只改绑定仓库、做完交接即停"。
++**skill 不进系统提示词**：`--setting-sources ""` 关闭设置源，`SKILL.md` 以只读方式挂载在 `/workspace/.claude/skills/meta-meta-harness/`，由 proposer 按 user prompt 的指示自己读取；实测首轮第 5、6 次工具调用依次是 `Read SKILL.md` 与 `Read benchmark/domainspecific.md`（该评测合同现已并入 `SKILL.md`，proposer 只需读 Skill）。系统提示词只约束"一次一个候选、只改绑定仓库、做完交接即停"。
+ 
+-每轮的渲染结果落盘为 `sessions/<轮次>/prompt.md` 与 `sessions/<轮次>/input-<纳秒>.json`（内容为 `prompt`、`session_id`、`resume`）；不保存 skill 快照，skill 的版本由仓库 commit 决定。
++渲染结果不单独落盘，只随会话记录保存：`conversation.jsonl` 的第一行就是本轮 prompt，`result.json` 记是否续跑、本轮 token 用量与成本；不保存 skill 快照，skill 的版本由仓库 commit 决定。
+ 
+ ### proposer 实际看到的文件
+ 
+@@ -259,8 +264,9 @@ Scope: repository source only.
+ │   │   │   ├── manifest.json            tree hash、parent、评测配置、最终 commit
+ │   │   │   ├── <任务>/
+ │   │   │   │   ├── memory.json          该版本的固定 memory
+-│   │   │   │   └── conversations/<题号>/sample-<k>.json
+-│   │   │   │                            一个执行的完整记录：表头统计 + 对话
++│   │   │   │   └── conversations/<题号>/
++│   │   │   │       ├── sample-<k>.json  一个执行的完整记录：表头统计 + 对话
++│   │   │   │       └── sample-<k>.tmp/  有 tmp 文件时保留
+ │   │   │   └── results/
+ │   │   │       ├── samples.jsonl        一行一题的索引
+ │   │   │       └── summary.json         各任务分数与汇总
+@@ -268,7 +274,9 @@ Scope: repository source only.
+ │   │   │   ├── manifest.json
+ │   │   │   ├── <任务>/
+ │   │   │   │   ├── memory.json
+-│   │   │   │   └── conversations/<题号>/sample-<k>.json
++│   │   │   │   └── conversations/<题号>/
++│   │   │   │       ├── sample-<k>.json  一个执行的完整记录：表头统计 + 对话
++│   │   │   │       └── sample-<k>.tmp/  有 tmp 文件时保留
+ │   │   │   └── results/
+ │   │   │       ├── samples.jsonl
+ │   │   │       └── summary.json
+@@ -277,14 +285,13 @@ Scope: repository source only.
+ │       ├── run.py
+ │       ├── evaluate.py
+ │       ├── answers.py
+-│       ├── domainspecific.md            评测合同
+ │       ├── runtime/                     模型接入、隔离及轨迹代码
+ │       └── data/
+ │           ├── uspto/{train,val}.jsonl
+ │           ├── symptom_diagnosis/{train,val}.jsonl
+ │           └── crime_prediction/{train,val}.jsonl
+ └── tmp/                                 可写，临时工作文件
+-    └── claude-state/                    当前 proposer 会话运行状态
++    └── claude-state/                    CLI 运行时的会话工作目录，轮次结束只留 conversation.jsonl 与 tool-results/
+ ```
+ 
+ `/workspace/runs/` 只包含当前实验，内部按完整 tree hash 分目录。允许创建本轮新 hash 目录，已有候选目录只读；本轮目录可写，供 benchmark 保存产物。写入、读取及 notes 引用始终使用同一个路径。
+@@ -309,7 +316,7 @@ MetaMetaHarness Skill 属于 proposer 的工作流，保留在 `.claude/skills/`
+ 
+ 本轮任务参数给出使用上述固定路径的完整 benchmark 命令；runner 根据当前源码确定输出目录，proposer 无需传入实验名或候选编号。proposer 直接前台执行，等待完成，再读取分数和轨迹，最后提交及附加 notes。评测使用实验固定配置；其他实验、Test 和历史 proposer sessions 保持不可见。
+ 
+-memory 准备和 solver 隔离直接沿用 MetaHarness：准备只获得当前任务的训练数据；solver 只获得当前候选的求解代码、当前任务的固定 memory、单题输入及独立工作目录。Git 仓库及演化历史不提供给 solver。
++memory 准备和 solver 隔离直接沿用 MetaHarness：准备只获得当前任务的训练数据；solver 只获得当前候选的求解代码、当前任务的固定 memory、单题输入及独立工作目录（执行结束删除，非空时整份保存在对话旁）。Git 仓库及演化历史不提供给 solver。
+ 
+ ### solver（agent）侧
+ 
+@@ -361,12 +368,13 @@ You are an agent that answers a question by retrieving examples.
+ {skill}
+ ```
+ 
+-**skill** 是 `solver/skills/answer-with-examples/SKILL.md` 全文，三行：
++**skill** 是 `solver/skills/answer-with-examples/SKILL.md` 全文，四行：
+ 
+ ```text
+ 1. Call `retrieve_examples` before answering.
+-2. Match the wording, format and level of detail of the examples' answers.
+-3. Reply as JSON: `{"reasoning": "[your reasoning]", "final_answer": "[your answer]"}`
++2. If the examples do not cover the question, search the memory under `/harness/memory` yourself.
++3. Match the wording, format and level of detail of the examples' answers.
++4. Reply as JSON: `{"reasoning": "[your reasoning]", "final_answer": "[your answer]"}`
+ ```
+ 
+ **tools** 只有一个，在 `solver/tools/retrieval.py` 里用 `@tool` 定义，`build_tools(input_text)` 装配，闭包捕获当题输入；模型看到的说明就是 docstring：
+@@ -426,6 +434,6 @@ memory 在 Val/Test 期间固定，只有准备阶段可写。
+ 
+ `README.md` 在实现时说明配置更换、首次启动、原命令续跑、进度与结果位置，以及备份和恢复。备份必须同时保存 harness 仓库的工作区、全部 Git 对象及 refs/notes、runs 和配置，恢复时使用相同的固定数据源；清理实验必须同时处理对应候选 Git 与运行记录，不能只删日志。完成至少 5 轮的实验按 workspace 约定先备份。
+ 
+-进度保持简洁：proposer 只报阶段、具体活动、耗时和候选情况；benchmark 只报当前候选和最新分数。分析写入 commit message 和 notes，原始会话和执行细节保存在 sessions 与 traces。
++进度保持简洁：proposer 只报阶段、具体活动、耗时和候选情况；benchmark 只报当前候选和最新分数。分析写入 commit message 和 notes，交互记录保存在 sessions 与 conversations。
+ 
+ 首版已直接移植原 MetaMetaHarness Skill 与模板，复用当前 MetaHarness 的 benchmark 和 baseline，并适配路径、Git 结果关联、会话恢复及显式 Test。保持先评测并分析、再 commit 和 notes 的原顺序。使用方法见 README。
+diff --git a/README.md b/README.md
+index 7a3f148..c967fa7 100644
+--- a/README.md
++++ b/README.md
+@@ -56,12 +56,15 @@ runs/<实验>/
+ ├── config.yaml                   固定配置及 baseline 来源
+ ├── <tree_hash>/
+ │   ├── manifest.json             tree、parent、配置、计时及最终 commit
+-│   ├── memories/<任务>/
+-│   ├── results/                  summary.json 为该版本汇总
+-│   └── traces/<任务>/
+-├── sessions/<轮次>/              原始会话、逐次请求、恢复状态及累计耗时
++│   ├── <任务>/memory.json        固定训练 memory
++│   ├── <任务>/conversations/     每题每次执行的完整对话，memory 生成阶段在 prepare/ 下
++│   └── results/{samples.jsonl,summary.json}
++├── sessions/<轮次>/
++│   ├── conversation.jsonl       本轮 proposer 的完整交互记录（原生会话）
++│   ├── tool-results/            过大的工具输出落盘的全文，会话里只留预览与指针
++│   └── result.json              本轮结果、token 用量与耗时
+ ├── finalized.json               显式 Test 后出现
+-└── test/<commit_hash>/           Test 源码、memory、结果、轨迹及来源
++└── test/<commit_hash>/           Test 源码、memory、结果、完整对话及来源
+ ```
+ 
+ 训练、验证和测试数据统一保存在 `benchmark/data/`；准备阶段所需的训练输入 JSON 临时生成，用完清除。分数与失败明细保留在 benchmark 结果中，分析保留在 commit message 和 `refs/notes/evolution` 中。
+diff --git a/benchmark/domainspecific.md b/benchmark/domainspecific.md
+index c2fd997..dc7bf2c 100644
+--- a/benchmark/domainspecific.md
++++ b/benchmark/domainspecific.md
+@@ -55,18 +55,24 @@ request; memory preparation: 900 s. Exceeding the question deadline is recorded
+ 
+ ## 2. Runner output
+ 
+-The runner writes one directory per evaluated source tree and prints one JSON object:
+-`status`, `rankable`, `average`, and `scores.<task>` for USPTO, Symptom2Disease and
+-LawBench, each with `accuracy`, `completion_rate` and `memory_context_chars`.
++The runner writes one directory per evaluated source tree and prints one JSON object: the
++three task accuracies, their mean and the evaluation status, each rounded to four decimals.
+ 
+-- `accuracy` is validation accuracy; a failed sample stays in the denominator and counts as
+-  wrong.
++```json
++{"USPTO": 0.2333, "Symptom2Disease": 0.83, "LawBench": 0.53, "average": 0.5311, "status": "partial"}
++```
++
++- Each task value is that task's validation accuracy; a failed sample stays in the
++  denominator and counts as wrong.
+ - `average` = arithmetic mean of the three task accuracies; use it as the aggregate
+   comparison score.
+-- `memory_context_chars` = per-task mean character count of the text returned by solver
+-  tools.
+-- Only a complete three-task run counts: `rankable` is false for a partial run or a run
+-  restricted with `--limit`.
++- `status` is `ok` when every sample of all three tasks ran, `partial` when only some ran,
++  and `error` when none did.
++- Only a complete three-task run counts as a result to compare: `rankable` is false for a
++  partial run or a run restricted with `--limit`.
++- Everything else the runner computes — `rankable`, per-task `completion_rate` and
++  `successful_accuracy`, `memory_context_chars`, error counts — is written to
++  `results/summary.json` on disk and is not printed.
+ 
+ ### 2.1 Mandatory benchmark invocation
+ 
+@@ -90,17 +96,25 @@ Per evaluation, under the run evidence directory from the run binding:
+ 
+ ```text
+ <run-dir>/<source-tree>/
+-├── manifest.json                 # evaluated tree, actual parent, config, timing
+-├── memories/<task>/memory.json   # frozen training memory for this source
+-├── results/summary.json          # complete runner result
+-├── results/<task>/summary.json   # task score, completion and error counts
+-└── traces/<task>/attempt-N/val/<index>/sample-0/
+-    ├── result.json               # one row per executed sample
+-    └── execution-*/              # requests, responses, tool events, workspace
++├── manifest.json                     # evaluated tree, actual parent, config, timing
++├── <task>/memory.json                # frozen training memory for this source
++├── <task>/conversations/<index>/
++│   ├── sample-<k>.json               # one execution: header statistics, messages, side_calls
++│   └── sample-<k>.tmp/               # what the harness left in /workspace, only when non-empty
++├── <task>/conversations/prepare/     # memory preparation conversations
++└── results/
++    ├── samples.jsonl                 # one line per sample, built from the conversation headers
++    └── summary.json                  # complete runner result
+ ```
+ 
+-Each sample row carries `status`, `was_correct`, `prediction`, `target`, `usage`
+-(`model_calls`, `input_tokens`, `output_tokens`), `tool_calls` and `trace_dir`.
++Read `results/samples.jsonl` first: one line per sample with `task`, `tree_hash`, `split`,
++`example_index`, `sample_index`, `status`, `error`, `was_correct`, `prediction`, `target`,
++`metric`, `usage` (`model_calls`, `input_tokens`, `output_tokens`), `elapsed_seconds`,
++`memory_context_chars`, `tool_calls`, `finish_reasons`, `truncated`, `repair_turns` and
++`retries`. The matching conversation file holds the main line in `messages` and any
++independent conversations in `side_calls`; a writable workspace the harness left files in
++is kept beside it as `sample-<k>.tmp/`. It is the only trace, there is no per-call or
++per-token record.
+ 
+ The evidence root is `/workspace/runs`; each evaluation lives in
+ `/workspace/runs/<source-tree>/`. Keep the source unchanged during and after evaluation.
+diff --git a/benchmark/evaluate.py b/benchmark/evaluate.py
+index 216e1f0..f82fa0b 100644
+--- a/benchmark/evaluate.py
++++ b/benchmark/evaluate.py
+@@ -40,11 +40,14 @@ def score(task: str, example: dict, response: str, status: str):
+ 
+ 
+ def summarize(rows: list[dict], examples: int):
++    def metric(row):
++        return row.get("metric") or {}
++
+     correct = sum(row["was_correct"] for row in rows)
+-    f1_values = [row["metrics"]["f1"] for row in rows if "f1" in row["metrics"]]
+-    tp = sum(row["metrics"].get("tp", 0) for row in rows)
+-    fp = sum(row["metrics"].get("fp", 0) for row in rows)
+-    fn = sum(row["metrics"].get("fn", 0) for row in rows)
++    f1_values = [metric(row)["f1"] for row in rows if "f1" in metric(row)]
++    tp = sum(metric(row).get("tp", 0) for row in rows)
++    fp = sum(metric(row).get("fp", 0) for row in rows)
++    fn = sum(metric(row).get("fn", 0) for row in rows)
+     return {
+         "accuracy": correct / len(rows) if rows else 0.0,
+         "correct": correct,
+@@ -57,4 +60,6 @@ def summarize(rows: list[dict], examples: int):
+         "model_calls": sum(row["usage"]["model_calls"] for row in rows),
+         "input_tokens": sum(row["usage"]["input_tokens"] for row in rows),
+         "output_tokens": sum(row["usage"]["output_tokens"] for row in rows),
++        "cached_tokens": sum(row["usage"].get("cached_tokens", 0) for row in rows),
++        "cache_write_tokens": sum(row["usage"].get("cache_write_tokens", 0) for row in rows),
+     }
+diff --git a/benchmark/run.py b/benchmark/run.py
+index 4bd4961..a849ee0 100644
+--- a/benchmark/run.py
++++ b/benchmark/run.py
+@@ -5,7 +5,6 @@ from collections import Counter
+ from concurrent.futures import ThreadPoolExecutor, as_completed
+ import json
+ from pathlib import Path
+-import shutil
+ import sys
+ import time
+ 
+@@ -16,56 +15,27 @@ from benchmark.evaluate import load_task, score, summarize
+ from benchmark.runtime.errors import EvaluationError, classify_error
+ from benchmark.runtime.gateway import Gateway
+ from benchmark.runtime.runs import (
+-    PROJECT, open_candidate, open_experiment, output_directory, prepare_task, read_json,
+-    solve_question, write_json, load_config, load_credentials, source_tree, git, directory_hash,
++    PROJECT, frozen_memory, git, load_config, load_credentials, memory_path, open_candidate,
++    open_experiment, output_directory, prepare_attempts, prepare_task, read_conversations,
++    read_json, read_summary, rebuild_index, solve_question, source_tree, write_conversation,
++    write_json, write_summary,
+ )
+ from benchmark.runtime import sandbox
+ 
+ 
+-def evaluate_one(root, manifest, task, split, memory, trace, index, sample, example, gateway):
+-    directory = trace / f"{index:04d}" / f"sample-{sample}"
+-    result_path = directory / "result.json"
+-    if result_path.exists():
+-        row = read_json(result_path)
+-        if row["status"] == "ok":
+-            return row
+-    execution = directory / f"execution-{time.time_ns()}"
+-    try:
+-        row = solve_question(manifest, memory, execution, example["input"], gateway)
+-        if row["status"] == "ok":
+-            row.update(score(task, example, row["response"], row["status"]))
+-    except Exception as error:
+-        row = {
+-            "status": "error", "input": example["input"], "response": "",
+-            "error": classify_error(error, patterns=manifest["config"]["solver"].get("error_patterns")),
+-            "usage": {"model_calls": 0, "input_tokens": 0, "output_tokens": 0},
+-        }
+-    row.update({
+-        "task": task, "split": split, "example_index": index, "sample_index": sample,
+-        "trace_dir": str(execution.relative_to(root)),
++def evaluate_one(root, manifest, task, split, memory, index, sample, example, gateway):
++    """Run one sample and write its conversation; failed samples are recorded the same way."""
++    header, response = solve_question(
++        root, manifest, task, split, index, sample, memory, example["input"], gateway,
++    )
++    graded = score(task, example, response, header["status"])
++    header.update({
++        "was_correct": graded["was_correct"],
++        "prediction": graded["prediction"],
++        "target": graded["target"],
++        "metric": graded["metrics"],
+     })
+-    write_json(result_path, row)
+-    return row
+-
+-
+-def cached_predictions(root, task_trace, split, patterns):
+-    rows = {}
+-    attempts = sorted(task_trace.glob("attempt-*"), key=lambda path: int(path.name.split("-")[1]))
+-    for attempt in attempts:
+-        for path in (attempt / split).glob("*/sample-*/result.json"):
+-            row = read_json(path)
+-            key = (row["example_index"], row["sample_index"])
+-            if row["status"] != "ok" and not row.get("error"):
+-                stderr = root / row["trace_dir"] / "stderr.txt"
+-                message = "Previous solver execution failed"
+-                if stderr.exists():
+-                    with stderr.open("rb") as handle:
+-                        handle.seek(max(0, stderr.stat().st_size - 4096))
+-                        message = handle.read().decode(errors="replace") or message
+-                row["error"] = classify_error(message, patterns=patterns)
+-            if key not in rows or rows[key]["status"] != "ok" or row["status"] == "ok":
+-                rows[key] = row
+-    return rows, int(attempts[-1].name.split("-")[1]) if attempts else 0
++    return write_conversation(root, manifest, task, index, sample, header, split)
+ 
+ 
+ def task_summary(rows, examples, samples, limited, preparation_error=None):
+@@ -99,64 +69,43 @@ def task_summary(rows, examples, samples, limited, preparation_error=None):
+     return summary
+ 
+ 
+-def evaluate_task(root, manifest, task, split, gateway, question_pool, limit=None, prepare_only=False):
++def evaluate_task(root, manifest, task, split, gateway, question_pool, limit=None, prepare_only=False, saved=None):
+     config = manifest["config"]
+-    output_root = output_directory(root, manifest, split)
+-    result_root = output_root / "results" / task
+-    result_root.mkdir(parents=True, exist_ok=True)
+-    summary_path = result_root / "summary.json"
+-    spec = {"limit": limit, "samples": config["evaluation"][f"{split}_samples"]}
+-    spec_path = result_root / "spec.json"
+-    if spec_path.exists() and read_json(spec_path) != spec:
+-        raise ValueError("Evaluation size changed; use a new experiment")
+-    write_json(spec_path, spec)
+-    if summary_path.exists() and not prepare_only:
+-        saved = read_json(summary_path)
+-        if saved.get("rankable"):
+-            return saved
+-    state_path = result_root / "attempt.json"
+-    task_trace = output_root / "traces" / task
+-    task_trace.mkdir(parents=True, exist_ok=True)
++    if saved and saved.get("rankable") and not prepare_only:
++        return saved
+     examples = load_task(task, config, split)
+-    if split == "test":
+-        source = root / manifest["tree"] / "memories" / task
+-        val_summary = root / manifest["tree"] / "results" / task / "summary.json"
+-        if not val_summary.exists() or read_json(val_summary)["status"] != "ok":
+-            raise ValueError("Test requires the saved memory and successful Val result")
+-        memory = output_root / "memories" / task
+-        memory_id = read_json(val_summary.parent / "memory_manifest.json")["memory_id"]
+-        if directory_hash(source) != memory_id:
+-            raise ValueError("Frozen Val memory changed")
+-        if not memory.exists():
+-            shutil.copytree(source, memory)
+-        if directory_hash(memory) != memory_id:
+-            raise ValueError("Frozen Test memory changed")
++    samples = config["evaluation"][f"{split}_samples"]
+     full_count = len(examples)
+     if limit is not None:
+         examples = examples[:limit]
+-    work = {(index, sample): example for index, example in enumerate(examples) for sample in range(spec["samples"])}
+-    rows, attempt = cached_predictions(root, task_trace, split, config["solver"].get("error_patterns"))
+-    rows = {key: row for key, row in rows.items() if key in work}
++    work = {
++        (index, sample): example
++        for index, example in enumerate(examples) for sample in range(samples)
++    }
++    attempt = len(prepare_attempts(root, manifest, task, split))
++    memory = None
++    if prepare_only:
++        if split == "val":
++            memory = prepare_task(root, manifest, task, gateway, split)
++        return {"status": "prepared", "memory": str(memory) if memory else ""}
++    rows = {key: row for key, row in read_conversations(root, manifest, task, split).items() if key in work}
+     reused = sum(row["status"] == "ok" for row in rows.values())
+     pending = [key for key in work if key not in rows or rows[key]["status"] != "ok"]
+     attempts = config["runtime"].get("sample_attempts", config["runtime"].get("task_attempts", 2))
+     preparation_error = None
+     for _ in range(attempts):
+-        if not pending and not prepare_only:
++        if not pending:
+             break
+         attempt += 1
+-        write_json(state_path, {"attempt": attempt, "status": "running"})
+-        trace = task_trace / f"attempt-{attempt}"
+-        trace.mkdir(parents=True, exist_ok=True)
+         try:
+-            if split == "val":
+-                memory = prepare_task(root, manifest, task, gateway, trace / "prepare")
++            memory = (
++                prepare_task(root, manifest, task, gateway, split) if split == "val"
++                else frozen_memory(root, manifest, task)
++            )
+             preparation_error = None
+-            if prepare_only:
+-                return {"status": "prepared", "memory": str(memory)}
+             futures = [
+                 question_pool.submit(
+-                    evaluate_one, root, manifest, task, split, memory, trace / split,
++                    evaluate_one, root, manifest, task, split, memory,
+                     index, sample, work[(index, sample)], gateway,
+                 )
+                 for index, sample in pending
+@@ -172,28 +121,20 @@ def evaluate_task(root, manifest, task, split, gateway, question_pool, limit=Non
+             except BaseException:
+                 for future in futures:
+                     future.cancel()
++                sandbox.stop_all()
+                 raise
+-            predictions = [rows[key] for key in sorted(rows)]
+-            with (trace / "predictions.jsonl").open("w") as handle:
+-                for row in predictions:
+-                    handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+             pending = [key for key in pending if rows[key]["status"] != "ok" and rows[key]["error"]["retryable"]]
+         except Exception as error:
+             preparation_error = error.error if isinstance(error, EvaluationError) else classify_error(
+                 error, patterns=config["solver"].get("error_patterns"),
+             )
+-            write_json(trace / "error.json", {"attempt": attempt, "error": preparation_error})
++            sandbox.STOPPING.clear()
+             if not preparation_error["retryable"]:
+                 break
+     predictions = [rows[key] for key in sorted(rows)]
+-    predictions_path = task_trace / "predictions.jsonl"
+-    with predictions_path.open("w") as handle:
+-        for row in predictions:
+-            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+-    summary = task_summary(predictions, len(examples), spec["samples"], len(examples) < full_count, preparation_error)
+-    summary.update({"attempt": attempt, "reused_samples": reused, "predictions": str(predictions_path.relative_to(root))})
+-    write_json(summary_path, summary)
+-    write_json(state_path, {"attempt": attempt, "status": summary["status"], "error_counts": summary["error_counts"]})
++    summary = task_summary(predictions, len(examples), samples, len(examples) < full_count, preparation_error)
++    summary.update({"attempt": attempt, "reused_samples": reused})
++    rebuild_index(root, manifest, split)
+     return summary
+ 
+ 
+@@ -204,29 +145,31 @@ def evaluate_candidate(root, config, candidate, split="val", tasks=None, limit=N
+         raise ValueError("Use outerloop/meta_meta_harness.py --test-commits for Test")
+     manifest = manifest or open_candidate(root, config, candidate)
+     output_root = output_directory(root, manifest, split)
+-    summary_path = output_root / "results" / "summary.json"
+-    if summary_path.exists() and not prepare_only:
+-        saved = read_json(summary_path)
+-        if saved.get("rankable") or (split == "val" and manifest.get("commit")):
+-            return saved
++    spec = {"limit": limit, "samples": config["evaluation"][f"{split}_samples"]}
++    saved = read_summary(root, manifest, split) or {}
++    if saved and saved.get("spec") != spec:
++        raise ValueError("Evaluation size changed; use a new experiment")
++    if saved and not prepare_only and (saved.get("rankable") or (split == "val" and manifest.get("commit"))):
++        return saved
+     manifest_path = output_root / "manifest.json"
+     record = read_json(manifest_path)
+     record["evaluation"] = {"started_at": time.time(), "finished_at": None}
+     write_json(manifest_path, record)
+     head = git(candidate, "rev-parse", "HEAD") if split == "val" else None
+     try:
+-        result = _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_only)
++        result = _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_only, saved)
+         if split == "val" and (source_tree(candidate) != manifest["tree"] or git(candidate, "rev-parse", "HEAD") != head):
+             raise ValueError("Harness source or HEAD changed during evaluation")
+         if not prepare_only:
+-            write_json(summary_path, result)
++            result["spec"] = spec
++            write_summary(root, manifest, result, split)
+         return result
+     finally:
+         record["evaluation"]["finished_at"] = time.time()
+         write_json(manifest_path, record)
+ 
+ 
+-def _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_only):
++def _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_only, saved):
+     tasks = tasks or config["dataset"]["tasks"]
+     if any(task not in config["dataset"]["tasks"] for task in tasks):
+         raise ValueError("Task is not enabled in the experiment configuration")
+@@ -236,7 +179,10 @@ def _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_onl
+         with ThreadPoolExecutor(max_workers=config["runtime"]["parallel_questions"]) as question_pool:
+             with ThreadPoolExecutor(max_workers=len(tasks)) as task_pool:
+                 futures = {
+-                    task: task_pool.submit(evaluate_task, root, manifest, task, split, gateway, question_pool, limit, prepare_only)
++                    task: task_pool.submit(
++                        evaluate_task, root, manifest, task, split, gateway, question_pool,
++                        limit, prepare_only, saved.get("scores", {}).get(task),
++                    )
+                     for task in tasks
+                 }
+                 try:
+@@ -269,8 +215,8 @@ def _evaluate_candidate(root, config, manifest, split, tasks, limit, prepare_onl
+     for task, row in scores.items():
+         accuracy = row.get("successful_accuracy")
+         local = f"{accuracy:.2%}" if accuracy is not None else "无"
+-        score = row.get("accuracy")
+-        graded = f"{score:.2%}" if score is not None else "无"
++        score_value = row.get("accuracy")
++        graded = f"{score_value:.2%}" if score_value is not None else "无"
+         print(f"  {task}: 成功={row.get('successful_samples', row.get('total', 0))}/{row.get('expected_samples', row.get('total', 0))} 计分准确率={graded} 成功题准确率={local} 错误={row.get('error_counts', {})}", flush=True)
+     return result
+ 
+@@ -319,11 +265,14 @@ def main():
+             parser.error("solve requires one task and an input file")
+         manifest = open_candidate(root, config, candidate)
+         task = args.tasks[0]
+-        trace = root / manifest["tree"] / "traces" / task / "solve" / str(time.time_ns())
++        memory = memory_path(root, manifest, task)
++        if not memory.exists():
++            parser.error("no frozen memory for this tree and task; run prepare first")
+         with Gateway(config["solver"], config["runtime"]["model_concurrency"]) as gateway:
+-            memory = root / manifest["tree"] / "memories" / task
+-            result = solve_question(manifest, memory, trace, args.input_file.read_text(), gateway)
+-            write_json(trace / "result.json", result)
++            header, _ = solve_question(
++                root, manifest, task, "val", 0, 0, memory, args.input_file.read_text(), gateway,
++            )
++            result = write_conversation(root, manifest, task, 0, 0, header)
+     else:
+         result = evaluate_candidate(
+             root, config, candidate, args.split, args.tasks, args.limit, args.command == "prepare",
+diff --git a/benchmark/runtime/gateway.py b/benchmark/runtime/gateway.py
+index cc2ee1f..01cfb64 100644
+--- a/benchmark/runtime/gateway.py
++++ b/benchmark/runtime/gateway.py
+@@ -5,7 +5,6 @@ from datetime import datetime, timezone
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ import json
+ import os
+-from pathlib import Path
+ import threading
+ import time
+ import uuid
+@@ -49,16 +48,37 @@ def merge_chunk(response, chunk):
+                     call["function"][key] += value
+ 
+ 
++def cache_tokens(usage):
++    """Cache-hit and cache-write input tokens, across the provider spellings."""
++    details = usage.get("prompt_tokens_details") or {}
++    hits = (
++        details.get("cached_tokens")
++        or usage.get("prompt_cache_hit_tokens")
++        or usage.get("cache_read_input_tokens")
++        or 0
++    )
++    writes = (
++        details.get("cache_creation_tokens")
++        or details.get("cache_creation_input_tokens")
++        or usage.get("prompt_cache_miss_tokens")
++        or usage.get("cache_creation_input_tokens")
++        or 0
++    )
++    return int(hits or 0), int(writes or 0)
++
++
+ @dataclass
+ class Job:
+-    directory: Path
+     deadline: float
+     max_calls: int
+     calls: int = 0
+     input_tokens: int = 0
+     output_tokens: int = 0
++    cached_tokens: int = 0
++    cache_write_tokens: int = 0
+     closed: bool = False
+     error: dict | None = None
++    rows: list = field(default_factory=list)
+     lock: threading.Lock = field(default_factory=threading.Lock)
+ 
+     def reserve(self):
+@@ -73,13 +93,16 @@ class Job:
+             return self.calls
+ 
+     def record(self, row):
++        """Keep the call in memory; the conversation file is written once, at the end."""
+         with self.lock:
+             usage = row.get("response", {}).get("usage") or {}
+             self.input_tokens += usage.get("prompt_tokens", 0) or 0
+             self.output_tokens += usage.get("completion_tokens", 0) or 0
++            hits, writes = cache_tokens(usage)
++            self.cached_tokens += hits
++            self.cache_write_tokens += writes
+             self.error = row.get("error")
+-            with (self.directory / "model_calls.jsonl").open("a") as handle:
+-                handle.write(json.dumps(row, ensure_ascii=False) + "\n")
++            self.rows.append(row)
+ 
+     def finish(self):
+         with self.lock:
+@@ -88,6 +111,8 @@ class Job:
+                 "model_calls": self.calls,
+                 "input_tokens": self.input_tokens,
+                 "output_tokens": self.output_tokens,
++                "cached_tokens": self.cached_tokens,
++                "cache_write_tokens": self.cache_write_tokens,
+             }
+ 
+ 
+@@ -152,7 +177,6 @@ class Gateway:
+                             call_id = job.reserve()
+                         attempt_started = time.monotonic()
+                         response = {}
+-                        raw_response = ""
+                         chunks = []
+                         first_chunk_seconds = None
+                         try:
+@@ -169,7 +193,6 @@ class Gateway:
+                                 status = upstream.status_code
+                                 if status >= 400:
+                                     upstream.read()
+-                                    raw_response = upstream.text
+                                     try:
+                                         response = upstream.json()
+                                     except ValueError:
+@@ -201,8 +224,6 @@ class Gateway:
+                             response = {"error": {"message": str(error), "type": type(error).__name__}}
+                             retryable = True
+                         finally:
+-                            if chunks:
+-                                raw_response = "\n\n".join(chunks)
+                             failure = classify_error(
+                                 response.get("error", {"message": f"HTTP {status}"}),
+                                 status, gateway.solver.get("error_patterns"),
+@@ -214,8 +235,7 @@ class Gateway:
+                                 "first_chunk_seconds": first_chunk_seconds,
+                                 "stream_chunks": len(chunks),
+                                 "status_code": status, "request": payload,
+-                                "response": response, "raw_response": raw_response,
+-                                "error": failure,
++                                "response": response, "error": failure,
+                             })
+                         if not retryable or attempt == attempts - 1:
+                             break
+@@ -243,10 +263,9 @@ class Gateway:
+         self.thread.join()
+         self.client.close()
+ 
+-    def register(self, directory: Path, timeout_seconds=None, max_calls=None):
++    def register(self, timeout_seconds=None, max_calls=None):
+         token = uuid.uuid4().hex
+         job = Job(
+-            directory=directory,
+             deadline=time.monotonic() + (timeout_seconds or self.solver["timeout_seconds"]),
+             max_calls=self.solver["max_model_calls"] if max_calls is None else max_calls,
+         )
+diff --git a/benchmark/runtime/runs.py b/benchmark/runtime/runs.py
+index ef98fdd..6e19116 100644
+--- a/benchmark/runtime/runs.py
++++ b/benchmark/runtime/runs.py
+@@ -1,4 +1,4 @@
+-"""Experiment files, frozen candidates, task memories, and solver traces."""
++"""Experiment files, evaluated source trees, task memories, and solver conversations."""
+ 
+ from datetime import datetime, timezone
+ import hashlib
+@@ -13,7 +13,7 @@ import time
+ import yaml
+ 
+ from benchmark.evaluate import load_task
+-from . import sandbox
++from . import conversation, sandbox
+ from .errors import EvaluationError, classify_error
+ 
+ PROJECT = Path(__file__).resolve().parents[2]
+@@ -42,6 +42,10 @@ def directory_hash(directory):
+     return digest.hexdigest()
+ 
+ 
++def file_hash(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
+ def load_config(path):
+     return yaml.safe_load(Path(path).read_text())
+ 
+@@ -112,103 +116,213 @@ def output_directory(root, manifest, split):
+     return root / manifest["tree"] if split == "val" else root / "test" / manifest["commit"]
+ 
+ 
+-def prepare_task(root, manifest, task, gateway, trace):
+-    candidate_root = root / manifest["tree"]
+-    memory = candidate_root / "memories" / task
+-    ready = candidate_root / "results" / task / "memory_manifest.json"
+-    if ready.exists():
+-        if directory_hash(memory) != read_json(ready)["memory_id"]:
+-            raise ValueError("Frozen memory changed")
+-        return memory
+-    trace = trace / f"execution-{time.time_ns()}"
+-    trace.mkdir(parents=True, exist_ok=True)
+-    output = trace / "memory"
+-    output.mkdir(exist_ok=True)
++def task_root(root, manifest, task, split="val"):
++    return output_directory(root, manifest, split) / task
++
++
++def memory_path(root, manifest, task, split="val"):
++    return task_root(root, manifest, task, split) / "memory.json"
++
++
++def conversation_path(root, manifest, task, index, sample, split="val"):
++    """``index`` is the example index; ``None`` names the memory-preparation conversation."""
++    directory = "prepare" if index is None else f"{index:04d}"
++    return task_root(root, manifest, task, split) / "conversations" / directory / f"sample-{sample}.json"
++
++
++def workspace_path(root, manifest, task, index, sample, split="val"):
++    """The kept workspace of one execution, next to its conversation file."""
++    path = conversation_path(root, manifest, task, index, sample, split)
++    return path.parent / f"sample-{sample}.tmp"
++
++
++def read_conversations(root, manifest, task, split="val"):
++    """The sample conversations of one task, keyed by (example, sample)."""
++    rows = {}
++    directory = task_root(root, manifest, task, split) / "conversations"
++    for path in sorted(directory.glob("*/sample-*.json")):
++        if path.parent.name == "prepare":
++            continue
++        row = read_json(path)
++        rows[(row["example_index"], row["sample_index"])] = row
++    return rows
++
++
++def prepare_attempts(root, manifest, task, split="val"):
++    directory = task_root(root, manifest, task, split) / "conversations" / "prepare"
++    return sorted(directory.glob("sample-*.json"))
++
++
++def write_conversation(root, manifest, task, index, sample, header, split="val"):
++    write_json(conversation_path(root, manifest, task, index, sample, split), header)
++    return header
++
++
++def rebuild_index(root, manifest, split="val"):
++    """`results/samples.jsonl` is derived: one line per sample, from the conversation headers."""
++    output = output_directory(root, manifest, split)
++    path = output / "results" / "samples.jsonl"
++    lines = []
++    for task_dir in sorted(source for source in output.glob("*") if source.is_dir()):
++        for file in sorted(task_dir.glob("conversations/*/sample-*.json")):
++            if file.parent.name == "prepare":
++                continue
++            row = read_json(file)
++            row.pop("messages", None)
++            row.pop("side_calls", None)
++            lines.append(json.dumps(row, ensure_ascii=False))
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_text("".join(line + "\n" for line in lines))
++    return path
++
++
++def read_summary(root, manifest, split="val"):
++    path = output_directory(root, manifest, split) / "results" / "summary.json"
++    return read_json(path) if path.exists() else None
++
++
++def write_summary(root, manifest, result, split="val"):
++    path = output_directory(root, manifest, split) / "results" / "summary.json"
++    write_json(path, result)
++    return path
++
++
++def prepare_task(root, manifest, task, gateway, split="val"):
++    """Generate the frozen memory for one task of one tree, recording its conversation."""
+     config = manifest["config"]
+-    timeout = config["runtime"]["prepare_timeout_seconds"]
+-    token, job = gateway.register(trace, timeout_seconds=timeout, max_calls=0)
+-    request = {
+-        "solver": config["solver"], "gateway_url": gateway.url, "gateway_token": token,
+-    }
+-    request_path = trace / "model.json"
+-    write_json(request_path, request)
++    memory = memory_path(root, manifest, task, split)
++    if memory.exists():
++        return memory
++    working = Path(tempfile.mkdtemp(prefix="metametaharness-memory-"))
+     try:
+-        with tempfile.TemporaryDirectory(prefix="harness-train-") as temporary:
+-            train = Path(temporary) / "train.json"
+-            write_json(train, load_task(task, config, "train"))
+-            train_id = hashlib.sha256(train.read_bytes()).hexdigest()
++        train_path = working / "train.json"
++        write_json(train_path, load_task(task, config, "train"))
++        output = working / "memory"
++        output.mkdir()
++        request_path = working / "model.json"
++        timeout = config["runtime"]["prepare_timeout_seconds"]
++        token, job = gateway.register(timeout_seconds=timeout, max_calls=0)
++        write_json(request_path, {
++            "solver": config["solver"], "gateway_url": gateway.url, "gateway_token": token,
++        })
++        started = time.monotonic()
++        try:
+             result = sandbox.prepare(
+-                Path(manifest["candidate_path"]), train, output,
++                Path(manifest["candidate_path"]), train_path, output,
+                 config["dataset"]["num_epochs"], timeout, request_path,
+             )
++        finally:
++            usage = job.finish()
++        produced = output / "memory.json"
++        status = result["status"]
++        error = None
++        if status != "ok" or not produced.exists():
++            error = job.error or classify_error(
++                "Memory preparation timeout" if status == "timeout" else result["stderr"] or "memory.json was not produced",
++                patterns=config["solver"].get("error_patterns"),
++            )
++            status = "error" if status == "ok" else status
++        folded = conversation.assemble(job.rows)
++        write_conversation(root, manifest, task, None, len(prepare_attempts(root, manifest, task, split)), {
++            "task": task, "tree_hash": manifest["tree"], "split": split,
++            "example_index": None, "sample_index": 0,
++            "status": status, "error": error,
++            "usage": usage, "elapsed_seconds": time.monotonic() - started,
++            "memory_chars": produced.stat().st_size if produced.exists() else 0,
++            "messages": folded["messages"], "side_calls": folded["side_calls"],
++            "finish_reasons": folded["finish_reasons"], "truncated": folded["truncated"],
++            "repair_turns": folded["repair_turns"], "retries": folded["retries"],
++        }, split)
++        if status != "ok":
++            raise EvaluationError(error)
++        memory.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(produced, memory)
++        return memory
+     finally:
+-        write_json(trace / "usage.json", job.finish())
+-    (trace / "stdout.txt").write_text(result["stdout"])
+-    (trace / "stderr.txt").write_text(result["stderr"])
+-    if result["status"] != "ok" or not (output / "memory.json").exists():
+-        error = job.error or classify_error(
+-            "Memory preparation timeout" if result["status"] == "timeout" else result["stderr"] or "memory.json was not produced",
+-            patterns=config["solver"].get("error_patterns"),
+-        )
+-        write_json(trace / "result.json", {"status": result["status"], "error": error})
+-        raise EvaluationError(error)
+-    write_json(trace / "result.json", {"status": "ok"})
+-    shutil.copytree(output, memory, dirs_exist_ok=True)
+-    write_json(ready, {
+-        "candidate_id": manifest["candidate_id"], "task": task,
+-        "memory_id": directory_hash(memory),
+-        "train_id": train_id,
+-        "epochs": config["dataset"]["num_epochs"],
+-    })
++        shutil.rmtree(working, ignore_errors=True)
++
++
++def frozen_memory(root, manifest, task):
++    """Test reuses the Val memory of the same frozen tree, verified byte for byte."""
++    source = memory_path(root, manifest, task, "val")
++    if not source.exists():
++        raise ValueError("Test requires the saved Val memory")
++    memory = memory_path(root, manifest, task, "test")
++    if memory.exists() and file_hash(memory) != file_hash(source):
++        raise ValueError("Frozen Test memory changed")
++    if not memory.exists():
++        memory.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(source, memory)
++    if file_hash(memory) != file_hash(source):
++        raise ValueError("Frozen Test memory changed")
+     return memory
+ 
+ 
+-def solve_question(manifest, memory, sample_directory, input_text, gateway):
+-    sample_directory.mkdir(parents=True, exist_ok=True)
+-    workspace = sample_directory / "workspace"
+-    workspace.mkdir(exist_ok=True)
+-    token, job = gateway.register(sample_directory)
+-    started = time.monotonic()
++def solve_question(root, manifest, task, split, index, sample, memory, input_text, gateway):
++    """Run one sample in isolation and return its conversation header and raw response."""
++    working = Path(tempfile.mkdtemp(prefix="metametaharness-sample-"))
+     try:
+-        result = sandbox.solve(
+-            Path(manifest["candidate_path"]), memory, workspace,
+-            {
+-                "input": input_text, "solver": manifest["config"]["solver"],
+-                "gateway_url": gateway.url, "gateway_token": token,
+-            },
+-        )
+-    finally:
+-        usage = job.finish()
+-    stdout = result.pop("stdout")
+-    (sample_directory / "events.jsonl").write_text(stdout)
+-    stderr = result.pop("stderr")
+-    (sample_directory / "stderr.txt").write_text(stderr)
+-    response = None
+-    tool_calls = []
+-    context_chars = 0
+-    for line in stdout.splitlines():
++        workspace = working / "workspace"
++        workspace.mkdir()
++        token, job = gateway.register()
++        started = time.monotonic()
+         try:
+-            event = json.loads(line)
+-        except json.JSONDecodeError:
+-            continue
+-        if event.get("event") == "final":
+-            response = event["response"]
+-        elif event.get("event") == "tool_start":
+-            tool_calls.append(event["name"])
+-        elif event.get("event") == "tool_end":
+-            output = event["output"]
+-            context_chars += len(str(output.get("content", ""))) if isinstance(output, dict) else len(str(output))
+-    if response is None and result["status"] == "ok":
+-        result["status"] = "error"
+-    if result["status"] != "ok":
+-        result["error"] = job.error or classify_error(
+-            "Solver timeout" if result["status"] == "timeout" else stderr or "Solver returned no final answer",
+-            patterns=manifest["config"]["solver"].get("error_patterns"),
++            try:
++                result = sandbox.solve(
++                    Path(manifest["candidate_path"]), memory, workspace,
++                    {
++                        "input": input_text, "solver": manifest["config"]["solver"],
++                        "gateway_url": gateway.url, "gateway_token": token,
++                    },
++                )
++            except Exception as error:
++                # 单题执行异常同样留下对话文件，由重试逻辑决定是否补跑
++                result = {
++                    "status": "error",
++                    "error": classify_error(error, patterns=manifest["config"]["solver"].get("error_patterns")),
++                }
++        finally:
++            usage = job.finish()
++        stdout = result.pop("stdout", "")
++        stderr = result.pop("stderr", "")
++        response = None
++        tool_calls = []
++        context_chars = 0
++        for line in stdout.splitlines():
++            try:
++                event = json.loads(line)
++            except json.JSONDecodeError:
++                continue
++            if event.get("event") == "final":
++                response = event["response"]
++            elif event.get("event") == "tool_start":
++                tool_calls.append(event["name"])
++            elif event.get("event") == "tool_end":
++                output = event["output"]
++                context_chars += len(str(output.get("content", ""))) if isinstance(output, dict) else len(str(output))
++        if response is None and result["status"] == "ok":
++            result["status"] = "error"
++        if result["status"] != "ok":
++            result["error"] = result.get("error") or job.error or classify_error(
++                "Solver timeout" if result["status"] == "timeout" else stderr or "Solver returned no final answer",
++                patterns=manifest["config"]["solver"].get("error_patterns"),
++            )
++        folded = conversation.assemble(job.rows)
++        conversation.save_workspace(
++            workspace, workspace_path(root, manifest, task, index, sample, split),
+         )
+-    result.update({
+-        "input": input_text, "response": response or "", "usage": usage,
+-        "tool_calls": tool_calls, "memory_context_chars": context_chars,
+-        "elapsed_seconds": time.monotonic() - started,
+-        "candidate_id": manifest["candidate_id"], "memory_id": directory_hash(memory),
+-    })
+-    return result
++        header = {
++            "task": task, "tree_hash": manifest["tree"], "split": split,
++            "example_index": index, "sample_index": sample,
++            "status": result["status"], "error": result.get("error"),
++            "was_correct": False, "prediction": "", "target": "", "metric": {},
++            "usage": usage, "elapsed_seconds": time.monotonic() - started,
++            "memory_context_chars": context_chars,
++            "tool_calls": tool_calls,
++            "finish_reasons": folded["finish_reasons"], "truncated": folded["truncated"],
++            "repair_turns": folded["repair_turns"], "retries": folded["retries"],
++            "messages": folded["messages"], "side_calls": folded["side_calls"],
++        }
++        return header, response or ""
++    finally:
++        shutil.rmtree(working, ignore_errors=True)
+diff --git a/benchmark/runtime/sandbox.py b/benchmark/runtime/sandbox.py
+index 1c74b32..181f519 100644
+--- a/benchmark/runtime/sandbox.py
++++ b/benchmark/runtime/sandbox.py
+@@ -3,6 +3,7 @@
+ import json
+ import os
+ from pathlib import Path
++import shutil
+ import signal
+ import subprocess
+ import sys
+@@ -104,12 +105,49 @@ def prepare(candidate: Path, train: Path, output: Path, epochs: int, timeout: in
+     return execute(command, timeout)
+ 
+ 
++def link_or_copy(source, target):
++    """Hard-link when the two paths share a filesystem, otherwise copy."""
++    try:
++        os.link(source, target)
++    except OSError:
++        shutil.copyfile(source, target)
++
++
++def harness_stage(candidate: Path, memory: Path, workspace: Path) -> Path:
++    """Stage the harness tree the solver sees, with the frozen memory inside it.
++
++    The solver mounts the harness read-only, so the memory cannot be bound into it
++    directly: the mount point would have to be created inside a read-only filesystem.
++    The stage hard-links the candidate's files (no data copied) and carries
++    ``memory/memory.json``, so the sandbox binds one directory.
++    """
++    stage = workspace.parent / f".harness-{workspace.name}"
++    shutil.rmtree(stage, ignore_errors=True)
++    shutil.copytree(
++        candidate / "solver", stage, copy_function=link_or_copy, symlinks=False,
++        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
++    )
++    memory_dir = stage / "memory"
++    memory_dir.mkdir(parents=True, exist_ok=True)
++    target = memory_dir / "memory.json"
++    if target.exists():
++        target.unlink()
++    try:
++        os.link(memory, target)
++    except OSError:
++        shutil.copyfile(memory, target)
++    return stage
++
++
+ def solve(candidate: Path, memory: Path, workspace: Path, request: dict):
+-    command = base_command() + [
+-        "--ro-bind", str(candidate / "solver"), "/harness",
+-        "--ro-bind", str(memory), "/harness/memory",
+-        "--bind", str(workspace), "/workspace",
+-        "--ro-bind", str(PROJECT / "benchmark" / "runtime" / "worker.py"), "/runtime/worker.py",
+-        "--chdir", "/workspace", "/opt/venv/bin/python", "/runtime/worker.py",
+-    ]
+-    return execute(command, request["solver"]["timeout_seconds"], request)
++    stage = harness_stage(candidate, memory, workspace)
++    try:
++        command = base_command() + [
++            "--ro-bind", str(stage), "/harness",
++            "--bind", str(workspace), "/workspace",
++            "--ro-bind", str(PROJECT / "benchmark" / "runtime" / "worker.py"), "/runtime/worker.py",
++            "--chdir", "/workspace", "/opt/venv/bin/python", "/runtime/worker.py",
++        ]
++        return execute(command, request["solver"]["timeout_seconds"], request)
++    finally:
++        shutil.rmtree(stage, ignore_errors=True)
+diff --git a/config.yaml b/config.yaml
+index 44bfa37..87df015 100644
+--- a/config.yaml
++++ b/config.yaml
+@@ -1,6 +1,6 @@
+ solver:
+   provider: qwen
+-  model: qwen3.5-flash
++  model: qwen3.7-flash
+   api_base: https://dashscope.aliyuncs.com/compatible-mode/v1
+   api_key_env: BAILIAN_API_KEY
+   system_prompt: ''
+diff --git a/outerloop/meta_meta_harness.py b/outerloop/meta_meta_harness.py
+index 0143459..daf5b01 100644
+--- a/outerloop/meta_meta_harness.py
++++ b/outerloop/meta_meta_harness.py
+@@ -75,8 +75,8 @@ def confirm_round(root, repo, config, iteration, state):
+         if len(added) != 1:
+             raise ValueError("Each evolution round must create exactly one commit")
+         commit = added.pop()
+-        if not git(repo, "branch", "--show-current").startswith("codex/"):
+-            raise ValueError("Candidate branches must use codex/")
++        if git(repo, "branch", "--show-current") in ("", "main"):
++            raise ValueError("A candidate must be committed on its own branch")
+     if git(repo, "rev-parse", "HEAD") != commit:
+         raise ValueError("The evaluated commit must be the current HEAD")
+     tree = git(repo, "rev-parse", f"{commit}^{{tree}}")
+diff --git a/outerloop/prompt.md b/outerloop/prompt.md
+index 9b09cc8..a27dc3e 100644
+--- a/outerloop/prompt.md
++++ b/outerloop/prompt.md
+@@ -1,10 +1,4 @@
+-Create one evaluated candidate node. Analyze evolution history, make one mechanism-level modification, run benchmark once, audit and commit based on skill and domainspecific.
+-
+-Round: {iteration}.
+-
+-First action: Read Contract in full before any other tool call; it binds the Skill, the paths, the branch prefix, the notes ref and the benchmark command.
+-Mandatory: follow the skill workflow exactly in order; never skip, merge, replace, or reorder any step.
+-Scope: repository source only.
++Run evolution iteration {iteration} using the meta-meta-harness skill at /workspace/.claude/skills/meta-meta-harness/SKILL.md.
+ 
+ {stage}
+ {continuation}
+diff --git a/outerloop/proposer.py b/outerloop/proposer.py
+index 840fc56..a398149 100644
+--- a/outerloop/proposer.py
++++ b/outerloop/proposer.py
+@@ -1,10 +1,11 @@
+-"""One isolated proposal, with full HTTP requests, responses, and native sessions."""
++"""One isolated proposal, with the native session and its conversation events kept."""
+ 
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ import importlib
+ import json
+ import os
+ from pathlib import Path
++import shutil
+ import signal
+ import subprocess
+ import threading
+@@ -16,25 +17,98 @@ import httpx
+ from benchmark.runtime.runs import git, read_json, write_json
+ from .sandbox import build_sandbox, child_environment
+ 
+-# Mirrors the autonomous-proposer system prompt used by the reference runs.
++# Role-only system prompt, following the reference proposer prompts, which state the role and
++# leave the constraints to the skill: SIA "You are a meta-agent. Your task is to create a target
++# agent which can execute a task."; Proteus "You are an agent that can inspect and change its own
++# harness — the set of files it wakes up with each episode."; RHO "You are the proposer in an
++# end-to-end harness search loop."; Meta-Harness injects the whole SKILL.md instead.
+ SYSTEM_PROMPT = (
+-    "You are an autonomous harness-evolution proposer. Complete exactly one candidate "
+-    "per invocation by following the loaded Skill and evaluation contract. Modify only "
+-    "the bound repository, finish the required result handoff, and do not start another candidate."
++    "You are the proposer in a harness self-evolution process."
+ )
+ 
+ 
+-class TraceProxy:
+-    def __init__(self, settings, session):
++def spill_directory(transcript):
++    """Where the CLI parks tool output too large to keep in the transcript itself."""
++    return transcript.parent / transcript.stem / "tool-results"
++
++
++def copy_spills(source, destination):
++    """Copy the spilled tool outputs, and nothing else, into ``destination``."""
++    spills = sorted(source.glob("*.txt")) if source.is_dir() else []
++    if not spills:
++        return
++    destination.mkdir(parents=True, exist_ok=True)
++    for spill in spills:
++        shutil.copyfile(spill, destination / spill.name)
++
++
++def keep_conversation(session):
++    """Keep the CLI's own session transcript as the round's conversation record.
++
++    The CLI writes it inside a working state directory next to shell snapshots and tool-result
++    spills; the transcript survives as ``conversation.jsonl`` and oversize tool output as
++    ``tool-results/`` beside it. The returned path is where the transcript has to go back
++    before a resumed run.
++    """
++    state = session / "state"
++    projects = state / "projects"
++    transcripts = sorted(projects.glob("*/*.jsonl")) if projects.is_dir() else []
++    relative = None
++    if transcripts:
++        source = max(transcripts, key=lambda path: path.stat().st_size)
++        relative = source.relative_to(state).as_posix()
++        shutil.copyfile(source, session / "conversation.jsonl")
++        copy_spills(spill_directory(source), session / "tool-results")
++    shutil.rmtree(state, ignore_errors=True)
++    return relative
++
++
++def usage_totals(*events):
++    """Token, cost and turn counters of the CLI result events, summed over a resumed round."""
++    totals = {
++        "usage": {
++            "input_tokens": 0, "output_tokens": 0,
++            "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
++        },
++        "cost_usd": 0.0, "num_turns": 0, "duration_api_ms": 0,
++    }
++    for event in events:
++        if not event:
++            continue
++        usage = event.get("usage") or {}
++        for key in totals["usage"]:
++            totals["usage"][key] += usage.get(key, 0)
++        totals["cost_usd"] += event.get("total_cost_usd") or 0.0
++        totals["num_turns"] += event.get("num_turns", 0)
++        totals["duration_api_ms"] += event.get("duration_api_ms", 0)
++    return totals
++
++
++def conversation_event(line):
++    """One CLI event to keep, with its parsed form; thinking heartbeats are dropped."""
++    try:
++        event = json.loads(line)
++    except json.JSONDecodeError:
++        return line, None
++    if event.get("type") == "system" and event.get("subtype") == "thinking_tokens":
++        return None, None
++    return line, event
++
++
++class UpstreamProxy:
++    """Forward the proposer's API calls to the configured upstream endpoint.
++
++    The CLI is pointed at this proxy, the real key is injected here and the optional request
++    adapter runs on the way through. Nothing is recorded: the round keeps its conversation
++    events instead of per-call requests and responses.
++    """
++
++    def __init__(self, settings):
+         self.settings = settings
+         self.adapt_request = None
+         if settings.get("request_adapter"):
+             module, function = settings["request_adapter"].split(":", 1)
+             self.adapt_request = getattr(importlib.import_module(module), function)
+-        self.directory = session / "requests"
+-        self.directory.mkdir(exist_ok=True)
+-        self.counter = len(list(self.directory.glob("*.request.json")))
+-        self.lock = threading.Lock()
+         self.token = uuid.uuid4().hex
+         self.api_key = os.environ[settings["api_key_env"]]
+         self.client = httpx.Client(timeout=settings["timeout_seconds"])
+@@ -50,16 +124,10 @@ class TraceProxy:
+                     self.send_error(401)
+                     return
+                 body = self.rfile.read(int(self.headers["Content-Length"]))
+-                with proxy.lock:
+-                    proxy.counter += 1
+-                    stem = proxy.directory / f"{proxy.counter:06d}"
+-                stem.with_suffix(".request.json").write_bytes(body)
+                 upstream = json.loads(body)
+                 if proxy.adapt_request:
+                     upstream = proxy.adapt_request(upstream)
+                 upstream_body = json.dumps(upstream, ensure_ascii=False).encode()
+-                stem.with_suffix(".upstream_request.json").write_bytes(upstream_body)
+-                started = time.time()
+                 headers = {
+                     name: self.headers[name]
+                     for name in ("content-type", "anthropic-version", "anthropic-beta")
+@@ -67,45 +135,34 @@ class TraceProxy:
+                 }
+                 headers["x-api-key"] = proxy.api_key
+                 headers["Authorization"] = "Bearer " + proxy.api_key
+-                status = 502
+-                error = None
+                 try:
+                     with proxy.client.stream(
+                         "POST", proxy.settings["api_base"].rstrip("/") + self.path,
+                         headers=headers, content=upstream_body,
+                     ) as response:
+-                        status = response.status_code
+-                        self.send_response(status)
++                        self.send_response(response.status_code)
+                         self.send_header("Content-Type", response.headers.get("content-type", "application/json"))
+                         self.end_headers()
+-                        with stem.with_suffix(".response.txt").open("wb") as record:
+-                            connected = True
+-                            for chunk in response.iter_bytes():
+-                                record.write(chunk)
+-                                record.flush()
+-                                if connected:
+-                                    try:
+-                                        self.wfile.write(chunk)
+-                                        self.wfile.flush()
+-                                    except (BrokenPipeError, ConnectionResetError):
+-                                        connected = False
++                        connected = True
++                        for chunk in response.iter_bytes():
++                            if connected:
++                                try:
++                                    self.wfile.write(chunk)
++                                    self.wfile.flush()
++                                except (BrokenPipeError, ConnectionResetError):
++                                    connected = False
+                 except Exception as exc:
+-                    error = f"{type(exc).__name__}: {exc}"
+-                    payload = json.dumps({"type": "error", "error": {"type": "api_error", "message": error}}).encode()
+-                    if not stem.with_suffix(".response.txt").exists():
+-                        stem.with_suffix(".response.txt").write_bytes(payload)
+-                        try:
+-                            self.send_response(502)
+-                            self.send_header("Content-Type", "application/json")
+-                            self.end_headers()
+-                            self.wfile.write(payload)
+-                        except (BrokenPipeError, ConnectionResetError):
+-                            pass
+-                finally:
+-                    write_json(stem.with_suffix(".meta.json"), {
+-                        "path": self.path, "status": status, "started_at": started,
+-                        "elapsed_seconds": time.time() - started, "error": error,
+-                    })
++                    payload = json.dumps({
++                        "type": "error",
++                        "error": {"type": "api_error", "message": f"{type(exc).__name__}: {exc}"},
++                    }).encode()
++                    try:
++                        self.send_response(502)
++                        self.send_header("Content-Type", "application/json")
++                        self.end_headers()
++                        self.wfile.write(payload)
++                    except (BrokenPipeError, ConnectionResetError):
++                        pass
+ 
+         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+         self.server.daemon_threads = True
+@@ -144,16 +201,23 @@ def run_agent(root, harness, iteration, config):
+     session = root / "sessions" / f"{iteration:03d}"
+     state_path = session / "result.json"
+     state = read_json(state_path)
++    previous_result = state.get("result")
+     previous_activity = state.get("activity_seconds", 0.0)
+     previous_benchmark = state.get("benchmark_seconds", 0.0)
+     previous_wall = state.get("wall_seconds", 0.0)
+     if previous_activity >= settings["timeout_seconds"]:
+         raise TimeoutError("This round has exhausted its proposer activity budget")
+-    resume = any((session / "state").rglob(f"{state['session_id']}.jsonl"))
++    resume = (session / "conversation.jsonl").exists() and bool(state.get("session_file"))
++    if resume:
++        # 会话记录搬回了轮次目录，恢复前先放回 CLI 期望的位置
++        restored = session / "state" / state["session_file"]
++        restored.parent.mkdir(parents=True, exist_ok=True)
++        shutil.copyfile(session / "conversation.jsonl", restored)
++        copy_spills(session / "tool-results", spill_directory(restored))
+     stage = (
+         "Stage 0: evaluate the existing baseline and attach notes to its existing commit; do not create a new commit. "
+         "An incomplete baseline remains in Stage 0 on continuation."
+-        if iteration == 0 else "Run one evolution iteration of the original Skill."
++        if iteration == 0 else ""
+     )
+     prompt = (Path(__file__).parent / "prompt.md").read_text().format(
+         iteration=iteration, stage=stage,
+@@ -164,11 +228,8 @@ def run_agent(root, harness, iteration, config):
+             if resume else ""
+         ),
+     )
+-    (session / "prompt.md").write_text(prompt)
+-    progress = {"action": "分析：读取工作流和领域合同", "candidate": git(harness, "rev-parse", "--short", "HEAD"), "result": None}
+-    invocation = str(time.time_ns())
+-    code = None
+-    with TraceProxy(settings, session) as proxy:
++    progress = {"action": "分析：读取 Skill", "candidate": git(harness, "rev-parse", "--short", "HEAD"), "result": None}
++    with UpstreamProxy(settings) as proxy:
+         command = build_sandbox(root, harness, session, config) + [
+             "/sandbox-bin/claude", "--dangerously-skip-permissions",
+             "--setting-sources", "", "--append-system-prompt", SYSTEM_PROMPT, "--print", prompt,
+@@ -176,87 +237,93 @@ def run_agent(root, harness, iteration, config):
+             "--tools", "Read,Glob,Grep,Edit,Write,Bash",
+             "--resume" if resume else "--session-id", state["session_id"],
+         ]
+-        write_json(session / f"input-{invocation}.json", {"prompt": prompt, "session_id": state["session_id"], "resume": resume})
+-        with (session / "events.jsonl").open("a") as events, (session / "stderr.txt").open("a") as stderr:
+-            started = time.time()
+-            process = subprocess.Popen(
+-                command, env=child_environment(proxy.url, proxy.token, config),
+-                stdout=subprocess.PIPE, stderr=stderr, text=True, start_new_session=True,
+-            )
+-
+-            def record():
+-                for line in process.stdout:
+-                    events.write(line)
+-                    events.flush()
+-                    try:
+-                        event = json.loads(line)
+-                    except json.JSONDecodeError:
+-                        continue
+-                    if event.get("type") == "result":
+-                        progress["result"] = event
+-                    if event.get("type") != "assistant":
++        started = time.time()
++        process = subprocess.Popen(
++            command, env=child_environment(proxy.url, proxy.token, config),
++            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True,
++        )
++        code = None
++
++        def record():
++            for line in process.stdout:
++                _, event = conversation_event(line)
++                if event is None:
++                    continue
++                if event.get("type") == "result":
++                    progress["result"] = event
++                if event.get("type") != "assistant":
++                    continue
++                for block in event.get("message", {}).get("content", []):
++                    if block.get("type") != "tool_use":
+                         continue
+-                    for block in event.get("message", {}).get("content", []):
+-                        if block.get("type") != "tool_use":
+-                            continue
+-                        name = block["name"]
+-                        value = block.get("input", {})
+-                        detail = value.get("file_path") or value.get("path") or value.get("description") or value.get("pattern") or name
+-                        phase = "写候选" if name in {"Write", "Edit"} else "分析" if name in {"Read", "Grep", "Glob"} else "执行步骤"
+-                        progress["action"] = f"{phase}：{str(detail)[:160]}"
+-
+-            def save_timing():
+-                now = time.time()
+-                benchmark, running = benchmark_time(root, started, now)
+-                wall = now - started
+-                state.update({
+-                    "activity_seconds": previous_activity + max(0.0, wall - benchmark),
+-                    "benchmark_seconds": previous_benchmark + benchmark,
+-                    "wall_seconds": previous_wall + wall,
+-                    "result": progress["result"],
+-                })
+-                write_json(state_path, state)
+-                return running
+-
+-            reader = threading.Thread(target=record, daemon=True)
+-            reader.start()
+-            last_report = 0.0
+-            try:
+-                while True:
+-                    running = save_timing()
+-                    if time.time() - last_report >= 30:
+-                        if running:
+-                            progress["candidate"] = running
+-                            scores = []
++                    name = block["name"]
++                    value = block.get("input", {})
++                    detail = value.get("file_path") or value.get("path") or value.get("description") or value.get("pattern") or name
++                    phase = "写候选" if name in {"Write", "Edit"} else "分析" if name in {"Read", "Grep", "Glob"} else "执行步骤"
++                    progress["action"] = f"{phase}：{str(detail)[:160]}"
++
++        def complain():
++            for line in process.stderr:
++                progress["stderr"] = (progress.get("stderr", "") + line)[-4000:]
++
++        def save_timing():
++            now = time.time()
++            benchmark, running = benchmark_time(root, started, now)
++            wall = now - started
++            state.update({
++                "activity_seconds": previous_activity + max(0.0, wall - benchmark),
++                "benchmark_seconds": previous_benchmark + benchmark,
++                "wall_seconds": previous_wall + wall,
++                "result": progress["result"],
++            })
++            write_json(state_path, state)
++            return running
++
++        reader = threading.Thread(target=record, daemon=True)
++        listener = threading.Thread(target=complain, daemon=True)
++        reader.start()
++        listener.start()
++        last_report = 0.0
++        try:
++            while True:
++                running = save_timing()
++                if time.time() - last_report >= 30:
++                    if running:
++                        progress["candidate"] = running
++                        path = root / running / "results" / "summary.json"
++                        scores = []
++                        if path.exists():
++                            saved = read_json(path)
+                             for task in config["dataset"]["tasks"]:
+-                                path = root / running / "results" / task / "summary.json"
+-                                if path.exists():
+-                                    row = read_json(path)
+-                                    accuracy = row.get("accuracy")
+-                                    if accuracy is not None:
+-                                        scores.append(f"{task}={accuracy:.2%}")
+-                            print(f"benchmark 候选={running} 最新分数={', '.join(scores) or '待评测'}", flush=True)
+-                        else:
+-                            print(f"proposer 轮次={iteration} {progress['action']} 耗时={state['activity_seconds']:.0f}s 候选={progress['candidate']}", flush=True)
+-                        last_report = time.time()
+-                    if state["activity_seconds"] >= settings["timeout_seconds"]:
+-                        raise TimeoutError("Proposer exceeded its cumulative activity time limit")
+-                    try:
+-                        code = process.wait(timeout=1)
+-                        break
+-                    except subprocess.TimeoutExpired:
+-                        pass
+-            except BaseException as error:
+-                write_json(session / f"error-{invocation}.json", {"error": str(error)})
+-                raise
+-            finally:
+-                if process.poll() is None:
+-                    os.killpg(process.pid, signal.SIGKILL)
+-                    process.wait()
+-                reader.join()
+-                process.stdout.close()
+-                save_timing()
+-    result = progress["result"]
+-    if code or result is None or result.get("is_error"):
++                                accuracy = (saved.get("scores", {}).get(task) or {}).get("accuracy")
++                                if accuracy is not None:
++                                    scores.append(f"{task}={accuracy:.2%}")
++                        print(f"benchmark 候选={running} 最新分数={', '.join(scores) or '待评测'}", flush=True)
++                    else:
++                        print(f"proposer 轮次={iteration} {progress['action']} 耗时={state['activity_seconds']:.0f}s 候选={progress['candidate']}", flush=True)
++                    last_report = time.time()
++                if state["activity_seconds"] >= settings["timeout_seconds"]:
++                    raise TimeoutError("Proposer exceeded its cumulative activity time limit")
++                try:
++                    code = process.wait(timeout=1)
++                    break
++                except subprocess.TimeoutExpired:
++                    pass
++        except BaseException as error:
++            progress["error"] = str(error)
++            raise
++        finally:
++            if process.poll() is None:
++                os.killpg(process.pid, signal.SIGKILL)
++                process.wait()
++            reader.join()
++            listener.join()
++            process.stdout.close()
++            process.stderr.close()
++            state["session_file"] = keep_conversation(session) or state.get("session_file")
++            state.update(usage_totals(previous_result, progress["result"]))
++            state["error"] = progress.get("error")
++            save_timing()
++    if progress.get("error") or code or progress["result"] is None or progress["result"].get("is_error"):
+         raise RuntimeError(f"Proposer failed; see {session}")
+     return state

@@ -1,0 +1,80 @@
+{
+  "session_id": "e9cbf071-a5ef-489a-aad7-672d386b3dbc",
+  "commits_before": [
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 423.5259962081909,
+  "benchmark_seconds": 519.1693871021271,
+  "wall_seconds": 942.695383310318,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 391195,
+    "num_turns": 80,
+    "stop_reason": "end_turn",
+    "session_id": "e9cbf071-a5ef-489a-aad7-672d386b3dbc",
+    "total_cost_usd": 5.159155999999999,
+    "usage": {
+      "input_tokens": 70251,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 5415552,
+      "output_tokens": 84005,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 70251,
+        "outputTokens": 84005,
+        "cacheReadInputTokens": 5415552,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 5.159155999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 5 complete.\n\n**Lineage analysis.** The graph is a linear chain: `ea3b299` (baseline, 0.4367) → `d7b155f` (0.4933) → `3340e63` (0.4989) → `7628d2a` (0.5256) → `e5d4cc5` (0.5344, best). Every gain since the baseline came from LawBench answer-wording mechanisms; USPTO (0.2333) is a chemistry wall and Symptom2Disease (0.88) is nearly saturated.\n\n**Parent and plan.** Chose `e5d4cc5`, whose own note named the concrete leftover: the check matched an answer item to a memory item by *containment*, so `以危险方法危害公共安全` was matched to the memory's `过失以危险方法危害公共安全` and the notice pushed the model into the negligent charge (its one correct→wrong flip); the same containment flagged a correct answer via the separator split of `生产、销售伪劣产品`; and read the other way, containment put the dropped-piece charges (`非法采伐国家重点保护植物` vs the memory's `非法采伐、毁坏国家重点保护植物`) out of reach entirely.\n\n**Change** (`d8f5ef0`, branch `codex/answer-variant-agreement`): `_closest_known` now reads the two strings together instead of one inside the other — non-empty shared beginning, then a bounded leftover that must be made of the other side's characters in order. Measured offline on all 400 recorded first passes of the four earlier runs before evaluating: 114/268 wrong flagged and 0/132 correct (parent: 107 and 3).\n\n**Result:** `{\"USPTO\": 0.2833, \"Symptom2Disease\": 0.89, \"LawBench\": 0.52, \"average\": 0.5644, \"status\": \"partial\"}` — LawBench 0.49 → 0.52, average 0.5344 → 0.5644. Of the 22 fired notices, none landed on an already-correct answer (the parent's 27 included 2, one of which was the flip); ex13.0 flipped on an identical first pass, which is the clean attribution. USPTO and Symptom2Disease got zero notices — their movement is the spread this lineage has measured before. The note records the remaining limit: an item that departs twice at once still gets nothing, with three traces of that shape.",
+    "ttft_ms": 670,
+    "ttft_stream_ms": 268,
+    "time_to_request_ms": 55,
+    "type": "result",
+    "duration_ms": 942122,
+    "uuid": "b080f4c0-d1f7-4b36-8056-719eb20f3516"
+  },
+  "session_file": "projects/-workspace-harness/e9cbf071-a5ef-489a-aad7-672d386b3dbc.jsonl",
+  "usage": {
+    "input_tokens": 70251,
+    "output_tokens": 84005,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 5415552
+  },
+  "cost_usd": 5.159155999999999,
+  "num_turns": 80,
+  "duration_api_ms": 391195,
+  "error": null,
+  "commit": "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+  "tree": "37a3ebb74a30bacfa2ab2379c86fa408af47a2fd"
+}

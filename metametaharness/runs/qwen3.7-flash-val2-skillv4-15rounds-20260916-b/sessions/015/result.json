@@ -1,0 +1,90 @@
+{
+  "session_id": "36e5ba56-b45a-4826-81cd-d663979cda23",
+  "commits_before": [
+    "ae4fb7cb16b97683f999842a45d3341f37f865c8",
+    "52a532fdb396955d18858c82d2cbad92858f4f67",
+    "b6060a910203479b2ba7731dc3288a67d5947a36",
+    "0df22b3a9a24e67e590afc82eb0cf21437edc57d",
+    "9b04306a774263abfbe289568c621385f913cb29",
+    "7f99ffff8ef19bdf722115250e143b4b99fec990",
+    "b823e6058ff8b78f9f6f48bc32e46d3e105c6889",
+    "ece446637fc7870c97283996e946158324d694b2",
+    "7baad6478a7c372346a4357843ec01b069f5637d",
+    "99acee1b28c005f3fcb3254e8b1208566921a69d",
+    "e05c6f0df98589c418940cfde2e9aac3082ccba5",
+    "49c9c67dc05930e1d958ed4821916d56b54e8983",
+    "419618e1c16bbd6387ad3ec523d75d10b193771e",
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 548.6274282932281,
+  "benchmark_seconds": 51.172316789627075,
+  "wall_seconds": 599.7997450828552,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 494612,
+    "num_turns": 108,
+    "stop_reason": "end_turn",
+    "session_id": "36e5ba56-b45a-4826-81cd-d663979cda23",
+    "total_cost_usd": 7.881360999999997,
+    "usage": {
+      "input_tokens": 96322,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9908352,
+      "output_tokens": 97823,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 96322,
+        "outputTokens": 97823,
+        "cacheReadInputTokens": 9908352,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.881360999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 15 is complete. Summary:\n\n## Lineage analysis\nThe graph is a linear chain from `3d84679` (baseline, 0.4367) to the tip `ae4fb7c`, whose last two nodes (`52a532f` memory-in-prompt, `ae4fb7c` carried-prompt) are **void** — the provider's account went into arrears and every sample failed with 0 model calls. The memory-in-prompt design (the best-evidenced change left: 80/3380 recorded samples never called retrieval, scored 7/80 vs 1895/3300) had never been scored.\n\nI mined the recorded traces offline for a real lever and found the memory side is exhausted:\n- **LawBench**: memory covers only 32/50 val targets in full; 36/54 reachable samples are already correct.\n- **USPTO**: no val target is a string the memory holds; a fragment-vocabulary correction fixes 8 fragments and breaks 19.\n- **Symptom2Disease**: the model's 88/100 beats every vote over the same memory (best 39/50).\n\n## Change (`reply-contract`, parent `ae4fb7c`)\nThree edits to text the model reads, each describing the harness as it now stands:\n- The **system prompt** (previously \"answers a question by retrieving examples\" — the lookup the parent removed) now states the reply contract: one JSON object, `reasoning` + `final_answer`, markup inside the field.\n- The memory step names `/harness/memory/memory.json` — the directory path it named was tried **135 times** across traces and answered none, while the file was read 176 times and answered 175.\n- The check step says to call `check_answer` **once** with the draft meant for submission (one sample spent 22 calls enumerating candidate labels the memory all holds).\n\n## Result — void\n`{\"USPTO\": 0.0, \"Symptom2Disease\": 0.0, \"LawBench\": 0.0, \"average\": 0.0, \"status\": \"error\"}` — 260/260 samples failed with the provider's `invalid_request` / `#overdue-payment` message, 0 tokens, 0 model calls. The parent's run and its parent's failed identically 10 and 20 minutes earlier, so the graph now holds three consecutive void nodes. The expected effect is **unobserved, not disproved**; the change is read before any model call, so nothing about it is observable in this run.\n\nCommit `c1a5a1b` (tree `7ad60114`, matching the evaluated tree exactly) carries the message and the evolution note with all citations, including the offline findings above so the next iteration doesn't redo them.",
+    "ttft_ms": 950,
+    "ttft_stream_ms": 227,
+    "time_to_request_ms": 68,
+    "type": "result",
+    "duration_ms": 599133,
+    "uuid": "2f0a5ba6-0c06-48b9-aa70-e04a61b94c97"
+  },
+  "session_file": "projects/-workspace-harness/36e5ba56-b45a-4826-81cd-d663979cda23.jsonl",
+  "usage": {
+    "input_tokens": 96322,
+    "output_tokens": 97823,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9908352
+  },
+  "cost_usd": 7.881360999999997,
+  "num_turns": 108,
+  "duration_api_ms": 494612,
+  "error": null,
+  "commit": "c1a5a1bab2dc00511e652cc2840365baef693bee",
+  "tree": "7ad60114d93b6bcbfa049b772ee21a2adf01dd9f"
+}

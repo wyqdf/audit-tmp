@@ -1,0 +1,76 @@
+{
+  "session_id": "da44d738-a504-4636-afd1-b4a1c61dadd6",
+  "commits_before": [
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 74.039231300354,
+  "benchmark_seconds": 1096.4891126155853,
+  "wall_seconds": 1170.5283439159393,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 71516,
+    "num_turns": 33,
+    "stop_reason": "end_turn",
+    "session_id": "da44d738-a504-4636-afd1-b4a1c61dadd6",
+    "total_cost_usd": 0.7964409999999998,
+    "usage": {
+      "input_tokens": 36477,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 429312,
+      "output_tokens": 15976,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 36477,
+        "outputTokens": 15976,
+        "cacheReadInputTokens": 429312,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.7964409999999998,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Stage 0 complete. Here's what happened:\n\n## Baseline evaluation (iteration 0)\n\n**State found:** baseline commit `ea3b299` (tree `9f49dd72`) on `main`, clean tree, unevaluated — no run directory, no evolution notes.\n\n**Evaluation run** (foreground, single invocation of the runner):\n\n```json\n{\"USPTO\": 0.2, \"Symptom2Disease\": 0.8, \"LawBench\": 0.31, \"average\": 0.4367, \"status\": \"partial\"}\n```\n\n257/260 samples succeeded (completion 98.85%), `rankable: true`, `partial: false`. The runner exits 1 on `partial`, which here reflects 3 failed samples counted as wrong, not a failed evaluation.\n\n**Notes attached** to the existing commit `ea3b299` under `refs/notes/evolution` — the note cites the run directory, `results/summary.json`, and six individual traces.\n\n### Evidence recorded in the notes\n\n| Finding | Detail |\n|---|---|\n| USPTO 0.20 | 35/47 wrong answers share *no* component with the target (median Jaccard 0.0) — wrong disconnection, not truncation; only 3 are dropped co-products |\n| LawBench 0.31 | 18/67 wrong differ from target only by a trailing 「罪」; 18 collapse a multi-label target to one label — surface fidelity, not reasoning |\n| Instruction drift | 1 sample answered with its own plan text (`\"调用 retrieve_examples 获取参考案例。\"`) and made zero tool calls; 18 samples skipped retrieval entirely. Skipping hurts LawBench (0.14 vs 0.33) and Symptom2Disease, but *helped* USPTO (0.30 vs 0.18, n=10) |\n| Symptom2Disease 0.80 | Near ceiling because the input enumerates the closed label set; 19 isolated errors + 1 empty prediction |\n| Infra failures | 1 provider `ReadTimeout` at 423 s (retryable, didn't recover on retry) + 2 non-retryable `content_filter` rejections; all counted wrong |\n\n### Repository state\n- HEAD unchanged at `ea3b299`, still the only commit — no new commit, no branch, working tree clean\n- Harness source untouched (verified against the runner's \"source changed during evaluation\" check)\n\nThe baseline is now **complete** (evaluated, rankable, notes attached), so it does not remain in Stage 0 on continuation — the next invocation can go straight to Stage 1 (Lineage Analysis) with this baseline as the sole parent.",
+    "ttft_ms": 1015,
+    "ttft_stream_ms": 239,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 1169995,
+    "uuid": "2653ee13-bf9d-45d5-9dd8-1d11e53e988d"
+  },
+  "session_file": "projects/-workspace-harness/da44d738-a504-4636-afd1-b4a1c61dadd6.jsonl",
+  "usage": {
+    "input_tokens": 36477,
+    "output_tokens": 15976,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 429312
+  },
+  "cost_usd": 0.7964409999999998,
+  "num_turns": 33,
+  "duration_api_ms": 71516,
+  "error": null,
+  "commit": "ea3b299c22126cde8683a506fd968f0be49771ba",
+  "tree": "9f49dd7221d29df0c6f8b80f8f04a8b2b2b607f7"
+}

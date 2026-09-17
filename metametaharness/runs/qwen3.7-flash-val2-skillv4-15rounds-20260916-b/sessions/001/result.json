@@ -1,0 +1,76 @@
+{
+  "session_id": "6e81091f-9ab0-41da-be4e-7e8788317d8f",
+  "commits_before": [
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 350.3049430847168,
+  "benchmark_seconds": 1233.5392227172852,
+  "wall_seconds": 1583.844165802002,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 318656,
+    "num_turns": 79,
+    "stop_reason": "end_turn",
+    "session_id": "6e81091f-9ab0-41da-be4e-7e8788317d8f",
+    "total_cost_usd": 4.321915,
+    "usage": {
+      "input_tokens": 100782,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 4456960,
+      "output_tokens": 63581,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 100782,
+        "outputTokens": 63581,
+        "cacheReadInputTokens": 4456960,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 4.321915,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Evolution iteration 1 complete. **N1 recorded: `13a6c63` on branch `ranked-memory-retrieval` (parent N0 = `3d84679`).**\n\n## What I did\n\n**Stage 1 — Lineage analysis.** Only the baseline existed (N0, average 0.4367: USPTO 0.15 / Symptom2Disease 0.88 / LawBench 0.28). Its note diagnosed relevance-blind retrieval as the core weakness: `retrieve_examples` shuffled memory with a question-seeded RNG and truncated at 30000 chars, so LawBench reached only 28–74 of 200 examples and a USPTO \"FGA\" question was answered from mismatched reaction-type examples.\n\n**Stage 2 — Evolution.** Replaced the shuffle with IDF-weighted character-3-gram cosine ranking, delivered up to 60000 chars of the ranked list (verified this stays below the 80000-char ceiling at which deepagents offloads a tool result to a file), and told the model in the skill that examples arrive closest-first.\n\n## Results\n\n| Task | Baseline | Candidate |\n|---|---|---|\n| USPTO | 0.15 | 0.1167 |\n| Symptom2Disease | 0.88 | 0.86 |\n| LawBench | 0.28 | **0.38** (avg_f1 0.415 → 0.582) |\n| **average** | 0.4367 | **0.4522** |\n\nStatus `partial`: 4 LawBench samples were rejected by the provider's input content filter on the request carrying the ranked memory (non-retryable, counted wrong) and 1 USPTO sample timed out at 427s.\n\n**Honest read of the outcome:** the expected effect only partly occurred. LawBench gained clearly (+0.10, 10 questions up vs 3 down), driven by ordering — e.g. question 11 produced the exact charge once a matching example reached rank 2, where the baseline had one at rank 39. But USPTO fell, and trace inspection showed why: I ranked the full incoming text (instructions + problem) against memory rendered from the problem alone, so instruction boilerplate matched unrelated long reaction-type names (\"Acylation and related processes\" ranked first for an Oxidations question). Offline replay against the frozen memory quantifies it — top-1 same-type 19/30 as shipped vs 23/30 when both sides use the memory's `input` field vs 30/30 for the ideal problem-to-problem comparison. That fix, plus copying answer spelling exactly (8 LawBench samples still lost only to a trailing 罪), is recorded in the note for iteration 2.\n\nThe evaluated source tree hash matches the run directory byte-for-byte, and the harness was not modified after evaluation started.",
+    "ttft_ms": 620,
+    "ttft_stream_ms": 242,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 1583265,
+    "uuid": "09d6e544-cd8e-433d-b1a7-587e22e9ee49"
+  },
+  "session_file": "projects/-workspace-harness/6e81091f-9ab0-41da-be4e-7e8788317d8f.jsonl",
+  "usage": {
+    "input_tokens": 100782,
+    "output_tokens": 63581,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 4456960
+  },
+  "cost_usd": 4.321915,
+  "num_turns": 79,
+  "duration_api_ms": 318656,
+  "error": null,
+  "commit": "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+  "tree": "b539c7bec6aedea86a01cfab887fab950110c356"
+}

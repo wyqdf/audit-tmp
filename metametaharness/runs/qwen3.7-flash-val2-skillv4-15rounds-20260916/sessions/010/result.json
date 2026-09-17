@@ -1,0 +1,85 @@
+{
+  "session_id": "bece5dd7-130c-41b2-be3c-ba157b6980db",
+  "commits_before": [
+    "cadc26b582d0fb65eab6408437e01fd8e5231129",
+    "a311512caa2aaa9eed919dc914ac8b9473ba30f8",
+    "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 597.5978579521179,
+  "benchmark_seconds": 630.8987603187561,
+  "wall_seconds": 1228.496618270874,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 562727,
+    "num_turns": 99,
+    "stop_reason": "end_turn",
+    "session_id": "bece5dd7-130c-41b2-be3c-ba157b6980db",
+    "total_cost_usd": 8.240101,
+    "usage": {
+      "input_tokens": 101762,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9580032,
+      "output_tokens": 117651,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 101762,
+        "outputTokens": 117651,
+        "cacheReadInputTokens": 9580032,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 8.240101,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 10 is complete. Branch `codex/inline-budget` at `bc19c51`, tree `84fb7ecd` (matching `/workspace/runs/84fb7ecd.../`), note attached under `refs/notes/evolution`, working tree clean.\n\n## What I did\n\n**Lineage analysis.** The chain is linear (`ea3b299` → … → `a311512` → `cadc26b`, the current HEAD). HEAD was a regression: its 200,000-character retrieval budget overshot the framework's own tool-result ceiling (4 chars/token × 20,000 tokens = 80,000 chars, `deepagents/middleware/filesystem.py:926/:1650/:3213`), so 97 of 100 LawBench samples answered from a two-example preview stub.\n\nBefore committing to a change I measured the candidate mechanisms offline against the 11 recorded runs:\n- The check's notices are **provably insensitive to the served context** — moving the text quotes may be drawn from 30k→75k changes 0 notices across four runs' first passes.\n- The model **copies from the top of the ranking** (median rank 4; 47 of its 52 exact copies sit inside the examples already served at 30k), so added examples are mostly ignored.\n- LawBench's remaining loss is concentrated in multi-charge targets (5/36 correct vs 49/61 single-charge), whose second charge is often absent from the facts the task supplies (ex35, ex48, ex15…).\n- All those candidates (completeness nudge, reasoning-derived recall, ranking, second repair) were rejected as unsupported or risky; I chose to complete HEAD's intent inside the real ceiling.\n\n**Modification.** `retrieval.MAX_CHARS` 200000 → 75000, documented as the framework's inline limit rather than a slice of the memory, keeping HEAD's composition-quote change.\n\n**Result.** `{\"USPTO\": 0.1833, \"Symptom2Disease\": 0.89, \"LawBench\": 0.52, \"average\": 0.5311, \"status\": \"partial\"}`. The ceiling is fixed (0 offloads, 138 examples inlined), but the extra budget bought nothing and carried a measured cost: the served text roughly doubles the case text the provider's filter reacts to, and the run drew 6 `content_filter` failures against the parent's 3 and the lineage's 2.1 average — each of which counts as a wrong answer. On the samples that ran, the two runs are the same workload (55.3% vs 55.7% correct); USPTO could not differ (its 8,663-char memory is served identically under both bounds). The note records the limit this establishes: the budget is a bound, not a lever.",
+    "ttft_ms": 515,
+    "ttft_stream_ms": 215,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 1227926,
+    "uuid": "c48ec54b-e717-4e33-9dd0-c2ac79dccdf8"
+  },
+  "session_file": "projects/-workspace-harness/bece5dd7-130c-41b2-be3c-ba157b6980db.jsonl",
+  "usage": {
+    "input_tokens": 101762,
+    "output_tokens": 117651,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9580032
+  },
+  "cost_usd": 8.240101,
+  "num_turns": 99,
+  "duration_api_ms": 562727,
+  "error": null,
+  "commit": "bc19c512eb5b9e86cc09bd5cc3f28235b1452ad5",
+  "tree": "84fb7ecd4aa0f4a1ab2a71b3fec90e281f407964"
+}

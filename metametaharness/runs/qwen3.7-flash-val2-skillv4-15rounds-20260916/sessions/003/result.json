@@ -1,0 +1,78 @@
+{
+  "session_id": "a71b74f5-bc9c-44b5-9385-7830966f4a2c",
+  "commits_before": [
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 747.8342816829681,
+  "benchmark_seconds": 600.0227680206299,
+  "wall_seconds": 1347.857049703598,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 661517,
+    "num_turns": 116,
+    "stop_reason": "end_turn",
+    "session_id": "a71b74f5-bc9c-44b5-9385-7830966f4a2c",
+    "total_cost_usd": 8.909515000000003,
+    "usage": {
+      "input_tokens": 69059,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 10259840,
+      "output_tokens": 137372,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 69059,
+        "outputTokens": 137372,
+        "cacheReadInputTokens": 10259840,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 8.909515000000003,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 3 complete.\n\n## Summary\n\n**Stage 1 — Lineage analysis.** The graph was `ea3b299` (0.4367) → `d7b155f` (0.4933) → `3340e63` (0.4989), the last two both nibbling at answer *wording* via the repair turn. I re-derived the error buckets from the traces rather than trusting the notes:\n\n- LawBench 55 wrong = 22 missing-charge, 17 wrong-charge, 14 wording, 2 extra — and only **10 of the 55** had their target anywhere in the memory, so the memory-quote family the lineage has been working is nearly exhausted.\n- USPTO (47 wrong) and Symptom2Disease (17 wrong) are reasoning/knowledge limits, not format ones.\n- The untouched defect: `retrieve_examples` **shuffled** the pool with a per-question seed and truncated at 30k chars — LawBench saw 54.8 of 200 examples, a different random 55 per question, so 26 of 100 samples had their exact target answer in the memory and not in context. Ranking by relevance covers the target answer for 36% of val questions vs 16%, at the same budget.\n\n**Stage 2 — Evolution.** Parent `3340e63`; branch `codex/relevance-ranked-retrieval`; `retrieval.py` now ranks examples by tf-idf cosine over character 2-grams of the question and fills the same 30k budget from the closest down (no dataset-specific logic).\n\n**Result:** `{\"USPTO\": 0.2667, \"Symptom2Disease\": 0.88, \"LawBench\": 0.43, \"average\": 0.5256}` — up from 0.4989, the best node so far.\n\nThe honest reading, recorded in the note: the intended effect **materialised but did not convert** — LawBench samples with the target answer in view doubled (16 → 32, 84% of them correct) while the 42 in-memory samples went 32 → 30 correct, i.e. visibility marks which questions have a near-analog rather than causing correctness. The average gain came from USPTO and Symptom2Disease, where the example sets barely changed, so it is an ordering/salience effect the same size as the 7–9 sample flips seen between parent runs — plausible, not separable from noise. One flip has a direct trace (the two nearest same-label cases for a persistent Symptom2Disease error were exactly the ones the random slice had dropped). Three LawBench samples were lost to input-side `content_filter` rejections, which occur in every run. Committed as `7628d2a` (tree `8b90b9c`, matching the evaluated tree) with notes under `refs/notes/evolution`.",
+    "ttft_ms": 453,
+    "ttft_stream_ms": 231,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 1347317,
+    "uuid": "ae1d97e9-eae3-4835-a40a-03f126bcb7a7"
+  },
+  "session_file": "projects/-workspace-harness/a71b74f5-bc9c-44b5-9385-7830966f4a2c.jsonl",
+  "usage": {
+    "input_tokens": 69059,
+    "output_tokens": 137372,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 10259840
+  },
+  "cost_usd": 8.909515000000003,
+  "num_turns": 116,
+  "duration_api_ms": 661517,
+  "error": null,
+  "commit": "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+  "tree": "8b90b9c533d81d047bcfa360458b9b5b1f664fb9"
+}

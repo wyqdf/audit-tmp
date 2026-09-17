@@ -1,0 +1,82 @@
+{
+  "session_id": "a2e2b254-2488-41da-87c6-8b620475fcd6",
+  "commits_before": [
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": true,
+  "activity_seconds": 1135.4592559337616,
+  "benchmark_seconds": 466.18863821029663,
+  "wall_seconds": 1601.6478941440582,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 1089170,
+    "num_turns": 147,
+    "stop_reason": "end_turn",
+    "session_id": "a2e2b254-2488-41da-87c6-8b620475fcd6",
+    "total_cost_usd": 17.488393,
+    "usage": {
+      "input_tokens": 126522,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 22428416,
+      "output_tokens": 225663,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 126522,
+        "outputTokens": 225663,
+        "cacheReadInputTokens": 22428416,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 17.488393,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 7 is complete. Here's the summary:\n\n## Stage 1 — Lineage analysis\n\n**Graph (7 evaluated nodes):** `ea3b299` (baseline 0.4367) → `d7b155f` → `3340e63` → `7628d2a` → `e5d4cc5` → `d8f5ef0` (best average 0.5644) → `3bb9672` (HEAD, 0.5333). The HEAD is the most evolved harness: its check flags 180 of 392 wrong first passes against the parent's 165, with 0 false positives in both, so its lower recorded average is USPTO noise.\n\n**Where the remaining headroom is.** I measured the HEAD's 48 wrong LawBench samples against the frozen memory and the raw val data:\n- The dominant family (44 of 48 have a missing item) is **unreachable**: the extra charges in the targets are mostly unsupported by the question text (label noise), or the charge appears nowhere in the memory.\n- Retrieval is at its lexical ceiling — an oracle query expansion barely moves inclusion (0.383 → 0.392 leave-one-out), and 4 of the affected samples are provider content-filter losses.\n- Composition evidence (a memory answer writing the model's charges *together with* the missing one) exists in only 5 of 64 instances; self-consistency over recorded draws adds nothing (majority-of-3 ≈ single).\n\nOne family was left: the check read the inventory as a list of charges and skipped **every** item it holds — but the inventory also holds the pieces a charge's name is cut into (「窝藏」 from 「窝藏、包庇」, 「拐卖妇女」 from 「拐卖妇女、儿童」). Five of the 492 recorded first passes are that shape and all five stayed wrong with no notice, in every one of the six runs.\n\n## Stage 2 — Evolution\n\n**Change** (`solver/answer_conventions.py`, on `codex/answer-name-pieces` from `3bb9672`): the check now reads from the memory which separator joins charges (the one whose units reappear across answers — 0.41 for 「;」 vs 0.03 for 「、」), treats items never written as such a unit or as a complete answer as pieces of a longer name, and reports a piece only when the answer writes it as a charge of its own, quoting the memory's spelling of the whole name. Memories with no separator have no pieces, so it is a no-op there.\n\n**Offline, before evaluating** (492 recorded first passes): 147 fires vs the parent's 142, all 5 new ones on wrong first passes, 0 of 173 correct first passes fired in either version, no parent notice lost.\n\n**Evaluation** (one run): `{\"USPTO\": 0.25, \"Symptom2Disease\": 0.87, \"LawBench\": 0.48, \"average\": 0.5333, \"status\": \"partial\"}` — average unchanged. The mechanism did what it was designed to do: 30 notices (parent 25), none on a correct first pass, 19 converted, two of them reachable only by the new rule (「窝藏」→「窝藏、包庇」, 「拐卖妇女」→「拐卖妇女、儿童」, both right after the rewrite). The score fell on the model's own first passes — 29 of 98 correct vs the parent's 34 of 97; all 9 correct→wrong flips already had a wrong first pass, and on the 59 samples with identical first passes the candidate reversed none and gained the one the parent could not fix.\n\nCommitted as `5402cb1` (tree `b000c8ef…`, matching the run directory) with the evolution note attached, including the next step this run exposed: the composition quote can still pull an extra charge into an answer (ex0045/0), and the charge/piece distinction the check now has is what would fix it.",
+    "ttft_ms": 583,
+    "ttft_stream_ms": 249,
+    "time_to_request_ms": 58,
+    "type": "result",
+    "duration_ms": 1601025,
+    "uuid": "f0044e9f-58f1-41ee-aeed-c00385c756e3"
+  },
+  "session_file": "projects/-workspace-harness/a2e2b254-2488-41da-87c6-8b620475fcd6.jsonl",
+  "usage": {
+    "input_tokens": 126522,
+    "output_tokens": 225663,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 22428416
+  },
+  "cost_usd": 17.488393,
+  "num_turns": 147,
+  "duration_api_ms": 1089170,
+  "error": null,
+  "commit": "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+  "tree": "b000c8efdc1973bb7b24cd9430e5f9a612f2bf24"
+}

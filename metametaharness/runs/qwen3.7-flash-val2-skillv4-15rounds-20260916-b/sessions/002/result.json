@@ -1,0 +1,77 @@
+{
+  "session_id": "5a6d7605-96a8-406d-9823-4c3371c6beba",
+  "commits_before": [
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 330.9120705127716,
+  "benchmark_seconds": 575.2438583374023,
+  "wall_seconds": 906.155928850174,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 259078,
+    "num_turns": 69,
+    "stop_reason": "end_turn",
+    "session_id": "5a6d7605-96a8-406d-9823-4c3371c6beba",
+    "total_cost_usd": 3.0313219999999994,
+    "usage": {
+      "input_tokens": 46168,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 2804864,
+      "output_tokens": 55922,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 46168,
+        "outputTokens": 55922,
+        "cacheReadInputTokens": 2804864,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 3.0313219999999994,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 2 complete.\n\n## Lineage Analysis\n\nTwo nodes existed: **N0** baseline (0.4367) and **N1** `ranked-memory-retrieval` (0.4522), which ranked memory by character-3-gram similarity. N1's own note diagnosed its flaw — it compared the *whole incoming prompt* against entries rendered from `raw_question` alone. Reading the parent's code before building on it surfaced a second, larger defect in the same function: `Ranker.__init__` built `self.norms` and `rank` built the query `norm`, but **`rank` never divided by either** — so scoring was a raw IDF dot product in which long documents win on length, not on similarity.\n\nAn offline replay over the frozen memories and all 130 val questions isolated both fixes:\n\n| variant (query = incoming text) | USPTO top-1 type | Symptom2D top-1 disease | LawBench delivered |\n|---|---|---|---|\n| N1 as shipped | 0.33 | 0.10 | 73.8 |\n| cosine only | 0.63 | 0.24 | 114 |\n| `input` docs + shared-gram removal only | 0.77 | 0.72 | 78 |\n| **both (shipped)** | **0.90** | **0.74** | **111** |\n| oracle (question↔question) | 1.00 | 0.76 | 114 |\n\n## Evolution — node N2 (`419618e`, branch `template-free-ranking`)\n\n`solver/tools/retrieval.py` now indexes examples by their full `input` (the same template the solver receives), drops the 3-grams carried by ≥half the examples — which is that shared template — and divides by both norms so the score is the cosine the class documents. Display still uses `raw_question`. No dataset names, keywords, or identity branching.\n\n## Results\n\n```\n{\"USPTO\": 0.2167, \"Symptom2Disease\": 0.89, \"LawBench\": 0.37, \"average\": 0.4922, \"status\": \"partial\"}\n```\n\n`average` 0.4367 → 0.4522 → **0.4922**. USPTO recovered the entire N1 regression and passed the baseline (0.15), gaining 4 questions and losing none; Symptom2Disease regained its baseline with 1 gained, 0 lost. Traces confirm the mechanism (USPTO top-1 same-reaction-type 21/60 → 53/60).\n\nHonest caveats, all recorded in the note:\n- **LawBench fell 2 questions net (23→21)**. Not retrieval — the three lost questions failed on wording: predicting `生产、销售伪劣产品罪` for target `生产、销售伪劣产品`, and `侮辱罪` for `侮辱`. Retrieval there actually improved (delivered 73.8 → 106.7, same-charge-in-list 0.32 → 0.38) without converting to accuracy, which points at the next lever: having the skill copy an example's answer exactly rather than extend it. That's a general instruction, not a LawBench rule.\n- `status: partial` — 3 LawBench samples hit the provider content filter, 1 USPTO sample timed out and was scored from its retry.",
+    "ttft_ms": 535,
+    "ttft_stream_ms": 232,
+    "time_to_request_ms": 56,
+    "type": "result",
+    "duration_ms": 905626,
+    "uuid": "18bc2237-f12a-42e7-a1f4-875ec85d7a8a"
+  },
+  "session_file": "projects/-workspace-harness/5a6d7605-96a8-406d-9823-4c3371c6beba.jsonl",
+  "usage": {
+    "input_tokens": 46168,
+    "output_tokens": 55922,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 2804864
+  },
+  "cost_usd": 3.0313219999999994,
+  "num_turns": 69,
+  "duration_api_ms": 259078,
+  "error": null,
+  "commit": "419618e1c16bbd6387ad3ec523d75d10b193771e",
+  "tree": "562ab0872291f6e171db9409b3576432d425084c"
+}

@@ -1,0 +1,88 @@
+{
+  "session_id": "9dad78b0-ce8d-4115-a57f-d4e7b6ddb407",
+  "commits_before": [
+    "152cd1aad6f526fa156ecd4d74734b41d78cd11d",
+    "794d93ebe9a26d4b2fb5fc9d740471f08e5b8006",
+    "921c06986dea35d021e7a932d15e855ace6cf12c",
+    "f071ba28b32bbf7dbef57c8d8947827fe7831363",
+    "bc19c512eb5b9e86cc09bd5cc3f28235b1452ad5",
+    "cadc26b582d0fb65eab6408437e01fd8e5231129",
+    "a311512caa2aaa9eed919dc914ac8b9473ba30f8",
+    "5402cb12d7832d6ca7a7dda11607b0a5f7f0d9c9",
+    "3bb9672c9bf50cf8cc48a057e605b8d81af464df",
+    "d8f5ef0abc4f02e9f3862c392228c57f30d7afd5",
+    "e5d4cc50d51004875db81b49655f98163e98048c",
+    "7628d2a1729edc0c110a00bb7ccb94498972bf5f",
+    "3340e638dae378a4bf828d9390084a6b1c9cbbf5",
+    "d7b155f0d6d296b753c7aff57c4a26a93ccb2093",
+    "ea3b299c22126cde8683a506fd968f0be49771ba"
+  ],
+  "completed": false,
+  "activity_seconds": 5921.58758020401,
+  "benchmark_seconds": 55.258275508880615,
+  "wall_seconds": 5976.845855712891,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 580635,
+    "num_turns": 109,
+    "stop_reason": "end_turn",
+    "session_id": "9dad78b0-ce8d-4115-a57f-d4e7b6ddb407",
+    "total_cost_usd": 7.978979999999996,
+    "usage": {
+      "input_tokens": 77014,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9547520,
+      "output_tokens": 112806,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 77014,
+        "outputTokens": 112806,
+        "cacheReadInputTokens": 9547520,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 7.978979999999996,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 15 is complete. Summary of what I did and found:\n\n## Lineage analysis\n- **Best measured node:** `d8f5ef0` (0.5644). **The last node, `152cd1a`** (staged consensus draws, `MAX_DRAWS=8` with early stop) — the lineage's main structural bet — **was never measured**; its run died on a bwrap failure.\n- Its predecessor `794d93e` (five draws, 0.5411) was measured with **22 of 100 LawBench samples lost to a provider account failure** (`overdue-payment`), so the consensus family is understated on record.\n- I recovered the draws from `794d93e`'s own traces and measured the vote offline: per-draw → vote on USPTO 0.222 → 0.283, S2D 0.820 → 0.880, LawBench 0.562 → 0.564; the k-curve over all subsets is still rising (USPTO 0.230/0.243/0.279/0.294/0.302 for k=1–5). Item-level, centroid, coverage and majority aggregation rules do **not** beat plain plurality; a second repair turn would fire on 10 of 90 repaired answers; the reading and wording notices together are worth +3 USPTO and +14 LawBench points at sample level.\n\n## Change (branch `codex/memory-is-the-file`, commit `834b2e8`, parent `152cd1a`)\nThe skill sent the model to search `/harness/memory` itself. `/harness` holds only `solver/` and `memory/memory.json`, and `retrieve_examples` already returns the whole memory where it fits (USPTO: 8,665 chars for all 50 examples; S2D: 34,178 for all 200). On USPTO that search costs **8.1 of the 13.2 tool calls per sample** — paging the same memory as raw 92 KB JSON, 26 `read_file`s in one sample, globs for files that don't exist — and **209,639 of tool-output characters vs 43,325 the retrieval accounts for**. The question's 32-call budget is the budget the draws come from, and the parent's eight draws need ~30 of it. Skill item 1 now states the memory is one file of Q/A pairs that the tool returns closest-first; nothing else changed.\n\n## Evaluation — not taken\n**Ten attempts between 22:31 and 23:58 (five foreground, four background, 55 s each) were refused by the provider**: `invalid_request`, \"overdue-payment\", 260 of 260 samples each, no tokens recorded. The bwrap failure of the previous iteration is gone (verified directly). Recorded as `evaluation_result: null` with the failure and the expected observables (tool calls/sample → ~5, context → ~43 k, calls/sample → ~11) in the message and note.\n\nOne finding that outlives the run: **every run directory except this session's is mounted read-only**, so the parent's tree keeps its rankable 0.0 summary and the runner's reuse rule refuses to re-run it — the parent's own prescribed remedy is no longer available, and the staged rounds it introduced can only be measured through a descendant tree. This tree's poisoned summary was moved to `results/summary.failed.json` while its directory was still writable, so the next iteration can re-run it, or branch from `152cd1a` and add nothing to get the staged-rounds number raw.",
+    "ttft_ms": 775,
+    "ttft_stream_ms": 245,
+    "time_to_request_ms": 60,
+    "type": "result",
+    "duration_ms": 5976270,
+    "uuid": "f81b725b-02e6-4e13-ac88-511aa2416c8b"
+  },
+  "session_file": "projects/-workspace-harness/9dad78b0-ce8d-4115-a57f-d4e7b6ddb407.jsonl",
+  "usage": {
+    "input_tokens": 77014,
+    "output_tokens": 112806,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9547520
+  },
+  "cost_usd": 7.978979999999996,
+  "num_turns": 109,
+  "duration_api_ms": 580635,
+  "error": null
+}

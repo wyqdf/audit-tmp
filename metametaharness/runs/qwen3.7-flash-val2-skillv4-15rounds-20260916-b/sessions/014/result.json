@@ -1,0 +1,89 @@
+{
+  "session_id": "db199865-f7be-49f5-a18e-10a6d7e8ef00",
+  "commits_before": [
+    "52a532fdb396955d18858c82d2cbad92858f4f67",
+    "b6060a910203479b2ba7731dc3288a67d5947a36",
+    "0df22b3a9a24e67e590afc82eb0cf21437edc57d",
+    "9b04306a774263abfbe289568c621385f913cb29",
+    "7f99ffff8ef19bdf722115250e143b4b99fec990",
+    "b823e6058ff8b78f9f6f48bc32e46d3e105c6889",
+    "ece446637fc7870c97283996e946158324d694b2",
+    "7baad6478a7c372346a4357843ec01b069f5637d",
+    "99acee1b28c005f3fcb3254e8b1208566921a69d",
+    "e05c6f0df98589c418940cfde2e9aac3082ccba5",
+    "49c9c67dc05930e1d958ed4821916d56b54e8983",
+    "419618e1c16bbd6387ad3ec523d75d10b193771e",
+    "13a6c63a0efb8e4af5298ab405410fd29fdb23b6",
+    "3d84679da6be2eeecac0cf38ba1526ddad400016"
+  ],
+  "completed": true,
+  "activity_seconds": 569.5492269992828,
+  "benchmark_seconds": 54.296701431274414,
+  "wall_seconds": 623.8459284305573,
+  "result": {
+    "is_error": false,
+    "duration_api_ms": 520415,
+    "num_turns": 101,
+    "stop_reason": "end_turn",
+    "session_id": "db199865-f7be-49f5-a18e-10a6d7e8ef00",
+    "total_cost_usd": 8.091911,
+    "usage": {
+      "input_tokens": 101132,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 9879552,
+      "output_tokens": 105859,
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "",
+      "iterations": [],
+      "speed": "standard"
+    },
+    "modelUsage": {
+      "deepseek-v4-flash": {
+        "inputTokens": 101132,
+        "outputTokens": 105859,
+        "cacheReadInputTokens": 9879552,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 8.091911,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000,
+        "canonicalModel": "deepseek-v4-flash",
+        "provider": "firstParty"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "Iteration 14 is complete. Here is what happened.\n\n## Lineage analysis\n\nThe graph is linear: `main` → … → `b823e60` (0.5656) → … → `b6060a9` (0.5511) → `52a532f` (memory-in-prompt, **void**). The tip's run failed on a provider refusal, so the memory-in-prompt change was never measured; I took the tip as parent to carry that unmeasured mechanism forward.\n\nReading the tip against its parent's diff, I found a regression it introduced. `with_prompt` wrote the attempt's prompt *over the whole message* the invocation carries. But the message a caller sends is the harness's prompt **plus** what the runner appends — a 326-character \"FINAL OUTPUT REQUIREMENT\" naming the JSON schema the runner reads the score from. Verified two ways:\n\n- In all 13 recorded runs, every solver message ends with that requirement (3350/3350); after the tip, it reaches no model.\n- Replayed against the parent's code path: 2024 characters sent where the caller wrote 2350.\n- The population it serves is recorded: 340/1300 (26.2%) of Symptom2Disease samples, 19/774 of USPTO, 4/1276 of LawBench come back as prose with no `final_answer` field and are carried only by that requirement.\n\nI considered and rejected three larger ideas on the measured evidence: a co-answer hint from the memory's joined answers (fires on 232 *correct* samples against 272 wrong ones), adopting the checked draft as the answer (drafted answers would have lost 36 samples and won none), and a \"name more charges\" nudge for LawBench's under-answering (its 183 under-answers never mention the missing charge in the model's own reasoning, so the knowledge is not there to recall).\n\n## Change\n\n`with_prompt(inputs, prompt, base)` now splices: the attempt's prompt goes where the prompt stood, and the caller's text after it stays. Verified offline — attempts 1–2 send the caller's message byte for byte, the reduced attempt sends its reduced listing with the requirement kept, `inputs` is unmutated.\n\n## Evaluation — void\n\n`{\"USPTO\": 0.0, \"Symptom2Disease\": 0.0, \"LawBench\": 0.0, \"average\": 0.0, \"status\": \"error\"}`, 0 model calls, 260/260 samples refused with `invalid_request` / \"overdue-payment\" — the same account block that voided the parent eleven minutes earlier. **No score; the expected effect is unobserved, not disproved.** Source at tree `615d1db7`, committed as `ae4fb7c` on `carried-prompt` with evolution notes attached; the note and commit message state the void and the offline sizing rather than a score.\n\nTwo operational facts I saved to memory for the next iteration: the provider outage, and that a void run is saved as `rankable: true`, so the same tree cannot be re-evaluated by re-running the runner — a fresh score needs a new tree.",
+    "ttft_ms": 766,
+    "ttft_stream_ms": 264,
+    "time_to_request_ms": 54,
+    "type": "result",
+    "duration_ms": 623296,
+    "uuid": "467f6578-cbf3-4f69-8efa-217cd72692ab"
+  },
+  "session_file": "projects/-workspace-harness/db199865-f7be-49f5-a18e-10a6d7e8ef00.jsonl",
+  "usage": {
+    "input_tokens": 101132,
+    "output_tokens": 105859,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 9879552
+  },
+  "cost_usd": 8.091911,
+  "num_turns": 101,
+  "duration_api_ms": 520415,
+  "error": null,
+  "commit": "ae4fb7cb16b97683f999842a45d3341f37f865c8",
+  "tree": "615d1db7d748f52ec846dca16349ac65dfc91833"
+}
