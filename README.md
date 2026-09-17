@@ -53,7 +53,7 @@ harness/
 | 项 | A `…-20260916` | B `…-20260916-b` |
 |---|---|---|
 | 起止 | 09-16 23:57 → 09-17 08:02（末轮崩溃退出） | 09-16 23:57 → 09-17 05:50（跑完全部轮次退出） |
-| 轮数 | 0–14 完成，N15 未提交 | 0–15 全部完成 |
+| 轮数 | 0–14 登记，N15 提交 `834b2e8` 但未登记（评测未产出结果） | 0–15 全部登记 |
 | 平均分 | 基线 `9f49dd72`/`ea3b299c` 0.4367 → 最高 **N5 `d8f5ef0a` 0.5644** | 基线 `9f49dd72`/`3d84679d` 0.4367 → 最高 **N8 `b823e605` 0.5656** |
 | 谱系 | 纯单链，14/14 轮接上一轮，无合并 | 纯单链，15/15 轮接上一轮，无合并 |
 | 有效轮次 | N0–N12（N13 部分受损），N14 基建故障、N15 未完成 | N0–N12，N13–N15 作废 |
@@ -69,10 +69,12 @@ harness/
 
 分任务（轮 0 → 最好的有效轮）：A 的 USPTO 0.200→0.283、Symptom2Disease 0.800→0.890、LawBench 0.310→0.520（N12 达 0.570）；B 的 USPTO 0.150→0.267、Symptom2Disease 0.880→0.890、LawBench 0.280→0.540（N11/N12 达 0.590）。涨分几乎全部来自 LawBench。
 
-节点对照（tree → commit → 均值 → 分支）：A 基线 `9f49dd72`/`ea3b299c` 0.4367；N1 `bca9cc83`/`d7b155f0` 0.4933；N2 `e2c96b80`/`3340e638` 0.4989；N3 `8b90b9c5`/`7628d2a1` 0.5256；N4 `3c5c61e1`/`e5d4cc50` 0.5344；N5 `37a3ebb7`/`d8f5ef0a` 0.5644；N6 `cd1bd0d4`/`3bb9672c` 0.5333；N7 `b000c8ef`/`5402cb12` 0.5333；N8 `4383c626`/`a311512c` 0.5456；N9 `ceeb3c6c`/`cadc26b5` 0.5267；N10 `84fb7ecd`/`bc19c512` 0.5311；N11 `8ccc1139`/`f071ba28` 0.5133；N12 `b51d7d5a`/`921c0698` 0.5367；N13 `4b32c77a`/`794d93eb` 0.5411；N14 `f940a453`/`152cd1aa` 0.0000；N15 无提交。
+节点对照（tree → commit → 均值 → 分支）：A 基线 `9f49dd72`/`ea3b299c` 0.4367；N1 `bca9cc83`/`d7b155f0` 0.4933；N2 `e2c96b80`/`3340e638` 0.4989；N3 `8b90b9c5`/`7628d2a1` 0.5256；N4 `3c5c61e1`/`e5d4cc50` 0.5344；N5 `37a3ebb7`/`d8f5ef0a` 0.5644；N6 `cd1bd0d4`/`3bb9672c` 0.5333；N7 `b000c8ef`/`5402cb12` 0.5333；N8 `4383c626`/`a311512c` 0.5456；N9 `ceeb3c6c`/`cadc26b5` 0.5267；N10 `84fb7ecd`/`bc19c512` 0.5311；N11 `8ccc1139`/`f071ba28` 0.5133；N12 `b51d7d5a`/`921c0698` 0.5367；N13 `4b32c77a`/`794d93eb` 0.5411；N14 `f940a453`/`152cd1aa` 0.0000（bwrap 故障）；N15 提交 `834b2e8`（未获评测，故未登记为节点）。
 B 基线 `9f49dd72`/`3d84679d` 0.4367；N1 `b539c7be`/`13a6c63a` 0.4522；N2 `562ab087`/`419618e1` 0.4922；N3 `57a4d05c`/`49c9c67d` 0.4978；N4 `54fcbc30`/`e05c6f0d` 0.4956；N5 `7dacda0a`/`99acee1b` 0.5144；N6 `268efd93`/`7baad647` 0.4967；N7 `e16a2b19`/`ece44663` 0.5122；N8 `03d84c38`/`b823e605` 0.5656；N9 `0f46c28c`/`7f99ffff` 0.5489；N10 `32c01b54`/`9b04306a` 0.5367；N11 `744847db`/`0df22b3a` 0.5533；N12 `8f5a4844`/`b6060a91` 0.5511；N13 `f83d88b2`/`52a532fd` 0.0000；N14 `615d1db7`/`ae4fb7cb` 0.0000；N15 `7ad60114`/`c1a5a1ba` 0.0000。
 
-**尾部 0 分与 A 的崩溃（不是候选的问题）**：09-17 05:24:59 起 solver 侧（阿里云百炼）账户欠费，样本报 `invalid_request: Access denied … #overdue-payment`，0 token、0 次模型调用；最后一条成功样本 05:25:41。此后 A 的 N13 有 22/260 条落在欠费（全部 LawBench，故 0.5411 被低估），N14 撞上另一个故障 `bwrap: Can't bind mount /oldroot/etc/ld.so.cache`（260/260 `execution_error`，评测 2 秒结束），N15 无提交 → `confirm_round` 不通过，进程抛 `RuntimeError: Round is incomplete` 退出；B 的 N13–N15 各 260/260 全部欠费。运行日志见 `runs/<run>.log`。
+**尾部 0 分与 A 的崩溃（不是候选的问题）**：09-17 05:24:59 起 solver 侧（阿里云百炼）账户欠费，样本报 `invalid_request: Access denied … #overdue-payment`，0 token、0 次模型调用；最后一条成功样本 05:25:41。此后 A 的 N13 有 22/260 条落在欠费（全部 LawBench，故 0.5411 被低估）；N14 撞上另一个故障——宿主替换了 `/etc/ld.so.cache` 而容器仍持有旧 inode（`/etc/ld.so.cache//deleted`），bwrap 无法绑定，沙箱根本起不来，260/260 `execution_error`，评测 2 秒结束；N15 的提交 `834b2e8`（分支 `codex/memory-is-the-file`，父 `152cd1aa`）和 note 都已生成（在 bundle 里），但评测始终没产出 manifest/结果（tree 目录 `5865dd0e` 只剩 `samples.jsonl` 与被改名的 `summary.failed.json`），`confirm_round` 不通过 → 进程抛 `RuntimeError: Round is incomplete` 退出，该轮 note 记 `evaluation_result: null`。B 的 N13–N15 各 260/260 全部欠费，N15 提交后正常退出。运行日志见 `runs/<run>.log`。
+
+runner 的复用规则在这里也咬了一口：260 条全失败的 summary 仍被算作 rankable，所以第 2、3 次重试直接把那份 0 分 summary 又发了回来（没有重跑），proposer 只能先清空 `results/summary.json` 才逼出第 4 次真正尝试——然后在 bwrap 上失败。A 的 N15 note 里写明了整个过程。
 
 **谱系观察**：两条都是纯单链，每一轮都取上一轮作为父节点，从没回头用更早的强节点——A 的 N5（0.5644）和 B 的 N8（0.5656）在各自链上再没被用过。旧版 Skill 里的 `Select a strong or promising parent … do not default to the latest node or current HEAD` 在当前 `SKILL.md` 中已被删除；每轮 note 的第一条又都回到父节点 note 结尾的缺陷（如 A N6/N8 "Chosen from the parent's own evidence … the parent's note ended on …"），note 最后一条是新的 limit / next step（A 9/14 轮、B 14/15 轮如此收尾），形成接力式单链。
 
